@@ -68,16 +68,14 @@ namespace SkiittzsThermalMechanics
         public void AppendCustomThermalInfo(StringBuilder customInfo)
         {
             var remainingSeconds = SecondsUntilOverheat();
-            if (Logger.Instance.Debug)
-            {
-                var debugInfo = new StringBuilder();
-                debugInfo.Append("DEBUG INFO:\n");
-                debugInfo.Append($"Current Heat: {CurrentHeat}\n");
-                debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
-                debugInfo.Append($"Last Heat Delta: {lastHeatDelta}\n");
-                debugInfo.Append($"Remaining Seconds: {remainingSeconds}");
-                Logger.Instance.LogDebug(debugInfo.ToString());
-            }
+
+            var debugInfo = new StringBuilder();
+            debugInfo.Append($"DEBUG INFO - {Block.CustomName}:\n");
+            debugInfo.Append($"Current Heat: {CurrentHeat}\n");
+            debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
+            debugInfo.Append($"Last Heat Delta: {lastHeatDelta}\n");
+            debugInfo.Append($"Remaining Seconds: {remainingSeconds}");
+            Logger.Instance.LogDebug(debugInfo.ToString());
 
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
             customInfo.Append($"Time until {(remainingSeconds < 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
@@ -85,7 +83,7 @@ namespace SkiittzsThermalMechanics
 
         private float SecondsUntilOverheat()
         {
-            return ((lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat) / lastHeatDelta) / 1.667f;
+            return ((lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat) / (lastHeatDelta == 0 ? 1 : lastHeatDelta)) / 1.667f;
         }
 
         private static string TimeUntilOverheatDisplay(float remainingSeconds)

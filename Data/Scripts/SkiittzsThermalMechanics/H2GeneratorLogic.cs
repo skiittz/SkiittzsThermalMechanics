@@ -15,13 +15,6 @@ namespace SkiittzsThermalMechanics
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_HydrogenEngine), false)]
     public class H2EngineLogic : MyGameLogicComponent
     {
-        //private IMyPowerProducer block;
-        //private float currentHeat;
-        //private float heatCapacity;
-        //private float passiveCooling;
-        //private bool initialized;
-        //private bool isOverheated;
-        //private float lastHeatDelta;
         private HeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
@@ -39,7 +32,6 @@ namespace SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<H2EngineLogic>();
             logic.heatData.AppendCustomThermalInfo(customInfo);
-            //ThermalLogic.AppendCustomThermalInfo(customInfo, logic.heatCapacity, logic.currentHeat, logic.lastHeatDelta);
         }
 
         void ThermalLogic_OnClose(IMyEntity obj)

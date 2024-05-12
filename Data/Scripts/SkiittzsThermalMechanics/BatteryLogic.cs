@@ -16,13 +16,6 @@ namespace SkiittzsThermalMechanics
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_BatteryBlock), false)]
     public class BatteryLogic : MyGameLogicComponent
     {
-        //private IMyPowerProducer block;
-        //private float currentHeat;
-        //private float heatCapacity;
-        //private float passiveCooling;
-        //private bool initialized;
-        //private bool isOverheated;
-        //private float lastHeatDelta;
         private HeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
