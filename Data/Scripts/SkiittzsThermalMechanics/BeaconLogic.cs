@@ -99,6 +99,7 @@ namespace SkiittzsThermalMechanics
             currentHeat -= cooling;
 
             block.Radius = Math.Min(500000,500000 * heatRatio);
+            (block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
         public void RemoveHeatDueToBlockDeath(float heat)
