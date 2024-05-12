@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Sandbox.ModAPI;
-using VRage.Game.ModAPI.Ingame;
+using VRage.Utils;
 
 namespace SkiittzsThermalMechanics
 {
@@ -15,8 +14,8 @@ namespace SkiittzsThermalMechanics
         public float HeatCapacity { get; }
         private float passiveCooling;
         public bool IsInitialized { get; set; }
-        private bool isOverheated;
         private float lastHeatDelta;
+        public float HeatRatio => (CurrentHeat / HeatCapacity);
 
         public HeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
         {
@@ -25,7 +24,7 @@ namespace SkiittzsThermalMechanics
             this.passiveCooling = passiveCooling;
         }
 
-        private float CalculateCooling()
+        private float CalculateCooling(float lastHeatDelta)
         {
             var beacons = new List<IMyBeacon>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
@@ -34,35 +33,40 @@ namespace SkiittzsThermalMechanics
             if (!beacons.Any())
                 return 0;
 
-            return beacons.OrderByDescending(x => x.Radius).First().GameLogic.GetAs<BeaconLogic>().ActiveCooling();
+            return beacons.OrderByDescending(x => x.Radius).First().GameLogic.GetAs<BeaconLogic>().ActiveCooling(lastHeatDelta);
         }
 
         private float CalculateHeating()
         {
             if (!Block.IsWorking)
                 return 0;
-
+            Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
+            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentOutputRatio}) - (passiveCooling {passiveCooling})");
             return Block.CurrentOutputRatio - passiveCooling;
         }
 
         public void ApplyHeating()
         {
-            lastHeatDelta = CalculateHeating() - CalculateCooling();
+            lastHeatDelta = CalculateHeating();
+            lastHeatDelta -= CalculateCooling(lastHeatDelta);
             CurrentHeat += lastHeatDelta;
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 
+            if (CurrentHeat <= HeatCapacity)
+                return;
 
-            if (CurrentHeat > HeatCapacity)
+            var beacons = new List<IMyBeacon>();
+            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
+            gts.GetBlocksOfType(beacons, x => x.IsWorking);
+            if (beacons.Any())
             {
-                Block.Enabled = false;
-                isOverheated = true;
+                var beacon = beacons.OrderByDescending(x => x.Radius).First();
+                var logic = beacon.GameLogic.GetAs<BeaconLogic>();
+                logic.RemoveHeatDueToBlockDeath(HeatCapacity);
             }
-            else if (isOverheated)
-            {
-                isOverheated = false;
-                Block.Enabled = true;
-            }
+
+            Block.SlimBlock.DoDamage(10000f, MyStringHash.GetOrCompute("Overheating"), true);
         }
 
         public void AppendCustomThermalInfo(StringBuilder customInfo)
@@ -88,6 +92,7 @@ namespace SkiittzsThermalMechanics
 
         private static string TimeUntilOverheatDisplay(float remainingSeconds)
         {
+            Logger.Instance.LogDebug($"Display Timespan for remaining seconds: {remainingSeconds}");
             var timeSpan = TimeSpan.FromSeconds(remainingSeconds);
 
             return timeSpan.ToString("hh\\:mm\\:ss");

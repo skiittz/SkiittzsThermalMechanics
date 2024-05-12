@@ -19,7 +19,7 @@ namespace SkiittzsThermalMechanics
         private HeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Thermal Logic");
+            Logger.Instance.LogDebug("Initializing Battery Logic");
             var block = (IMyPowerProducer)Entity;
             var heatCapacity = block.MaxOutput*2;
             var passiveCooling = 1 / block.MaxOutput;
@@ -74,13 +74,12 @@ namespace SkiittzsThermalMechanics
         public override void UpdateBeforeSimulation100()
         {
             heatData.ApplyHeating();
-            (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
         private void CreateControls()
         {
             var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBatteryBlock>("HeatRatio");
-            heatPercent.Getter = x => heatData.CurrentHeat / heatData.HeatCapacity;
+            heatPercent.Getter = x => heatData.HeatRatio;
             MyAPIGateway.TerminalControls.AddControl<IMyBatteryBlock>(heatPercent);
         }
     }

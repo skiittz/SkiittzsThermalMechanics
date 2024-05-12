@@ -18,16 +18,16 @@ namespace SkiittzsThermalMechanics
         private HeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Thermal Logic");
+            Logger.Instance.LogDebug("Initializing Reactor Logic");
             var block = (IMyPowerProducer)Entity;
             var heatCapacity = block.MaxOutput;
             var passiveCooling = 1 / block.MaxOutput;
             heatData = new HeatData(block, heatCapacity, passiveCooling);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
-            (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ThermalLogic_AppendingCustomInfo;
+            (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;
         }
 
-        void ThermalLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
+        void ReactorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
             Logger.Instance.LogDebug("Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<ReactorLogic>();
@@ -36,14 +36,14 @@ namespace SkiittzsThermalMechanics
 
      
 
-        void ThermalLogic_OnClose(IMyEntity obj)
+        void ReactorLogic_OnClose(IMyEntity obj)
         {
             try
             {
                 if (Entity != null)
                 {
-                    (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ThermalLogic_AppendingCustomInfo;
-                    (Container.Entity as IMyCubeBlock).OnClose -= ThermalLogic_OnClose;
+                    (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ReactorLogic_AppendingCustomInfo;
+                    (Container.Entity as IMyCubeBlock).OnClose -= ReactorLogic_OnClose;
                 }
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace SkiittzsThermalMechanics
                 CreateControls();
                 try
                 {
-                    (Container.Entity as IMyCubeBlock).OnClose += ThermalLogic_OnClose;
+                    (Container.Entity as IMyCubeBlock).OnClose += ReactorLogic_OnClose;
                 }
                 catch (Exception ex)
                 {
@@ -75,13 +75,12 @@ namespace SkiittzsThermalMechanics
         public override void UpdateBeforeSimulation100()
         {
             heatData.ApplyHeating();
-            (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
         private void CreateControls()
         {
             var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyReactor>("HeatRatio");
-            heatPercent.Getter = x => heatData.CurrentHeat / heatData.HeatCapacity;
+            heatPercent.Getter = x => heatData.HeatRatio;
             MyAPIGateway.TerminalControls.AddControl<IMyReactor>(heatPercent);
         }
     }
