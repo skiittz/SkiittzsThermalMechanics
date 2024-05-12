@@ -42,6 +42,7 @@ namespace SkiittzsThermalMechanics
         {
             Active = true;
             Enabled = true;
+            Debug = true;
         }
 
         public override string ToString()

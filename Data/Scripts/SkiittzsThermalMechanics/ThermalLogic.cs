@@ -1,30 +1,91 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
+using Sandbox.ModAPI;
+using VRage.Game.ModAPI.Ingame;
 
 namespace SkiittzsThermalMechanics
 {
-    public static class ThermalLogic
+    public class HeatData
     {
-        public static readonly bool DebugMode = true;
+        public IMyPowerProducer Block { get; }
+        public float CurrentHeat { get; private set; }
+        public float HeatCapacity { get; }
+        private float passiveCooling;
+        public bool IsInitialized { get; set; }
+        private bool isOverheated;
+        private float lastHeatDelta;
 
-        public static void AppendCustomThermalInfo(StringBuilder customInfo, float heatCapacity, float currentHeat, float lastHeatDelta)
+        public HeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
         {
-            customInfo.Append($"Heat Level: {(currentHeat / heatCapacity) * 100}%\n");
-            var remainingSeconds = SecondsUntilOverheat(heatCapacity, currentHeat, lastHeatDelta);
-            customInfo.Append($"Time until {(remainingSeconds < 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(remainingSeconds)}\n");
+            Block = block;
+            this.HeatCapacity = heatCapacity;
+            this.passiveCooling = passiveCooling;
+        }
 
-            if (DebugMode)
+        private float CalculateCooling()
+        {
+            var beacons = new List<IMyBeacon>();
+            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
+            gts.GetBlocksOfType(beacons, x => x.IsWorking);
+
+            if (!beacons.Any())
+                return 0;
+
+            return beacons.OrderByDescending(x => x.Radius).First().GameLogic.GetAs<BeaconLogic>().ActiveCooling();
+        }
+
+        private float CalculateHeating()
+        {
+            if (!Block.IsWorking)
+                return 0;
+
+            return Block.CurrentOutputRatio - passiveCooling;
+        }
+
+        public void ApplyHeating()
+        {
+            lastHeatDelta = CalculateHeating() - CalculateCooling();
+            CurrentHeat += lastHeatDelta;
+            if (CurrentHeat < 0)
+                CurrentHeat = 0;
+
+
+            if (CurrentHeat > HeatCapacity)
             {
-                customInfo.Append("DEBUG INFO:\n");
-                customInfo.Append($"Current Heat: {currentHeat}\n");
-                customInfo.Append($"Heat Capacity: {heatCapacity}\n");
-                customInfo.Append($"Last Heat Delta: {lastHeatDelta}\n");
+                Block.Enabled = false;
+                isOverheated = true;
+            }
+            else if (isOverheated)
+            {
+                isOverheated = false;
+                Block.Enabled = true;
             }
         }
 
-        private static float SecondsUntilOverheat(float heatCapacity, float currentHeat, float lastHeatDelta)
+        public void AppendCustomThermalInfo(StringBuilder customInfo)
         {
-            return ((heatCapacity - currentHeat) / lastHeatDelta) / 1.667f;
+            var remainingSeconds = SecondsUntilOverheat();
+            if (Logger.Instance.Debug)
+            {
+                var debugInfo = new StringBuilder();
+                debugInfo.Append("DEBUG INFO:\n");
+                debugInfo.Append($"Current Heat: {CurrentHeat}\n");
+                debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
+                debugInfo.Append($"Last Heat Delta: {lastHeatDelta}\n");
+                debugInfo.Append($"Remaining Seconds: {remainingSeconds}");
+                Logger.Instance.LogDebug(debugInfo.ToString());
+            }
+
+            customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
+            customInfo.Append($"Time until {(remainingSeconds < 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
+        }
+
+        private float SecondsUntilOverheat()
+        {
+            return ((lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat) / lastHeatDelta) / 1.667f;
         }
 
         private static string TimeUntilOverheatDisplay(float remainingSeconds)
