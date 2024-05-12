@@ -26,14 +26,20 @@ namespace SkiittzsThermalMechanics
 
         private float CalculateCooling(float lastHeatDelta)
         {
+            return GetBeaconLogic()?.ActiveCooling(lastHeatDelta) ?? 0;
+        }
+
+        private BeaconLogic GetBeaconLogic()
+        {
             var beacons = new List<IMyBeacon>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
             gts.GetBlocksOfType(beacons, x => x.IsWorking);
 
-            if (!beacons.Any())
-                return 0;
+            var beacon = beacons.OrderByDescending(x => x.Radius).FirstOrDefault();
+            if (beacon == null)
+                return null;
 
-            return beacons.OrderByDescending(x => x.Radius).First().GameLogic.GetAs<BeaconLogic>().ActiveCooling(lastHeatDelta);
+            return beacon.GameLogic.GetAs<BeaconLogic>();
         }
 
         private float CalculateHeating()
@@ -56,16 +62,7 @@ namespace SkiittzsThermalMechanics
             if (CurrentHeat <= HeatCapacity)
                 return;
 
-            var beacons = new List<IMyBeacon>();
-            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
-            gts.GetBlocksOfType(beacons, x => x.IsWorking);
-            if (beacons.Any())
-            {
-                var beacon = beacons.OrderByDescending(x => x.Radius).First();
-                var logic = beacon.GameLogic.GetAs<BeaconLogic>();
-                logic.RemoveHeatDueToBlockDeath(HeatCapacity);
-            }
-
+            GetBeaconLogic()?.RemoveHeatDueToBlockDeath(HeatCapacity);
             Block.SlimBlock.DoDamage(10000f, MyStringHash.GetOrCompute("Overheating"), true);
         }
 
