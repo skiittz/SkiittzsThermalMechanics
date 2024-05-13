@@ -118,6 +118,8 @@ namespace SkiittzsThermalMechanics
                     fireEffect.Autodelete = false;
                     fireEffect.UserScale = Block.Model.BoundingBox.Perimeter * .018f;
                 }
+
+                return;
             }
 
             Utilities.GetBeaconLogic(Block.CubeGrid)?.RemoveHeatDueToBlockDeath(HeatCapacity);
