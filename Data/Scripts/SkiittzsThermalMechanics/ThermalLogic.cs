@@ -3,11 +3,58 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sandbox.ModAPI;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
+using SpaceEngineers.Game.ModAPI;
 using VRage.Utils;
 
 namespace SkiittzsThermalMechanics
 {
-    public class HeatData
+    public class ThrusterHeatData
+    {
+        public IMyThrust Block { get; }
+        public float CurrentHeat { get; private set; }
+        private float passiveCooling;
+        public bool IsInitialized { get; set; }
+        private float lastHeatDelta;
+
+        public ThrusterHeatData(IMyThrust block, float passiveCooling)
+        {
+            Block = block;
+            this.passiveCooling = passiveCooling;
+        }
+
+        public void ApplyHeating()
+        {
+            lastHeatDelta = CalculateHeating();
+            CurrentHeat += lastHeatDelta;
+            CurrentHeat -= CalculateCooling(CurrentHeat);
+            if (CurrentHeat < 0)
+                CurrentHeat = 0;
+        }
+
+        private float CalculateCooling(float availableHeatToSink)
+        {
+            return Utilities.GetBeaconLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+        }
+
+        private float CalculateHeating()
+        {
+            if (!Block.IsWorking)
+                return 0;
+            Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
+            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentThrust}) - (passiveCooling {passiveCooling})");
+            return Block.CurrentThrust - passiveCooling;
+        }
+
+        public void AppendCustomThermalInfo(StringBuilder customInfo)
+        {
+            var debugInfo = new StringBuilder();
+            debugInfo.Append($"DEBUG INFO - {Block.CustomName}:\n");
+            debugInfo.Append($"Current Heat: {CurrentHeat}\n");
+            Logger.Instance.LogDebug(debugInfo.ToString());
+        }
+    }
+    public class PowerPlantHeatData
     {
         public IMyPowerProducer Block { get; }
         public float CurrentHeat { get; private set; }
@@ -17,29 +64,16 @@ namespace SkiittzsThermalMechanics
         private float lastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
 
-        public HeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
+        public PowerPlantHeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
         {
             Block = block;
             this.HeatCapacity = heatCapacity;
             this.passiveCooling = passiveCooling;
         }
 
-        private float CalculateCooling(float lastHeatDelta)
+        private float CalculateCooling(float availableHeatToSink)
         {
-            return GetBeaconLogic()?.ActiveCooling(lastHeatDelta) ?? 0;
-        }
-
-        private BeaconLogic GetBeaconLogic()
-        {
-            var beacons = new List<IMyBeacon>();
-            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
-            gts.GetBlocksOfType(beacons, x => x.IsWorking);
-
-            var beacon = beacons.OrderByDescending(x => x.Radius).FirstOrDefault();
-            if (beacon == null)
-                return null;
-
-            return beacon.GameLogic.GetAs<BeaconLogic>();
+            return Utilities.GetBeaconLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
         }
 
         private float CalculateHeating()
@@ -62,7 +96,7 @@ namespace SkiittzsThermalMechanics
             if (CurrentHeat <= HeatCapacity)
                 return;
 
-            GetBeaconLogic()?.RemoveHeatDueToBlockDeath(HeatCapacity);
+            Utilities.GetBeaconLogic(Block.CubeGrid)?.RemoveHeatDueToBlockDeath(HeatCapacity);
             Block.SlimBlock.DoDamage(10000f, MyStringHash.GetOrCompute("Overheating"), true);
         }
 
@@ -84,7 +118,7 @@ namespace SkiittzsThermalMechanics
 
         private float SecondsUntilOverheat()
         {
-            return ((lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat) / (lastHeatDelta == 0 ? 1 : lastHeatDelta)) / 1.667f;
+            return ((lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat) / (lastHeatDelta == 0 ? 1 : lastHeatDelta)) * 1.667f;
         }
 
         private static string TimeUntilOverheatDisplay(float remainingSeconds)

@@ -15,14 +15,14 @@ namespace SkiittzsThermalMechanics
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Reactor), false)]
     public class ReactorLogic : MyGameLogicComponent
     {
-        private HeatData heatData;
+        private PowerPlantHeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Reactor Logic");
             var block = (IMyPowerProducer)Entity;
             var heatCapacity = block.MaxOutput;
             var passiveCooling = 1 / block.MaxOutput;
-            heatData = new HeatData(block, heatCapacity, passiveCooling);
+            heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;
         }

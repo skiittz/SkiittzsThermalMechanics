@@ -113,9 +113,11 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BatteryLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BeaconLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2GeneratorLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HydrogenThrusterLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Logger.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ReactorLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ThermalLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

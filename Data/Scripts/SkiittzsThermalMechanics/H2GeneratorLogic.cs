@@ -16,14 +16,14 @@ namespace SkiittzsThermalMechanics
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_HydrogenEngine), false)]
     public class H2EngineLogic : MyGameLogicComponent
     {
-        private HeatData heatData;
+        private PowerPlantHeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing H2 Engine Logic");
             var block = (IMyPowerProducer)Entity;
             var heatCapacity = block.MaxOutput*2;
             var passiveCooling = 1 / block.MaxOutput;
-            heatData = new HeatData(block, heatCapacity, passiveCooling);
+            heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += H2EngineLogic_AppendingCustomInfo;
         }
