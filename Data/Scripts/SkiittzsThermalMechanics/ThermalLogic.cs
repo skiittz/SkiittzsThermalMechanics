@@ -54,8 +54,8 @@ namespace SkiittzsThermalMechanics
         public void ApplyHeating()
         {
             lastHeatDelta = CalculateHeating();
-            lastHeatDelta -= CalculateCooling(lastHeatDelta);
             CurrentHeat += lastHeatDelta;
+            CurrentHeat -= CalculateCooling(CurrentHeat);
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 
