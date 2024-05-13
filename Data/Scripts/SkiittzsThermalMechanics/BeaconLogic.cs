@@ -17,7 +17,7 @@ namespace SkiittzsThermalMechanics
     {
         private IMyBeacon block;
         private float currentHeat;
-        private float heatCapacity => 1000f;
+        private float heatCapacity => 1000000f;
         private float availableCapacity => heatCapacity - currentHeat;
         private float heatRatio => (currentHeat / heatCapacity);
         private bool isInitialized;

@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Beacon.sbc" />
+    <None Include="Data\PrettyHeatSink.sbc" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

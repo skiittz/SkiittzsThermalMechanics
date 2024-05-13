@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 using SpaceEngineers.Game.ModAPI;
+using VRage.Game;
 using VRage.Utils;
+using VRageMath;
 
 namespace SkiittzsThermalMechanics
 {
@@ -42,8 +45,8 @@ namespace SkiittzsThermalMechanics
             if (!Block.IsWorking)
                 return 0;
             Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentThrust}) - (passiveCooling {passiveCooling})");
-            return Block.CurrentThrust - passiveCooling;
+            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentThrust/ 1000000}) - (passiveCooling {passiveCooling})");
+            return (Block.CurrentThrust/1000000) - passiveCooling;
         }
 
         public void AppendCustomThermalInfo(StringBuilder customInfo)
@@ -63,7 +66,7 @@ namespace SkiittzsThermalMechanics
         public bool IsInitialized { get; set; }
         private float lastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
-
+        private MyParticleEffect fireEffect;
         public PowerPlantHeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
         {
             Block = block;
@@ -81,10 +84,11 @@ namespace SkiittzsThermalMechanics
             if (!Block.IsWorking)
                 return 0;
             Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentOutputRatio}) - (passiveCooling {passiveCooling})");
-            return Block.CurrentOutputRatio - passiveCooling;
+            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentOutput}) - (passiveCooling {passiveCooling})");
+            return Block.CurrentOutput - passiveCooling;
         }
 
+        MatrixD m_LocalOffset = new MatrixD();
         public void ApplyHeating()
         {
             lastHeatDelta = CalculateHeating();
@@ -93,8 +97,28 @@ namespace SkiittzsThermalMechanics
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 
-            if (CurrentHeat <= HeatCapacity)
+            if (CurrentHeat <= HeatCapacity * .8)
+            {
+                if (fireEffect != null)
+                {
+                    fireEffect.Stop(true);
+                    fireEffect = null;
+                }
                 return;
+            }
+
+            if (CurrentHeat <= HeatCapacity)
+            {
+                if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, false))
+                //m_LocalOffset = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);//<1 because 100% of offset would bury the effect inside wall
+                //fireEffect.WorldMatrix = m_LocalOffset * Block.WorldMatrix;
+                //if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, ref m_LocalOffset, ref ????, Block.Render.GetRenderObjectID(), false))
+                {
+                    fireEffect.WorldMatrix = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);
+                    fireEffect.Autodelete = false;
+                    fireEffect.UserScale = Block.Model.BoundingBox.Perimeter * .018f;
+                }
+            }
 
             Utilities.GetBeaconLogic(Block.CubeGrid)?.RemoveHeatDueToBlockDeath(HeatCapacity);
             Block.SlimBlock.DoDamage(10000f, MyStringHash.GetOrCompute("Overheating"), true);
