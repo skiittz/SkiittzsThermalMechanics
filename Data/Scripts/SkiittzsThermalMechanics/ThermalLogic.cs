@@ -55,6 +55,8 @@ namespace SkiittzsThermalMechanics
             debugInfo.Append($"DEBUG INFO - {Block.CustomName}:\n");
             debugInfo.Append($"Current Heat: {CurrentHeat}\n");
             Logger.Instance.LogDebug(debugInfo.ToString());
+
+            customInfo.Append($"Current Heat Level: {CurrentHeat}\n");
         }
     }
     public class PowerPlantHeatData
