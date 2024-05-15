@@ -97,6 +97,8 @@ namespace SkiittzsThermalMechanics
         public override void UpdateBeforeSimulation100()
         {
             currentHeat -= cooling;
+            if (currentHeat < 0)
+                currentHeat = 0;
 
             block.Radius = Math.Min(500000,500000 * heatRatio);
             (block as IMyTerminalBlock).RefreshCustomInfo();
