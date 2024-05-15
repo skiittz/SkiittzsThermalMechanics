@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
@@ -130,7 +131,7 @@ namespace SkiittzsThermalMechanics
 
         public void AppendCustomThermalInfo(StringBuilder customInfo)
         {
-            var remainingSeconds = SecondsUntilOverheat();
+            var remainingSeconds = RemainingSeconds();
 
             var debugInfo = new StringBuilder();
             debugInfo.Append($"DEBUG INFO - {Block.CustomName}:\n");
@@ -141,12 +142,15 @@ namespace SkiittzsThermalMechanics
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
-            customInfo.Append($"Time until {(remainingSeconds < 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
+            customInfo.Append($"Time until {(lastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
         }
 
-        private float SecondsUntilOverheat()
+        private const float SecondsPer100Ticks = 1.667f;
+        private float RemainingSeconds()
         {
-            return ((lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat) / (lastHeatDelta == 0 ? 1 : lastHeatDelta)) * 1.667f;
+            var numerator = lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat;
+            var denominator = lastHeatDelta == 0 ? 1 : Math.Abs(lastHeatDelta);
+            return (numerator / denominator) * SecondsPer100Ticks;
         }
 
         private static string TimeUntilOverheatDisplay(float remainingSeconds)
