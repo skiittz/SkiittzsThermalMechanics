@@ -9,7 +9,9 @@ using VRage.ObjectBuilders;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Thrust))]
+    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Thrust), false
+    ,new []{ "LargeBlockLargeHydrogenThrust", "LargeBlockSmallHydrogenThrust", "SmallBlockLargeHydrogenThrust", "SmallBlockSmallHydrogenThrust" }
+    )]
     public class HydrogenThrusterLogic : MyGameLogicComponent
     {
         private ThrusterHeatData heatData;

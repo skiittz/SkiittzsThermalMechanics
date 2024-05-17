@@ -131,8 +131,8 @@ namespace SkiittzsThermalMechanics
             {
                 overHeatCycles++;
                 DrawFireEffect();
-                var heatFactor = CurrentHeat + (CurrentHeat * (overHeatCycles/10));
-                Block.SlimBlock.DoDamage((heatFactor - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
+                var thermalFatigue = CurrentHeat + (CurrentHeat * (overHeatCycles/10));
+                Block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
                 if (Block.IsFunctional)
                     CurrentHeat = HeatCapacity;
                 else

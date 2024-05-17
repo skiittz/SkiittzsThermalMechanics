@@ -113,6 +113,7 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BatteryLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BeaconLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2GeneratorLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatRadiatorLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HydrogenThrusterLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Logger.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ReactorLogic.cs" />
@@ -122,7 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Beacon.sbc" />
-    <None Include="Data\PrettyHeatSink.sbc" />
+    <None Include="Data\BlockCategories.sbc" />
+    <None Include="Data\BlueprintClasses.sbc" />
+    <None Include="Data\HeatSink.sbc" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

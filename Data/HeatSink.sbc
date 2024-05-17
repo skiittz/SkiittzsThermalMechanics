@@ -2,14 +2,14 @@
 <Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <CubeBlocks>
 
-  <Definition xsi:type="MyObjectBuilder_HeatSinkBlockDefinition">
+  <Definition xsi:type="MyObjectBuilder_UpgradeModuleDefinition">
             <Id>
-                <TypeId>PrettyHeatSinkBlock</TypeId>
-                <SubtypeId>LargeHeatSinkBlock</SubtypeId>
+                <TypeId>UpgradeModule</TypeId>
+                <SubtypeId>LargeHeatRadiatorBlock</SubtypeId>
             </Id>
-            <DisplayName>DisplayName_Block_HeatVentWarfare2</DisplayName>
+            <DisplayName>Heat Radiator</DisplayName>
             <Icon>Textures\GUI\Icons\Cubes\HeatVent.dds</Icon>
-            <Description>Description_HeatVent</Description>
+            <Description>Provides grid cooling by venting heat into space</Description>
             <CubeSize>Large</CubeSize>
             <BlockTopology>TriangleMesh</BlockTopology>
             <Size x="1" y="1" z="1" />
@@ -30,7 +30,7 @@
                 <Component Subtype="Construction" Count="20" />
                 <Component Subtype="LargeTube" Count="10" />
                 <Component Subtype="Motor" Count="5" />
-                <Component Subtype="SuperConductor" Count="25" />
+                <Component Subtype="Superconductor" Count="25" />
                 <Component Subtype="SteelPlate" Count="10" />
             </Components>
             <CriticalComponent Subtype="Motor" Index="0" />
@@ -50,7 +50,7 @@
                 <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\HeatVentConstruction_2.mwm" />
                 <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\HeatVentConstruction_3.mwm" />
             </BuildProgressModels>
-            <BlockPairName>HeatSinkBlock</BlockPairName>
+            <BlockPairName>HeatRadiatorBlock</BlockPairName>
             <EdgeType>Light</EdgeType>
             <BuildTimeSeconds>20</BuildTimeSeconds>
             <RequiredPowerInput>0.0002</RequiredPowerInput>
@@ -68,17 +68,16 @@
             <LightRadiusBounds Min="1" Max="10" Default="3.6" />
             <LightOffsetBounds Min="0" Max="5" Default="0.5" />
             <IdleSound>BlockOxyGenIdle</IdleSound>
-            <DLC>Warfare2</DLC>
         </Definition>
 
-        <Definition xsi:type="MyObjectBuilder_HeatSinkBlockDefinition">
+        <Definition xsi:type="MyObjectBuilder_UpgradeModuleDefinition">
             <Id>
-                <TypeId>PrettyHeatSinkBlock</TypeId>
-                <SubtypeId>SmallSinkVentBlock</SubtypeId>
+                <TypeId>UpgradeModule</TypeId>
+                <SubtypeId>SmallHeatRadiatorBlock</SubtypeId>
             </Id>
-            <DisplayName>DisplayName_Block_HeatVentWarfare2</DisplayName>
+            <DisplayName>Heat Radiator</DisplayName>
             <Icon>Textures\GUI\Icons\Cubes\HeatVent_small.dds</Icon>
-            <Description>Description_HeatVent</Description>
+            <Description>Provides grid cooling by venting heat into space</Description>
             <CubeSize>Small</CubeSize>
             <BlockTopology>TriangleMesh</BlockTopology>
             <Size x="1" y="1" z="1" />
@@ -118,7 +117,7 @@
                 <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\HeatVentConstruction_1.mwm" />
                 <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\HeatVentConstruction_2.mwm" />
             </BuildProgressModels>
-            <BlockPairName>HeatVentBlock</BlockPairName>
+            <BlockPairName>HeatRadiatorBlock</BlockPairName>
             <EdgeType>Light</EdgeType>
             <BuildTimeSeconds>6</BuildTimeSeconds>
             <RequiredPowerInput>0.0002</RequiredPowerInput>
@@ -135,7 +134,6 @@
             <LightIntensityBounds Min="0.5" Max="10" Default="2" />
             <LightRadiusBounds Min="1" Max="10" Default="3.6" />
             <LightOffsetBounds Min="0" Max="5" Default="0.5" />
-            <DLC>Warfare2</DLC>
         </Definition>
   </CubeBlocks>
 </Definitions>
