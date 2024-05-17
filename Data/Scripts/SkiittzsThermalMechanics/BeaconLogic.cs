@@ -12,7 +12,7 @@ using VRage.ObjectBuilders;
 
 namespace SkiittzsThermalMechanics
 {
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false)]
+    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink" })]
     public class BeaconLogic : MyGameLogicComponent
     {
         private IMyBeacon block;

@@ -122,10 +122,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Beacon.sbc" />
+    <None Include="Data\HeatSinkCubeBlock.sbc" />
     <None Include="Data\BlockCategories.sbc" />
     <None Include="Data\BlueprintClasses.sbc" />
-    <None Include="Data\HeatSink.sbc" />
+    <None Include="Data\RadiatorsCubeBlocks.sbc" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
