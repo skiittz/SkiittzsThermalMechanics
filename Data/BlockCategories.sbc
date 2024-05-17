@@ -6,12 +6,14 @@
         <TypeId>GuiBlockCategoryDefinition</TypeId>
         <SubtypeId/>
       </Id>
-      <DisplayName>Radiators</DisplayName>
-      <Name>Radiators</Name>
+      <DisplayName>Heat Management</DisplayName>
+      <Name>HeatMgt</Name>
       <IsShipCategory>true</IsShipCategory>
       <ItemIds>
         <string>UpgradeModule/LargeHeatRadiatorBlock</string>
-        <string>UpgradeModule/SmallHeatRadiatorBlock</string>		
+        <string>UpgradeModule/SmallHeatRadiatorBlock</string>
+        <string>Beacon/LargeHeatSink</string>
+        <string>Beacon/SmallHeatSink</string>
       </ItemIds>
     </Category> 
   </CategoryClasses>

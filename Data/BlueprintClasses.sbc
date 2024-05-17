@@ -8,5 +8,8 @@
     <Entry Class="LargeBlocks" BlueprintSubtypeId="UpgradeModule/LargeHeatRadiatorBlock" />
     <Entry Class="SmallBlocks" BlueprintSubtypeId="UpgradeModule/SmallHeatRadiatorBlock" />
 
+    <Entry Class="LargeBlocks" BlueprintSubtypeId="Beacon/LargeHeatSink" />
+    <Entry Class="SmallBlocks" BlueprintSubtypeId="Beacon/SmallHeatSink" />
+
   </BlueprintClassEntries>
 </Definitions>
