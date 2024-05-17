@@ -41,6 +41,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
+            customInfo.Append($"Max Heat Dissipation: {dissipation}MW");
         }
 
         void RadiatorLogic_OnClose(IMyEntity obj)
