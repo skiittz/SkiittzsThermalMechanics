@@ -121,9 +121,10 @@ namespace SkiittzsThermalMechanics
 
         public void ApplyHeating()
         {
-            lastHeatDelta = CalculateHeating();
+            var heatGenerated = CalculateHeating();
+            var heatDissipated = CalculateCooling(CurrentHeat + heatGenerated);
+            lastHeatDelta = heatGenerated - heatDissipated;
             CurrentHeat += lastHeatDelta;
-            CurrentHeat -= CalculateCooling(CurrentHeat);
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 

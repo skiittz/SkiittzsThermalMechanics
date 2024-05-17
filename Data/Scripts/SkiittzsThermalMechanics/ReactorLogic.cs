@@ -21,7 +21,7 @@ namespace SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Initializing Reactor Logic");
             var block = (IMyPowerProducer)Entity;
             var heatCapacity = block.MaxOutput*100;
-            var passiveCooling = block.MaxOutput/120;
+            var passiveCooling = block.MaxOutput/500;
             heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;

@@ -22,7 +22,7 @@ namespace SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Initializing H2 Engine Logic");
             var block = (IMyPowerProducer)Entity;
             var heatCapacity = block.MaxOutput * 100;
-            var passiveCooling = block.MaxOutput / 120;
+            var passiveCooling = block.MaxOutput / 250;
             heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += H2EngineLogic_AppendingCustomInfo;
