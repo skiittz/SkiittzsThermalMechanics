@@ -21,8 +21,8 @@ namespace SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing Battery Logic");
             var block = (IMyPowerProducer)Entity;
-            var heatCapacity = block.MaxOutput * 100;
-            var passiveCooling = block.MaxOutput / 60;
+            var heatCapacity = (block as IMyBatteryBlock).MaxInput * 100;
+            var passiveCooling = (block as IMyBatteryBlock).MaxInput / 60;
             heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += BatteryLogic_AppendingCustomInfo;
@@ -75,7 +75,7 @@ namespace SkiittzsThermalMechanics
         {
             if (heatData?.Block == null)
                 return;
-
+            
             heatData.ApplyHeating();
             (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
         }

@@ -20,7 +20,6 @@ namespace SkiittzsThermalMechanics
         private float passiveCooling;
         public bool IsInitialized { get; set; }
         private float lastHeatDelta;
-
         public ThrusterHeatData(IMyThrust block, float passiveCooling)
         {
             Block = block;
@@ -70,6 +69,8 @@ namespace SkiittzsThermalMechanics
         private float lastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
         private MyParticleEffect fireEffect;
+        private int overHeatCycles { get; set; }
+
         public PowerPlantHeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
         {
             Block = block;
@@ -84,6 +85,7 @@ namespace SkiittzsThermalMechanics
 
         private float CalculateHeating()
         {
+            DrawFireEffect();
             if (!Block.IsWorking)
                 return 0;
             Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
@@ -91,7 +93,32 @@ namespace SkiittzsThermalMechanics
             return Block.CurrentOutput - passiveCooling;
         }
 
-        MatrixD m_LocalOffset = new MatrixD();
+
+
+        //MatrixD m_LocalOffset = new MatrixD();
+
+        private void DrawFireEffect()
+        {
+            //if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, false))
+            //    //m_LocalOffset = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);//<1 because 100% of offset would bury the effect inside wall
+            //    //fireEffect.WorldMatrix = m_LocalOffset * Block.WorldMatrix;
+            //    //if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, ref m_LocalOffset, ref ????, Block.Render.GetRenderObjectID(), false))
+            //{
+            //    fireEffect.WorldMatrix = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);
+            //    fireEffect.Autodelete = false;
+            //    fireEffect.UserScale = Block.Model.BoundingBox.Perimeter * .018f;
+            //}
+        }
+
+        private void StopFireEffect()
+        {
+            //if (fireEffect != null)
+            //{
+            //    fireEffect.Stop(true);
+            //    fireEffect = null;
+            //}
+        }
+
         public void ApplyHeating()
         {
             lastHeatDelta = CalculateHeating();
@@ -100,33 +127,22 @@ namespace SkiittzsThermalMechanics
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 
-            if (CurrentHeat <= HeatCapacity * .8)
+            if (CurrentHeat > HeatCapacity)
             {
-                if (fireEffect != null)
-                {
-                    fireEffect.Stop(true);
-                    fireEffect = null;
-                }
-                return;
-            }
+                overHeatCycles++;
+                DrawFireEffect();
+                var heatFactor = CurrentHeat + (CurrentHeat * (overHeatCycles/10));
+                Block.SlimBlock.DoDamage((heatFactor - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
+                if (Block.IsFunctional)
+                    CurrentHeat = HeatCapacity;
+                else
+                    CurrentHeat = 0;
 
-            if (CurrentHeat <= HeatCapacity)
+            }
+            else
             {
-                if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, false))
-                //m_LocalOffset = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);//<1 because 100% of offset would bury the effect inside wall
-                //fireEffect.WorldMatrix = m_LocalOffset * Block.WorldMatrix;
-                //if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, ref m_LocalOffset, ref ????, Block.Render.GetRenderObjectID(), false))
-                {
-                    fireEffect.WorldMatrix = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);
-                    fireEffect.Autodelete = false;
-                    fireEffect.UserScale = Block.Model.BoundingBox.Perimeter * .018f;
-                }
-
-                return;
+                StopFireEffect();
             }
-
-            Utilities.GetBeaconLogic(Block.CubeGrid)?.RemoveHeatDueToBlockDeath(HeatCapacity);
-            Block.SlimBlock.DoDamage(10000f, MyStringHash.GetOrCompute("Overheating"), true);
         }
 
         public void AppendCustomThermalInfo(StringBuilder customInfo)
