@@ -19,10 +19,9 @@ namespace SkiittzsThermalMechanics
         private float currentHeat;
         private float heatCapacity => 1000000f;
         private float availableCapacity => heatCapacity - currentHeat;
-        private float heatRatio => (currentHeat / heatCapacity);
+        public float HeatRatio => (currentHeat / heatCapacity);
         private bool isInitialized;
-        private float cooling => heatRatio * 5;
-
+        private float passiveCooling = 0.01f;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Beacon Logic");
@@ -96,24 +95,23 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            currentHeat -= cooling;
-            if (currentHeat < 0)
-                currentHeat = 0;
-
-            block.Radius = Math.Min(500000,500000 * heatRatio);
+            currentHeat -= passiveCooling;
+            block.Radius = Math.Min(500000,500000 * HeatRatio);
             (block as IMyTerminalBlock).RefreshCustomInfo();
-        }
-
-        public void RemoveHeatDueToBlockDeath(float heat)
-        {
-            currentHeat -= heat;
         }
 
         private void CreateControls()
         {
             var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBeacon>("HeatRatio");
-            heatPercent.Getter = x => heatRatio;
+            heatPercent.Getter = x => HeatRatio;
             MyAPIGateway.TerminalControls.AddControl<IMyBeacon>(heatPercent);
+        }
+
+        public void RemoveHeat(float heat)
+        {
+            currentHeat -= heat;
+            if (currentHeat < 0)
+                currentHeat = 0;
         }
     }
 }
