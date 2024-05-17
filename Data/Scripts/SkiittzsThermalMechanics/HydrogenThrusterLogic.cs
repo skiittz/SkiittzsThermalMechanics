@@ -17,12 +17,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private ThrusterHeatData heatData;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            var subtype = ((IMyThrust)Entity).BlockDefinition.SubtypeName;
-            if (!subtype.Contains("Hydrogen"))
-            {
-                base.Init(objectBuilder);
-                return;
-            }
             Logger.Instance.LogDebug("Initializing H2 Thruster Logic");
             var block = (IMyThrust)Entity;
             var passiveCooling = .25f;

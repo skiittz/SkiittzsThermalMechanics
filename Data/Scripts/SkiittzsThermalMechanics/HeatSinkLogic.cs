@@ -13,7 +13,7 @@ using VRage.ObjectBuilders;
 namespace SkiittzsThermalMechanics
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink" })]
-    public class BeaconLogic : MyGameLogicComponent
+    public class HeatSinkLogic : MyGameLogicComponent
     {
         private IMyBeacon block;
         private float currentHeat;
@@ -24,7 +24,7 @@ namespace SkiittzsThermalMechanics
         private float passiveCooling = 0.01f;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Beacon Logic");
+            Logger.Instance.LogDebug("Initializing Heat Sink Logic");
             block = (IMyBeacon)Entity;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += BeaconLogic_AppendingCustomInfo;
@@ -53,7 +53,7 @@ namespace SkiittzsThermalMechanics
             debugInfo.Append($"Heat Capacity: {heatCapacity}\n");
             Logger.Instance.LogDebug(debugInfo.ToString());
 
-            var logic = arg1.GameLogic.GetAs<BeaconLogic>();
+            var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
             customInfo.Append($"Heat Level: {(logic.currentHeat / logic.heatCapacity) * 100}%\n");
         }
 
@@ -95,7 +95,7 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            currentHeat -= passiveCooling;
+            currentHeat -= Math.Min(passiveCooling, currentHeat);
             block.Radius = Math.Min(500000,500000 * HeatRatio);
             (block as IMyTerminalBlock).RefreshCustomInfo();
         }
@@ -109,9 +109,7 @@ namespace SkiittzsThermalMechanics
 
         public void RemoveHeat(float heat)
         {
-            currentHeat -= heat;
-            if (currentHeat < 0)
-                currentHeat = 0;
+            currentHeat -= Math.Min(heat, currentHeat);
         }
     }
 }

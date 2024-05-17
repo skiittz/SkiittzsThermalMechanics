@@ -7,17 +7,22 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public static class Utilities
     {
-        public static BeaconLogic GetBeaconLogic(IMyCubeGrid grid)
+        public static HeatSinkLogic GetBeaconLogic(IMyCubeGrid grid)
         {
             var beacons = new List<IMyBeacon>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(grid);
-            gts.GetBlocksOfType(beacons, x => x.IsWorking);
+            gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink"));
+            beacons = beacons.OrderByDescending(x => x.Radius).ToList();
 
-            var beacon = beacons.OrderByDescending(x => x.Radius).FirstOrDefault();
+
+            if (beacons.Count > 1)
+                for (int i = 1; i < beacons.Count; i++)
+                    beacons[i].Enabled = false;
+
+            var beacon = beacons.FirstOrDefault();
             if (beacon == null)
                 return null;
-
-            return beacon.GameLogic.GetAs<BeaconLogic>();
+            return beacon.GameLogic.GetAs<HeatSinkLogic>();
         }
     }
 }
