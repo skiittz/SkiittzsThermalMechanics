@@ -8,6 +8,7 @@ using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using SpaceEngineers.Game.ModAPI;
 using VRage.Game.Components;
+using VRage.Game.Entity;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
@@ -82,7 +83,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            var beacon = Utilities.GetBeaconLogic(block.CubeGrid);
+            var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
             if (beacon == null)
                 return;
 
@@ -96,7 +97,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void Animate(float heatLevel)
         {
-
+            //var ventPlates = new List<MyEntitySubpart>();
+            //for (int i = 1; i < 5; i++)
+            //{
+            //    var subPart = block.GetSubpart($"HeatVentPlate{i}");
+            //    if(subPart != null)
+                    
+            //        //ventPlates.Add(subPart);
+            //}
         }
     }
 }

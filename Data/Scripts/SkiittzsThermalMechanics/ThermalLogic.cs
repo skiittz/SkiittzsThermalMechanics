@@ -8,6 +8,9 @@ using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 using SpaceEngineers.Game.ModAPI;
 using VRage.Game;
+using VRage.Game.Entity;
+using VRage.ModAPI;
+using VRage.Render.Particles;
 using VRage.Utils;
 using VRageMath;
 
@@ -37,7 +40,7 @@ namespace SkiittzsThermalMechanics
 
         private float CalculateCooling(float availableHeatToSink)
         {
-            return Utilities.GetBeaconLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+            return Utilities.GetHeatSinkLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
         }
 
         private float CalculateHeating()
@@ -80,12 +83,11 @@ namespace SkiittzsThermalMechanics
 
         private float CalculateCooling(float availableHeatToSink)
         {
-            return Utilities.GetBeaconLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+            return Utilities.GetHeatSinkLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
         }
 
         private float CalculateHeating()
         {
-            DrawFireEffect();
             if (!Block.IsWorking)
                 return 0;
             Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
@@ -94,30 +96,26 @@ namespace SkiittzsThermalMechanics
         }
 
 
+        //private void DrawFireEffect()
+        //{
+        //    var size = Block.CubeGrid.GridSizeEnum == MyCubeSize.Small ? 0.5f : 2.5f;
+        //    var localMatrix = MatrixD.CreateWorld(Vector3D.Transform(Block.Position * size, Block.WorldMatrix), Block.WorldMatrix.Forward, Block.WorldMatrix.Up);
+        //    localMatrix.Translation = Vector3D.Zero;
+        //    var parentId = Block.Render.GetRenderObjectID();
+        //    var position = Block.WorldMatrix.Translation;
 
-        //MatrixD m_LocalOffset = new MatrixD();
+        //    MyParticlesManager.TryCreateParticleEffect(38, out fireEffect, ref localMatrix, ref position, parentId);
 
-        private void DrawFireEffect()
-        {
-            //if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, false))
-            //    //m_LocalOffset = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);//<1 because 100% of offset would bury the effect inside wall
-            //    //fireEffect.WorldMatrix = m_LocalOffset * Block.WorldMatrix;
-            //    //if (fireEffect == null && MyParticlesManager.TryCreateParticleEffect(8, out fireEffect, ref m_LocalOffset, ref ????, Block.Render.GetRenderObjectID(), false))
-            //{
-            //    fireEffect.WorldMatrix = MatrixD.CreateTranslation(0.85f * Block.PositionComp.LocalVolume.Center);
-            //    fireEffect.Autodelete = false;
-            //    fireEffect.UserScale = Block.Model.BoundingBox.Perimeter * .018f;
-            //}
-        }
+        //}
 
-        private void StopFireEffect()
-        {
-            //if (fireEffect != null)
-            //{
-            //    fireEffect.Stop(true);
-            //    fireEffect = null;
-            //}
-        }
+        //private void StopFireEffect()
+        //{
+        //    if (fireEffect != null)
+        //    {
+        //        fireEffect.Stop(true);
+        //        fireEffect = null;
+        //    }
+        //}
 
         public void ApplyHeating()
         {
@@ -128,22 +126,41 @@ namespace SkiittzsThermalMechanics
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 
-            if (CurrentHeat > HeatCapacity)
+            if (CurrentHeat >= HeatCapacity)
             {
+                WarnPlayer($"Taking damage due to overheating!");
                 overHeatCycles++;
-                DrawFireEffect();
                 var thermalFatigue = CurrentHeat + (CurrentHeat * (overHeatCycles/10));
                 Block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
                 if (Block.IsFunctional)
                     CurrentHeat = HeatCapacity;
                 else
+                {
+                    WarnPlayer("Disabled due to heat damage.");
                     CurrentHeat = 0;
-
+                }
+            }
+            else if (CurrentHeat > HeatCapacity * .8)
+            {
+                Block.SetDamageEffect(true);
+                WarnPlayer($"Approaching heat threshold.");
             }
             else
+                Block.SetDamageEffect(false);
+        }
+
+        private const int messageDelay = 10;
+        private int messageAttemptCounter = 0;
+        private void WarnPlayer(string message)
+        {
+            if (messageAttemptCounter == 0)
             {
-                StopFireEffect();
+                MyAPIGateway.Utilities.ShowMessage("dumdum.bot", $"{Block.CubeGrid.CustomName}-{Block.CustomName}: {message}");
             }
+
+            messageAttemptCounter++;
+            if (messageAttemptCounter == messageDelay)
+                messageAttemptCounter = 0;
         }
 
         public void AppendCustomThermalInfo(StringBuilder customInfo)

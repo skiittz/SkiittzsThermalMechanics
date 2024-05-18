@@ -7,7 +7,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public static class Utilities
     {
-        public static HeatSinkLogic GetBeaconLogic(IMyCubeGrid grid)
+        public static HeatSinkLogic GetHeatSinkLogic(IMyCubeGrid grid)
         {
             var beacons = new List<IMyBeacon>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(grid);
