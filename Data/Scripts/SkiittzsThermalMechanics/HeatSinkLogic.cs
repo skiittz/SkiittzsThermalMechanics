@@ -97,7 +97,6 @@ namespace SkiittzsThermalMechanics
         public override void UpdateBeforeSimulation100()
         {
             currentHeat -= Math.Min(passiveCooling, currentHeat);
-            //block.Radius = Math.Min(500000,500000 * HeatRatio);
             block.Radius = Math.Min(500000, ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
             ventingHeat *= 0.9f;
@@ -110,10 +109,13 @@ namespace SkiittzsThermalMechanics
             MyAPIGateway.TerminalControls.AddControl<IMyBeacon>(heatPercent);
         }
 
-        public void RemoveHeat(float heat)
+        public float RemoveHeat(float heat)
         {
-            currentHeat -= Math.Min(heat, currentHeat);
-            ventingHeat += heat;
+            var dissipatedHeat = Math.Min(heat, currentHeat);
+            currentHeat -= dissipatedHeat;
+            ventingHeat += dissipatedHeat;
+
+            return dissipatedHeat;
         }
     }
 }

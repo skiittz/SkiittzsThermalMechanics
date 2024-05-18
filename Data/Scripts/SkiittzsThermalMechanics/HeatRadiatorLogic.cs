@@ -13,6 +13,7 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 using VRage.Utils;
+using VRageMath;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
@@ -90,8 +91,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (beacon == null)
                 return;
 
-            beacon.RemoveHeat(dissipation);
-            Animate(beacon.HeatRatio);
+            var disspiatedHeat = beacon.RemoveHeat(dissipation);
+            Animate(disspiatedHeat / dissipation);
         }
 
         private void CreateControls()
@@ -100,6 +101,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void Animate(float heatLevel)
         {
+            var colorA = Color.AliceBlue;
+            var colorB = Color.Red;
+            block.SetEmissiveParts("Emissive", InterpolateColor(colorA, colorB, heatLevel), dissipation);
             //var ventPlates = new List<MyEntitySubpart>();
             //for (int i = 1; i < 5; i++)
             //{
@@ -108,6 +112,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     
             //        //ventPlates.Add(subPart);
             //}
+        }
+
+        public static Color InterpolateColor(Color color1, Color color2, double t)
+        {
+            // Ensure t is within the range [0, 1]
+            t = Math.Max(0, Math.Min(1, t));
+
+            // Interpolate each color component
+            int r = (int)(color1.R + (color2.R - color1.R) * t);
+            int g = (int)(color1.G + (color2.G - color1.G) * t);
+            int b = (int)(color1.B + (color2.B - color1.B) * t);
+            int a = (int)(color1.A + (color2.A - color1.A) * t);
+
+            // Create and return the new color
+            return new Color(r, g, b, a);
         }
     }
 }
