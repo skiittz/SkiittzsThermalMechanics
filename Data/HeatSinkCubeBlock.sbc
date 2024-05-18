@@ -74,12 +74,12 @@
         <ModelOffset x="0" y="0" z="0" />
         <Model>Models\Cubes\Small\BeaconReskin.mwm</Model>
         <Components>
-          <Component Subtype="SteelPlate" Count="1" />
-          <Component Subtype="Construction" Count="1" />
-          <Component Subtype="SmallTube" Count="1" />
+          <Component Subtype="SteelPlate" Count="4" />
+          <Component Subtype="Construction" Count="3" />
+          <Component Subtype="LargeTube" Count="2" />
           <Component Subtype="Computer" Count="1" />
           <Component Subtype="Superconductor" Count="4" />
-          <Component Subtype="SteelPlate" Count="1" />
+          <Component Subtype="SteelPlate" Count="4" />
         </Components>
         <CriticalComponent Subtype="Superconductor" Index="0" />
         <MountPoints>

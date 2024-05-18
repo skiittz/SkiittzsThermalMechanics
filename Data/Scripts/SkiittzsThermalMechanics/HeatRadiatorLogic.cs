@@ -32,7 +32,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             block = (IMyUpgradeModule) Entity;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
-            dissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 0.035f : 10.5f;
+            dissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f;
         }
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
@@ -83,6 +83,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
+            if (!block.Enabled)
+                return;
+
             var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
             if (beacon == null)
                 return;

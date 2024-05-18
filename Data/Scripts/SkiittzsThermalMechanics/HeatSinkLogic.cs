@@ -22,6 +22,7 @@ namespace SkiittzsThermalMechanics
         public float HeatRatio => (currentHeat / heatCapacity);
         private bool isInitialized;
         private float passiveCooling = 0.01f;
+        private float ventingHeat;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Heat Sink Logic");
@@ -96,8 +97,10 @@ namespace SkiittzsThermalMechanics
         public override void UpdateBeforeSimulation100()
         {
             currentHeat -= Math.Min(passiveCooling, currentHeat);
-            block.Radius = Math.Min(500000,500000 * HeatRatio);
+            //block.Radius = Math.Min(500000,500000 * HeatRatio);
+            block.Radius = Math.Min(500000, ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
+            ventingHeat *= 0.9f;
         }
 
         private void CreateControls()
@@ -110,6 +113,7 @@ namespace SkiittzsThermalMechanics
         public void RemoveHeat(float heat)
         {
             currentHeat -= Math.Min(heat, currentHeat);
+            ventingHeat += heat;
         }
     }
 }
