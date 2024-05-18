@@ -71,7 +71,6 @@ namespace SkiittzsThermalMechanics
         public bool IsInitialized { get; set; }
         private float lastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
-        private MyParticleEffect fireEffect;
         private int overHeatCycles { get; set; }
 
         public PowerPlantHeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
@@ -94,28 +93,6 @@ namespace SkiittzsThermalMechanics
             Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentOutput}) - (passiveCooling {passiveCooling})");
             return Block.CurrentOutput - passiveCooling;
         }
-
-
-        //private void DrawFireEffect()
-        //{
-        //    var size = Block.CubeGrid.GridSizeEnum == MyCubeSize.Small ? 0.5f : 2.5f;
-        //    var localMatrix = MatrixD.CreateWorld(Vector3D.Transform(Block.Position * size, Block.WorldMatrix), Block.WorldMatrix.Forward, Block.WorldMatrix.Up);
-        //    localMatrix.Translation = Vector3D.Zero;
-        //    var parentId = Block.Render.GetRenderObjectID();
-        //    var position = Block.WorldMatrix.Translation;
-
-        //    MyParticlesManager.TryCreateParticleEffect(38, out fireEffect, ref localMatrix, ref position, parentId);
-
-        //}
-
-        //private void StopFireEffect()
-        //{
-        //    if (fireEffect != null)
-        //    {
-        //        fireEffect.Stop(true);
-        //        fireEffect = null;
-        //    }
-        //}
 
         public void ApplyHeating()
         {
