@@ -26,7 +26,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     {
         private IMyUpgradeModule block;
         private bool isInitialized;
-        private float dissipation;
+        private float maxDissipation;
+        private float minDissipation = 0.1f;
+        private float currentDissipation;
         private Color minColor = Color.Black;
         private Color maxColor = Color.Red;
 
@@ -36,7 +38,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             block = (IMyUpgradeModule) Entity;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
-            dissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f;
+            maxDissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f;
         }
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
@@ -46,7 +48,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
-            customInfo.Append($"Max Heat Dissipation: {dissipation}MW");
+            customInfo.Append($"Dissipating Heat: {currentDissipation}MW");
         }
 
         void RadiatorLogic_OnClose(IMyEntity obj)
@@ -94,8 +96,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (beacon == null)
                 return;
 
-            var disspiatedHeat = beacon.RemoveHeat(dissipation);
-            Animate(disspiatedHeat / dissipation);
+            if (currentDissipation < minDissipation)
+                currentDissipation = minDissipation;
+            if (currentDissipation > maxDissipation)
+                currentDissipation = maxDissipation;
+
+            var dissipatedHeat = beacon.RemoveHeat(currentDissipation);
+            if (dissipatedHeat < currentDissipation)
+                currentDissipation -= minDissipation;
+            if(dissipatedHeat == currentDissipation)
+                currentDissipation += minDissipation;
+
+            Animate(currentDissipation / maxDissipation);
+            block.RefreshCustomInfo();
         }
 
         private void CreateMinColorPicker()
@@ -176,15 +189,38 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void Animate(float heatLevel)
         {
-            block.SetEmissiveParts("Emissive", InterpolateColor(minColor, maxColor, heatLevel), dissipation);
-            //var ventPlates = new List<MyEntitySubpart>();
-            //for (int i = 1; i < 5; i++)
-            //{
-            //    var subPart = block.GetSubpart($"HeatVentPlate{i}");
-            //    if(subPart != null)
-                    
-            //        //ventPlates.Add(subPart);
-            //}
+            block.SetEmissiveParts("Emissive", InterpolateColor(minColor, maxColor, currentDissipation), currentDissipation);
+            RotateBlades(heatLevel);
+        }
+
+        public void RotateBlades(float heatLevel)
+        {
+            var entity = (MyEntity)MyAPIGateway.Entities.GetEntityById(block.EntityId);
+
+            foreach (var subpart in entity.Subparts)
+            {
+                var subpartEntity = subpart.Value as MyEntitySubpart;
+                if (subpartEntity != null)
+                {
+                    // Get current local matrix of the subpart
+                    MatrixD currentMatrix = subpartEntity.PositionComp.LocalMatrixRef;
+
+                    // Extract current position and rotation
+                    Vector3D currentPosition = currentMatrix.Translation;
+                    MatrixD currentRotation = currentMatrix.GetOrientation();
+
+                    MatrixD rotationMatrix = MatrixD.CreateRotationZ(MathHelper.ToRadians(heatLevel*10));
+
+                    // Apply the rotation to the current rotation matrix
+                    MatrixD newRotation = currentRotation * rotationMatrix;
+
+                    // Combine the new rotation with the original position
+                    Matrix newMatrix = Matrix.CreateWorld(currentPosition, newRotation.Forward, newRotation.Up);
+
+                    // Set the new local matrix to the subpart
+                    subpartEntity.PositionComp.SetLocalMatrix(ref newMatrix);
+                }
+            }
         }
 
         public static Color InterpolateColor(Color color1, Color color2, double t)
