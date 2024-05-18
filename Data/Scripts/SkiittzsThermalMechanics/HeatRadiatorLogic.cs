@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
+using Sandbox.ModAPI.Interfaces.Terminal;
 using SpaceEngineers.Game.ModAPI;
 using VRage.Game.Components;
 using VRage.Game.Entity;
@@ -26,6 +27,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private IMyUpgradeModule block;
         private bool isInitialized;
         private float dissipation;
+        private Color minColor = Color.Black;
+        private Color maxColor = Color.Red;
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
@@ -95,15 +98,85 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Animate(disspiatedHeat / dissipation);
         }
 
+        private void CreateMinColorPicker()
+        {
+            var existingControls = new List<IMyTerminalControl>();
+            MyAPIGateway.TerminalControls.GetControls<IMyUpgradeModule>(out existingControls);
+
+            if (existingControls.Any(x => x.Id == "MinColorPicker"))
+                return;
+
+            var colorControl = MyAPIGateway.TerminalControls.CreateControl<IMyTerminalControlColor, IMyTerminalBlock>("MinColorPicker");
+            colorControl.Title = MyStringId.GetOrCompute("Pick a Color");
+            colorControl.Tooltip = MyStringId.GetOrCompute("Select a color to represent an idle radiator");
+            colorControl.Getter = GetMinColor;
+            colorControl.Setter = SetMinColor;
+            colorControl.SupportsMultipleBlocks = true;
+            colorControl.Visible = b => b.GameLogic.GetAs<HeatRadiatorLogic>() != null;
+            MyAPIGateway.TerminalControls.AddControl<IMyUpgradeModule>(colorControl);
+        }
+
+        private Color GetMinColor(IMyTerminalBlock b)
+        {
+            var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
+            if (logic == null)
+                return Color.Black;
+
+            return logic.minColor;
+        }
+
+        private void SetMinColor(IMyTerminalBlock b, Color color)
+        {
+            var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
+            if (logic == null)
+                return;
+            logic.minColor = color;
+        }
+
+        private void CreateMaxColorPicker()
+        {
+            var existingControls = new List<IMyTerminalControl>();
+            MyAPIGateway.TerminalControls.GetControls<IMyUpgradeModule>(out existingControls);
+
+            if (existingControls.Any(x => x.Id == "MaxColorPicker"))
+                return;
+
+            var colorControl = MyAPIGateway.TerminalControls.CreateControl<IMyTerminalControlColor, IMyTerminalBlock>("MaxColorPicker");
+            colorControl.Title = MyStringId.GetOrCompute("Pick a Color");
+            colorControl.Tooltip = MyStringId.GetOrCompute("Select a color to represent a radiator at peak operation");
+            colorControl.Getter = GetMaxColor;
+            colorControl.Setter = SetMaxColor;
+            colorControl.SupportsMultipleBlocks = true;
+            colorControl.Visible = b => b.GameLogic.GetAs<HeatRadiatorLogic>() != null;
+            MyAPIGateway.TerminalControls.AddControl<IMyUpgradeModule>(colorControl);
+        }
+
+        private Color GetMaxColor(IMyTerminalBlock b)
+        {
+            var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
+            if (logic == null)
+                return Color.Black;
+
+            return logic.maxColor;
+        }
+
+        private void SetMaxColor(IMyTerminalBlock b, Color color)
+        {
+            var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
+            if (logic == null)
+                return;
+            logic.maxColor = color;
+        }
+
         private void CreateControls()
         {
+            CreateMinColorPicker();
+            CreateMaxColorPicker();
         }
 
         private void Animate(float heatLevel)
         {
-            var colorA = Color.AliceBlue;
-            var colorB = Color.Red;
-            block.SetEmissiveParts("Emissive", InterpolateColor(colorA, colorB, heatLevel), dissipation);
+            block.SetEmissiveParts("Emissive", InterpolateColor(minColor, maxColor, heatLevel), dissipation);
             //var ventPlates = new List<MyEntitySubpart>();
             //for (int i = 1; i < 5; i++)
             //{
