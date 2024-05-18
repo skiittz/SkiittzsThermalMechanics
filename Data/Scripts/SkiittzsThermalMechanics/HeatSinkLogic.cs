@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
+using Sandbox.ModAPI.Interfaces.Terminal;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
+using VRage.Utils;
 
 namespace SkiittzsThermalMechanics
 {
@@ -56,6 +59,7 @@ namespace SkiittzsThermalMechanics
 
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
             customInfo.Append($"Heat Level: {(logic.currentHeat / logic.heatCapacity) * 100}%\n");
+            customInfo.Append($"Current IR Detectable Distance: {block.Radius:N0} meters \n");
         }
 
         void BeaconLogic_OnClose(IMyEntity obj)
@@ -104,6 +108,24 @@ namespace SkiittzsThermalMechanics
 
         private void CreateControls()
         {
+            var controls = new List<IMyTerminalControl>();
+            var exclude = new List<IMyTerminalControl>();
+            var temp = new List<IMyTerminalControl>();
+
+            MyAPIGateway.TerminalControls.GetControls<IMyTerminalBlock>(out exclude);
+
+            MyAPIGateway.TerminalControls.GetControls<IMyFunctionalBlock>(out temp);
+            controls.AddRange(temp);
+
+            MyAPIGateway.TerminalControls.GetControls<IMyBeacon>(out temp);
+            controls.AddRange(temp);
+
+            foreach (var control in controls)
+            {
+                if(!exclude.Select(x => x.Id).Contains(control.Id))
+                    control.Visible = Block => Block.GameLogic.GetAs<HeatSinkLogic>() == null;
+            }
+
             var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBeacon>("HeatRatio");
             heatPercent.Getter = x => HeatRatio;
             MyAPIGateway.TerminalControls.AddControl<IMyBeacon>(heatPercent);
