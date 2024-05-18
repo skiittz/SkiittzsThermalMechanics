@@ -7,6 +7,7 @@ using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
@@ -126,7 +127,17 @@ namespace SkiittzsThermalMechanics
                     control.Visible = Block => Block.GameLogic.GetAs<HeatSinkLogic>() == null;
             }
 
-            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBeacon>("HeatRatio");
+            AddHeatRatioControl();
+        }
+
+        public void AddHeatRatioControl()
+        {
+            var existingControls = new List<IMyTerminalControl>();
+            MyAPIGateway.TerminalControls.GetControls<IMyBeacon>(out existingControls);
+            if (existingControls.Any(x => x.Id == Utilities.HeatRatioControlId))
+                return;
+
+            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBeacon>(Utilities.HeatRatioControlId);
             heatPercent.Getter = x => HeatRatio;
             MyAPIGateway.TerminalControls.AddControl<IMyBeacon>(heatPercent);
         }
