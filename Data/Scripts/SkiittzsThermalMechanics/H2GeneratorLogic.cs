@@ -10,6 +10,8 @@ using VRage.Game.ModAPI;
 using VRage.Game.ModAPI.Interfaces;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
+using Sandbox.ModAPI.Interfaces.Terminal;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 
 namespace SkiittzsThermalMechanics
 {
@@ -58,7 +60,7 @@ namespace SkiittzsThermalMechanics
 
             if (!heatData.IsInitialized)
             {
-                CreateControls();
+                AddHeatRatioControl();
                 try
                 {
                     (Container.Entity as IMyCubeBlock).OnClose += H2EngineLogic_OnClose;
@@ -77,11 +79,16 @@ namespace SkiittzsThermalMechanics
             (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
-        private void CreateControls()
+        public void AddHeatRatioControl()
         {
-            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyReactor>("HeatRatio");
+            var existingControls = new List<IMyTerminalControl>();
+            MyAPIGateway.TerminalControls.GetControls<IMyPowerProducer>(out existingControls);
+            if (existingControls.Any(x => x.Id == Utilities.HeatRatioControlId))
+                return;
+
+            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyPowerProducer>(Utilities.HeatRatioControlId);
             heatPercent.Getter = x => heatData.HeatRatio;
-            MyAPIGateway.TerminalControls.AddControl<IMyReactor>(heatPercent);
+            MyAPIGateway.TerminalControls.AddControl<IMyPowerProducer>(heatPercent);
         }
     }
 }

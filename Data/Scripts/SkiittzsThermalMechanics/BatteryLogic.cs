@@ -1,5 +1,7 @@
 ﻿using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
+using Sandbox.ModAPI.Interfaces.Terminal;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -58,7 +60,7 @@ namespace SkiittzsThermalMechanics
 
             if (!heatData.IsInitialized)
             {
-                CreateControls();
+                AddHeatRatioControl();
                 try
                 {
                     (Container.Entity as IMyCubeBlock).OnClose += BatteryLogic_OnClose;
@@ -80,11 +82,16 @@ namespace SkiittzsThermalMechanics
             (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
-        private void CreateControls()
+        public void AddHeatRatioControl()
         {
-            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBatteryBlock>("HeatRatio");
+            var existingControls = new List<IMyTerminalControl>();
+            MyAPIGateway.TerminalControls.GetControls<IMyPowerProducer>(out existingControls);
+            if (existingControls.Any(x => x.Id == Utilities.HeatRatioControlId))
+                return;
+
+            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyPowerProducer>(Utilities.HeatRatioControlId);
             heatPercent.Getter = x => heatData.HeatRatio;
-            MyAPIGateway.TerminalControls.AddControl<IMyBatteryBlock>(heatPercent);
+            MyAPIGateway.TerminalControls.AddControl<IMyPowerProducer>(heatPercent);
         }
     }
 }

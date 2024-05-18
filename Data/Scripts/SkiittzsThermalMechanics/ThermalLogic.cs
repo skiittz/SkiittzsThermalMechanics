@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI;
+using Sandbox.ModAPI.Interfaces.Terminal;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 using SpaceEngineers.Game.ModAPI;
 using VRage.Game;
