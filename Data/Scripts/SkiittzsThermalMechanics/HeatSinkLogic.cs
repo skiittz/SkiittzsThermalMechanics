@@ -86,7 +86,7 @@ namespace SkiittzsThermalMechanics
 
             if (!isInitialized)
             {
-                CreateControls();
+                AddHeatRatioControl();
                 try
                 {
                     (Container.Entity as IMyCubeBlock).OnClose += BeaconLogic_OnClose;
@@ -101,33 +101,11 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
+            block.Enabled = true;
             currentHeat -= Math.Min(passiveCooling, currentHeat);
             block.Radius = Math.Min(500000, ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
-            ventingHeat *= 0.9f;
-        }
-
-        private void CreateControls()
-        {
-            var controls = new List<IMyTerminalControl>();
-            var exclude = new List<IMyTerminalControl>();
-            var temp = new List<IMyTerminalControl>();
-
-            MyAPIGateway.TerminalControls.GetControls<IMyTerminalBlock>(out exclude);
-
-            MyAPIGateway.TerminalControls.GetControls<IMyFunctionalBlock>(out temp);
-            controls.AddRange(temp);
-
-            MyAPIGateway.TerminalControls.GetControls<IMyBeacon>(out temp);
-            controls.AddRange(temp);
-
-            foreach (var control in controls)
-            {
-                if(!exclude.Select(x => x.Id).Contains(control.Id))
-                    control.Visible = Block => Block.GameLogic.GetAs<HeatSinkLogic>() == null;
-            }
-
-            AddHeatRatioControl();
+            ventingHeat *= 0.95f;
         }
 
         public void AddHeatRatioControl()
