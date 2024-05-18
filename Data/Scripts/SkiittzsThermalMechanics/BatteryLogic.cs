@@ -85,13 +85,13 @@ namespace SkiittzsThermalMechanics
         public void AddHeatRatioControl()
         {
             var existingControls = new List<IMyTerminalControl>();
-            MyAPIGateway.TerminalControls.GetControls<IMyPowerProducer>(out existingControls);
+            MyAPIGateway.TerminalControls.GetControls<IMyBatteryBlock>(out existingControls);
             if (existingControls.Any(x => x.Id == Utilities.HeatRatioControlId))
                 return;
 
-            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyPowerProducer>(Utilities.HeatRatioControlId);
+            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBatteryBlock>(Utilities.HeatRatioControlId);
             heatPercent.Getter = x => heatData.HeatRatio;
-            MyAPIGateway.TerminalControls.AddControl<IMyPowerProducer>(heatPercent);
+            MyAPIGateway.TerminalControls.AddControl<IMyBatteryBlock>(heatPercent);
         }
     }
 }
