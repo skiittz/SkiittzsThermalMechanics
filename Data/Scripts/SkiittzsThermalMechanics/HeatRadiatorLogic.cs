@@ -23,7 +23,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     {
         private IMyUpgradeModule block;
         private bool isInitialized;
-        private float dissipation = 10f;
+        private float dissipation;
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
@@ -31,7 +31,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             block = (IMyUpgradeModule) Entity;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
-
+            dissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 0.035f : 10.5f;
         }
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)

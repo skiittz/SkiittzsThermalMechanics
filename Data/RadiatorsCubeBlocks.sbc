@@ -30,10 +30,11 @@
                 <Component Subtype="Construction" Count="20" />
                 <Component Subtype="LargeTube" Count="10" />
                 <Component Subtype="Motor" Count="5" />
+                <Component Subtype="Thrust" Count="25" />
                 <Component Subtype="Superconductor" Count="25" />
                 <Component Subtype="SteelPlate" Count="10" />
             </Components>
-            <CriticalComponent Subtype="Motor" Index="0" />
+            <CriticalComponent Subtype="Thrust" Index="0" />
             <MountPoints>
                 <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true"/>
                 <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
@@ -98,10 +99,11 @@
                 <Component Subtype="Construction" Count="1" />
                 <Component Subtype="LargeTube" Count="1" />
                 <Component Subtype="Motor" Count="1" />
+                <Component Subtype="Thrust" Count="1" />
                 <Component Subtype="Superconductor" Count="5" />
                 <Component Subtype="SteelPlate" Count="1" />
             </Components>
-            <CriticalComponent Subtype="Motor" Index="0" />
+            <CriticalComponent Subtype="Thrust" Index="0" />
             <MountPoints>
                 <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true"/>
                 <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
