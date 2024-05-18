@@ -101,7 +101,6 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            block.Enabled = true;
             currentHeat -= Math.Min(passiveCooling, currentHeat);
             block.Radius = Math.Min(500000, ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
