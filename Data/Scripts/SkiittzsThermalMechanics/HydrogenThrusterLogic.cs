@@ -6,9 +6,6 @@ using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
-using Sandbox.ModAPI.Interfaces.Terminal;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
@@ -60,7 +57,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             if (!heatData.IsInitialized)
             {
-                AddCurrentHeatControl();
+                CreateControls();
                 try
                 {
                     (Container.Entity as IMyCubeBlock).OnClose += ThrusterLogic_OnClose;
@@ -82,17 +79,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
-        public void AddCurrentHeatControl()
+        private void CreateControls()
         {
-            var existingControls = new List<IMyTerminalControl>();
-            MyAPIGateway.TerminalControls.GetControls<IMyBeacon>(out existingControls);
-            if (existingControls.Any(x => x.Id == Utilities.CurrentHeatControlId))
-                return;
-
-            var heatPercent =
-                MyAPIGateway.TerminalControls.CreateProperty<float, IMyThrust>(Utilities.CurrentHeatControlId);
+            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyThrust>("CurrentHeat");
             heatPercent.Getter = x => heatData.CurrentHeat;
-            MyAPIGateway.TerminalControls.AddControl<IMyBeacon>(heatPercent);
+            MyAPIGateway.TerminalControls.AddControl<IMyThrust>(heatPercent);
         }
     }
 }

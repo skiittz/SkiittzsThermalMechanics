@@ -7,9 +7,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public static class Utilities
     {
-        public static readonly string HeatRatioControlId = "HeatRatio";
-        public static readonly string CurrentHeatControlId = "CurrentHeat";
-
         public static HeatSinkLogic GetHeatSinkLogic(IMyCubeGrid grid)
         {
             var beacons = new List<IMyBeacon>();
