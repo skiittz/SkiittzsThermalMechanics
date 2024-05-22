@@ -93,7 +93,13 @@ namespace SkiittzsThermalMechanics
                 return 0;
             Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
             Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentOutput}) - (passiveCooling {passiveCooling})");
-            return Block.CurrentOutput - passiveCooling;
+            var powerProducers = new List<IMyPowerProducer>();
+            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
+            gts.GetBlocksOfType(powerProducers, x => x.IsWorking);
+
+            var additionalGeneratorCount = Math.Min(powerProducers.Count - 1, 0);
+            var spamPenalty = 1 + (additionalGeneratorCount / 100);
+            return Block.CurrentOutput*spamPenalty - passiveCooling;
         }
 
         public void ApplyHeating()
