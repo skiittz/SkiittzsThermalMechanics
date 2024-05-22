@@ -140,7 +140,7 @@ namespace SkiittzsThermalMechanics
         {
             if (messageAttemptCounter == 0)
             {
-                MyAPIGateway.Utilities.ShowMessage("dumdum.bot", $"{Block.CubeGrid.CustomName}-{Block.CustomName}: {message}");
+                MyAPIGateway.Utilities.ShowMessage("Thermal Monitoring System", $"{Block.CubeGrid.CustomName}-{Block.CustomName}: {message}");
             }
 
             messageAttemptCounter++;
