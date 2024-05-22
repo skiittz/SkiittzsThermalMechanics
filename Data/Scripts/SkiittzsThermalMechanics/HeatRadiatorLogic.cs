@@ -4,7 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Sandbox.Common.ObjectBuilders;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
 using SpaceEngineers.Game.ModAPI;
@@ -18,28 +20,34 @@ using VRageMath;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
+    public class RadiatorData
+    {
+        public IMyUpgradeModule block { get; set; }
+        public bool isInitialized { get; set; }
+        public float maxDissipation { get; set; }
+        public float stepSize => 0.25f;
+        public float currentDissipation { get; set; }
+        public float heatRatio => currentDissipation / maxDissipation;
+        public Color minColor = Color.Black;
+        public Color maxColor = Color.Red;
+    }
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new []
     {
         "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock"
     })]
     public class HeatRadiatorLogic : MyGameLogicComponent
     {
-        private IMyUpgradeModule block;
-        private bool isInitialized;
-        private float maxDissipation;
-        private float stepSize = 0.25f;
-        private float currentDissipation;
-        private float heatRatio => currentDissipation / maxDissipation;
-        private Color minColor = Color.Black;
-        private Color maxColor = Color.Red;
+        
+        private RadiatorData radiatorData;
+        private MyModStorageComponent storage;
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Radiator Logic");
-            block = (IMyUpgradeModule) Entity;
+            radiatorData.block = (IMyUpgradeModule) Entity;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
-            maxDissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f;
+            radiatorData.maxDissipation = radiatorData.block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f;
         }
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
@@ -49,7 +57,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
-            customInfo.Append($"Dissipating Heat: {currentDissipation.ToString("F1")}MW ({(heatRatio*100).ToString("N0")}%)");
+            customInfo.Append($"Dissipating Heat: {radiatorData.currentDissipation.ToString("F1")}MW ({(radiatorData.heatRatio *100).ToString("N0")}%)");
         }
 
         void RadiatorLogic_OnClose(IMyEntity obj)
@@ -70,10 +78,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+            if (radiatorData.block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
-            if (!isInitialized)
+            if (!radiatorData.isInitialized)
             {
                 CreateControls();
                 try
@@ -84,35 +92,35 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
 
                 }
-                isInitialized = true;
+                radiatorData.isInitialized = true;
             }
         }
 
         public override void UpdateBeforeSimulation100()
         {
-            if (!block.Enabled)
+            if (!radiatorData.block.Enabled)
                 return;
 
-            var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
+            var beacon = Utilities.GetHeatSinkLogic(radiatorData.block.CubeGrid);
             if (beacon == null)
                 return;
 
-            if (currentDissipation < 0)
-                currentDissipation = 0;
-            if (currentDissipation > maxDissipation)
-                currentDissipation = maxDissipation;
+            if (radiatorData.currentDissipation < 0)
+                radiatorData.currentDissipation = 0;
+            if (radiatorData.currentDissipation > radiatorData.maxDissipation)
+                radiatorData.currentDissipation = radiatorData.maxDissipation;
 
-            var dissipatedHeat = beacon.RemoveHeat(currentDissipation);
-            if (dissipatedHeat < currentDissipation)
-                currentDissipation -= stepSize;
-            if(dissipatedHeat == currentDissipation)
-                if(currentDissipation + stepSize < maxDissipation)
-                    currentDissipation += stepSize;
+            var dissipatedHeat = beacon.RemoveHeat(radiatorData.currentDissipation);
+            if (dissipatedHeat < radiatorData.currentDissipation)
+                radiatorData.currentDissipation -= radiatorData.stepSize;
+            if(dissipatedHeat == radiatorData.currentDissipation)
+                if(radiatorData.currentDissipation + radiatorData.stepSize < radiatorData.maxDissipation)
+                    radiatorData.currentDissipation += radiatorData.stepSize;
                 else
-                    currentDissipation = maxDissipation;
+                    radiatorData.currentDissipation = radiatorData.maxDissipation;
 
             Animate();
-            block.RefreshCustomInfo();
+            radiatorData.block.RefreshCustomInfo();
         }
 
         private void CreateMinColorPicker()
@@ -139,7 +147,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (logic == null)
                 return Color.Black;
 
-            return logic.minColor;
+            return logic.radiatorData.minColor;
         }
 
         private void SetMinColor(IMyTerminalBlock b, Color color)
@@ -147,7 +155,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
             if (logic == null)
                 return;
-            logic.minColor = color;
+            logic.radiatorData.minColor = color;
         }
 
         private void CreateMaxColorPicker()
@@ -174,7 +182,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (logic == null)
                 return Color.Black;
 
-            return logic.maxColor;
+            return logic.radiatorData.maxColor;
         }
 
         private void SetMaxColor(IMyTerminalBlock b, Color color)
@@ -182,7 +190,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
             if (logic == null)
                 return;
-            logic.maxColor = color;
+            logic.radiatorData.maxColor = color;
         }
 
         private void CreateControls()
@@ -193,19 +201,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void Animate()
         {
-            block.SetEmissiveParts("Emissive", InterpolateColor(minColor, maxColor, heatRatio), heatRatio);
+            radiatorData.block.SetEmissiveParts("Emissive", InterpolateColor(radiatorData.minColor, radiatorData.maxColor, radiatorData.heatRatio), radiatorData.heatRatio);
             SetBladeRotation();
         }
 
         private void SetBladeRotation()
         {
-            var entity = (MyEntity)block;
+            var entity = (MyEntity)radiatorData.block;
                 // Define the rotation limits
                 var minRotation = MathHelper.ToRadians(-45); // Fully closed position
                 var maxRotation = MathHelper.ToRadians(45); // Fully open position (90 degrees in radians)
 
                 // Calculate the rotation angle based on the percentage
-                var rotationAngle = MathHelper.Lerp(minRotation, maxRotation, heatRatio);
+                var rotationAngle = MathHelper.Lerp(minRotation, maxRotation, radiatorData.heatRatio);
 
                 foreach (var subpart in entity.Subparts)
                 {
@@ -244,5 +252,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             // Create and return the new color
             return new Color(r, g, b, a);
         }
+
+        //public override void Close()
+        //{
+        //    // Save settings to storage
+        //    if (storage != null)
+        //    {
+        //        string json = JsonConvert.SerializeObject(radiatorData);
+        //        storage["StorageKey"] = json;
+        //    }
+
+        //    base.Close();
+        //}
     }
 }
