@@ -18,6 +18,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing H2 Engine Logic");
             block = (IMyPowerProducer)Entity;
+            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+                return;
 
             if (!PowerPlantHeatData.LoadData(block, out heatData))
                 heatData = new PowerPlantHeatData

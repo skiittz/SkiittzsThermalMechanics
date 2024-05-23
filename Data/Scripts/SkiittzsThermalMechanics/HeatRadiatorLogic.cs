@@ -78,6 +78,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Initializing Radiator Logic");
 
             block = (Container.Entity as IMyUpgradeModule);
+            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+                return;
+
             radiatorData = RadiatorData.LoadData(block);
             
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;

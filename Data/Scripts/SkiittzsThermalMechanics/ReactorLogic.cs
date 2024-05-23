@@ -21,7 +21,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing Reactor Logic");
             block = (IMyPowerProducer)Entity;
-            if(!PowerPlantHeatData.LoadData(block, out heatData))
+            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+                return;
+
+            if (!PowerPlantHeatData.LoadData(block, out heatData))
                 heatData = new PowerPlantHeatData
                 {
                     HeatCapacity = block.MaxOutput * 100,

@@ -1,7 +1,10 @@
-﻿using Sandbox.ModAPI;
+﻿using Sandbox.Game.Entities;
+using Sandbox.ModAPI;
 using System.Collections.Generic;
 using System.Linq;
-using VRage.Game.ModAPI;
+using VRage.Game.ModAPI.Ingame;
+using IMyCubeBlock = VRage.Game.ModAPI.IMyCubeBlock;
+using IMyCubeGrid = VRage.Game.ModAPI.IMyCubeGrid;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
@@ -28,6 +31,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (beacon == null)
                 return null;
             return beacon.GameLogic.GetAs<HeatSinkLogic>();
+        }
+
+        public static bool IsPlayerOwnedGrid(this IMyCubeGrid grid)
+        {
+            if (grid != null)
+            {
+                foreach (var block in grid.GetFatBlocks<IMyCubeBlock>())
+                {
+                    if (block.OwnerId != 0 && MyAPIGateway.Players.TryGetSteamId(block.OwnerId) > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

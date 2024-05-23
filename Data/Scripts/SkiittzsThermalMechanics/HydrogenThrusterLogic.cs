@@ -24,6 +24,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Initializing H2 Thruster Logic");
             
             block = (IMyThrust)Entity;
+            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+                return;
+
             heatData = ThrusterHeatData.LoadData(block);
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;

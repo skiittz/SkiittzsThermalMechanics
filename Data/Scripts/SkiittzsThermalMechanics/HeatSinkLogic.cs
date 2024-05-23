@@ -69,6 +69,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing Heat Sink Logic");
             block = (IMyBeacon)Entity;
+            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+                return;
+
             heatSinkData = HeatSinkData.LoadData(block);
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;

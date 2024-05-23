@@ -21,6 +21,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing Battery Logic");
             block = (IMyPowerProducer)Entity;
+            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+                return;
 
             if (!PowerPlantHeatData.LoadData(block, out heatData))
                 heatData = new PowerPlantHeatData
