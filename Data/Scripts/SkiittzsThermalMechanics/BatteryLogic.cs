@@ -15,7 +15,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_BatteryBlock), false)]
     public class BatteryLogic : MyGameLogicComponent
     {
-        private PowerPlantHeatData heatData;
+        public PowerPlantHeatData heatData;
         private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {

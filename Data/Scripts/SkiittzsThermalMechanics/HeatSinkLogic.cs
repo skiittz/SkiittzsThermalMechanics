@@ -5,6 +5,7 @@ using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
+using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
@@ -76,6 +77,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += HeatSinkLogic_AppendingCustomInfo;
+
+            MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, OnBlockDestroyed);
         }
 
         public float ActiveCooling(float incomingHeat)
@@ -145,6 +148,44 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             block.Radius = Math.Min(500000, heatSinkData.ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
             heatSinkData.ventingHeat *= 0.95f;
+        }
+
+        private void OnBlockDestroyed(object target, MyDamageInformation info)
+        {
+            if (info.Type != MyDamageType.Grind)
+                return;
+
+            var currentHeat = heatSinkData.currentHeat;
+            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
+
+            var beacons = new List<IMyBeacon>();
+            gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.EntityId != block.EntityId);
+            foreach (var heatSink in beacons.OrderByDescending(x => x.Radius))
+            {
+                var gameLogic = heatSink.GameLogic.GetAs<HeatSinkLogic>();
+                var sunkHeat = gameLogic.ActiveCooling(currentHeat);
+                currentHeat -= sunkHeat;
+            }
+
+            var powerProducers = new List<IMyPowerProducer>();
+            gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
+            foreach (var powerProducer in powerProducers)
+            {
+                PowerPlantHeatData heatData;
+                if (powerProducer.BlockDefinition.SubtypeName.Contains("Battery"))
+                    heatData = powerProducer.GameLogic.GetAs<BatteryLogic>().heatData;
+                else if (powerProducer.BlockDefinition.SubtypeName.Contains("Reactor"))
+                    heatData = powerProducer.GameLogic.GetAs<ReactorLogic>().heatData;
+                else if (powerProducer.BlockDefinition.SubtypeName.Contains("Engine"))
+                    heatData = powerProducer.GameLogic.GetAs<H2EngineLogic>().heatData;
+                else
+                    continue;
+                
+
+                var sunkHeat = heatData.FeedHeatBack(currentHeat);
+                currentHeat -= sunkHeat;
+            }
+
         }
 
         public void AddHeatRatioControl()

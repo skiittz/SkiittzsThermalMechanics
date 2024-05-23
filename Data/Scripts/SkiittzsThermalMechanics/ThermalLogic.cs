@@ -90,6 +90,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public float lastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
         public int overHeatCycles { get; set; }
+        private float availableHeatCapacity => HeatCapacity - CurrentHeat;
 
         public static void SaveData(long entityId, PowerPlantHeatData data)
         {
@@ -134,6 +135,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             return Utilities.GetHeatSinkLogic(block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
         }
 
+        public float FeedHeatBack(float incomingHeat)
+        {
+            var acceptedHeat = Math.Min(incomingHeat, availableHeatCapacity);
+            CurrentHeat += acceptedHeat;
+            return acceptedHeat;
+        }
+
         private float CalculateHeating(IMyPowerProducer block)
         {
             if (!block.IsWorking)
@@ -142,7 +150,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentOutput}) - (passiveCooling {PassiveCooling})");
             var powerProducers = new List<IMyPowerProducer>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
-            gts.GetBlocksOfType(powerProducers, x => x.IsWorking);
+            gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
 
             var additionalGeneratorCount = Math.Min(powerProducers.Count - 1, 0);
             var spamPenalty = 1 + (additionalGeneratorCount / 100);
