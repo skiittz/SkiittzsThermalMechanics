@@ -20,10 +20,9 @@
           <Component Subtype="Construction" Count="30" />
           <Component Subtype="LargeTube" Count="20" />
           <Component Subtype="Computer" Count="10" />
-          <Component Subtype="Superconductor" Count="40" />
           <Component Subtype="SteelPlate" Count="40" />
         </Components>
-        <CriticalComponent Subtype="Superconductor" Index="0" />
+        <CriticalComponent Subtype="Computer" Index="0" />
         <MountPoints>
           <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
           <MountPoint Side="Left" StartX="0.1" StartY="0" EndX="0.9" EndY="0.1" />
@@ -78,10 +77,9 @@
           <Component Subtype="Construction" Count="3" />
           <Component Subtype="LargeTube" Count="2" />
           <Component Subtype="Computer" Count="1" />
-          <Component Subtype="Superconductor" Count="4" />
           <Component Subtype="SteelPlate" Count="4" />
         </Components>
-        <CriticalComponent Subtype="Superconductor" Index="0" />
+        <CriticalComponent Subtype="Computer" Index="0" />
         <MountPoints>
           <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
           <MountPoint Side="Left" StartX="0.3" StartY="0.4" EndX="0.7" EndY="0.7" />
