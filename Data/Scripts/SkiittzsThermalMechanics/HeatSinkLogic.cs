@@ -17,7 +17,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class HeatSinkData
     {
         public float currentHeat;
-        public float heatCapacity => 1000000f;
+        public float heatCapacity;
         public float availableCapacity => heatCapacity - currentHeat;
         public float HeatRatio => (currentHeat / heatCapacity);
         public float passiveCooling = 0.01f;
@@ -56,7 +56,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
             }
 
-            return new HeatSinkData();
+            return new HeatSinkData { heatCapacity = block.BlockDefinition.SubtypeName == "LargeHeatSink" ? 1000000f : 500000f};
         }
     }
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink" })]

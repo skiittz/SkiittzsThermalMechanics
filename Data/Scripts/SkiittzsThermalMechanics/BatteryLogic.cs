@@ -27,7 +27,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!PowerPlantHeatData.LoadData(block, out heatData))
                 heatData = new PowerPlantHeatData
                 {
-                    HeatCapacity = (block as IMyBatteryBlock).MaxInput * 100,
+                    HeatCapacity = (block as IMyBatteryBlock).MaxInput * 400,
                     PassiveCooling = (block as IMyBatteryBlock).MaxInput / 30
                 };
             

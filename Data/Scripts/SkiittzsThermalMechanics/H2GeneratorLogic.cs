@@ -24,8 +24,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!PowerPlantHeatData.LoadData(block, out heatData))
                 heatData = new PowerPlantHeatData
                 {
-                    HeatCapacity = block.MaxOutput * 100,
-                    PassiveCooling = block.MaxOutput / 50
+                    HeatCapacity = block.MaxOutput * 500,
+                    PassiveCooling = block.MaxOutput / 5
                 };
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
