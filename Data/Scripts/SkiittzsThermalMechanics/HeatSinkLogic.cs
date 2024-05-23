@@ -152,9 +152,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)
         {
-            if (info.Type != MyDamageType.Grind)
-                return;
-
             var currentHeat = heatSinkData.currentHeat;
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
 
