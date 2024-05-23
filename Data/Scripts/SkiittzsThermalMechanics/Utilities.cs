@@ -10,6 +10,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static readonly string HeatRatioControlId = "HeatRatio";
         public static readonly string CurrentHeatControlId = "CurrentHeat";
 
+        public static string SaveDataFilePath = $"{MyAPIGateway.Utilities.GamePaths.SavesPath}\\SkiittzThermalMechanics";
+
         public static HeatSinkLogic GetHeatSinkLogic(IMyCubeGrid grid)
         {
             var beacons = new List<IMyBeacon>();

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Sandbox.Common.ObjectBuilders;
-using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
-using SpaceEngineers.Game.ModAPI;
 using VRage.Game.Components;
 using VRage.Game.Entity;
 using VRage.Game.ModAPI;
@@ -22,14 +17,53 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public class RadiatorData
     {
-        public IMyUpgradeModule block { get; set; }
-        public bool isInitialized { get; set; }
         public float maxDissipation { get; set; }
         public float stepSize => 0.25f;
         public float currentDissipation { get; set; }
         public float heatRatio => currentDissipation / maxDissipation;
-        public Color minColor = Color.Black;
-        public Color maxColor = Color.Red;
+        public Color minColor { get; set; }
+        public Color maxColor { get; set; }
+
+        public static void SaveData(long entityId, RadiatorData data)
+        {
+            try
+            {
+                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{entityId}.xml", typeof(RadiatorData));
+                writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+                writer.Flush();
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                MyLog.Default.WriteLine($"Failed to save data: {e.Message}");
+            }
+        }
+
+        public static RadiatorData LoadData(IMyUpgradeModule block)
+        {
+            var file = $"{block.EntityId}.xml";
+            try
+            {
+                if (MyAPIGateway.Utilities.FileExistsInLocalStorage(file, typeof(RadiatorData)))
+                {
+                    var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(file, typeof(RadiatorData));
+                    string content = reader.ReadToEnd();
+                    reader.Close();
+                    return MyAPIGateway.Utilities.SerializeFromXML<RadiatorData>(content);
+                }
+            }
+            catch (Exception e)
+            {
+                MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
+            }
+
+            return new RadiatorData
+            {
+                maxDissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f,
+                minColor = Color.Black,
+                maxColor = Color.Red
+            };
+        }
     }
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new []
     {
@@ -37,17 +71,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     })]
     public class HeatRadiatorLogic : MyGameLogicComponent
     {
-        
         private RadiatorData radiatorData;
-        private MyModStorageComponent storage;
-
+        private IMyUpgradeModule block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Radiator Logic");
-            radiatorData.block = (IMyUpgradeModule) Entity;
+
+            block = (Container.Entity as IMyUpgradeModule);
+            radiatorData = RadiatorData.LoadData(block);
+            
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
-            radiatorData.maxDissipation = radiatorData.block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f;
         }
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
@@ -57,7 +91,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
-            customInfo.Append($"Dissipating Heat: {radiatorData.currentDissipation.ToString("F1")}MW ({(radiatorData.heatRatio *100).ToString("N0")}%)");
+            customInfo.Append($"Dissipating Heat: {logic.radiatorData.currentDissipation.ToString("F1")}MW ({(logic.radiatorData.heatRatio *100).ToString("N0")}%)");
         }
 
         void RadiatorLogic_OnClose(IMyEntity obj)
@@ -68,6 +102,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= RadiatorLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= RadiatorLogic_OnClose;
+                    RadiatorData.SaveData(obj.EntityId, (obj).GameLogic.GetAs<HeatRadiatorLogic>().radiatorData);
                 }
             }
             catch (Exception ex)
@@ -78,30 +113,25 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            if (radiatorData.block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+            if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
-
-            if (!radiatorData.isInitialized)
+            CreateControls();
+            try
             {
-                CreateControls();
-                try
-                {
-                    (Container.Entity as IMyCubeBlock).OnClose += RadiatorLogic_OnClose;
-                }
-                catch (Exception ex)
-                {
+                (Container.Entity as IMyCubeBlock).OnClose += RadiatorLogic_OnClose;
+            }
+            catch (Exception ex)
+            {
 
-                }
-                radiatorData.isInitialized = true;
             }
         }
 
         public override void UpdateBeforeSimulation100()
         {
-            if (!radiatorData.block.Enabled)
+            if (!block.Enabled)
                 return;
 
-            var beacon = Utilities.GetHeatSinkLogic(radiatorData.block.CubeGrid);
+            var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
             if (beacon == null)
                 return;
 
@@ -120,7 +150,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     radiatorData.currentDissipation = radiatorData.maxDissipation;
 
             Animate();
-            radiatorData.block.RefreshCustomInfo();
+            block.RefreshCustomInfo();
         }
 
         private void CreateMinColorPicker()
@@ -201,13 +231,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void Animate()
         {
-            radiatorData.block.SetEmissiveParts("Emissive", InterpolateColor(radiatorData.minColor, radiatorData.maxColor, radiatorData.heatRatio), radiatorData.heatRatio);
+            block.SetEmissiveParts("Emissive", InterpolateColor(radiatorData.minColor, radiatorData.maxColor, radiatorData.heatRatio), radiatorData.heatRatio);
             SetBladeRotation();
         }
 
         private void SetBladeRotation()
         {
-            var entity = (MyEntity)radiatorData.block;
+            var entity = (MyEntity)block;
                 // Define the rotation limits
                 var minRotation = MathHelper.ToRadians(-45); // Fully closed position
                 var maxRotation = MathHelper.ToRadians(45); // Fully open position (90 degrees in radians)
@@ -252,17 +282,5 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             // Create and return the new color
             return new Color(r, g, b, a);
         }
-
-        //public override void Close()
-        //{
-        //    // Save settings to storage
-        //    if (storage != null)
-        //    {
-        //        string json = JsonConvert.SerializeObject(radiatorData);
-        //        storage["StorageKey"] = json;
-        //    }
-
-        //    base.Close();
-        //}
     }
 }

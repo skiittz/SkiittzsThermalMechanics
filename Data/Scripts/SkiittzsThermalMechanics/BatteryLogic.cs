@@ -1,31 +1,34 @@
-﻿using Sandbox.Common.ObjectBuilders;
-using Sandbox.ModAPI;
-using Sandbox.ModAPI.Interfaces.Terminal;
-using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Sandbox.Common.ObjectBuilders;
+using Sandbox.ModAPI;
+using Sandbox.ModAPI.Interfaces.Terminal;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 
-namespace SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_BatteryBlock), false)]
     public class BatteryLogic : MyGameLogicComponent
     {
         private PowerPlantHeatData heatData;
+        private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Battery Logic");
-            var block = (IMyPowerProducer)Entity;
-            var heatCapacity = (block as IMyBatteryBlock).MaxInput * 100;
-            var passiveCooling = (block as IMyBatteryBlock).MaxInput / 30;
-            heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
+            block = (IMyPowerProducer)Entity;
+
+            if (!PowerPlantHeatData.LoadData(block, out heatData))
+                heatData = new PowerPlantHeatData
+                {
+                    HeatCapacity = (block as IMyBatteryBlock).MaxInput * 100,
+                    PassiveCooling = (block as IMyBatteryBlock).MaxInput / 30
+                };
+            
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += BatteryLogic_AppendingCustomInfo;
         }
@@ -34,7 +37,7 @@ namespace SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<BatteryLogic>();
-            logic.heatData.AppendCustomThermalInfo(customInfo);
+            logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
         }
 
         void BatteryLogic_OnClose(IMyEntity obj)
@@ -45,6 +48,7 @@ namespace SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= BatteryLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= BatteryLogic_OnClose;
+                    PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<BatteryLogic>().heatData);
                 }
             }
             catch (Exception ex)
@@ -55,31 +59,27 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            if (heatData.Block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+            if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
-            if (!heatData.IsInitialized)
+            AddHeatRatioControl();
+            try
             {
-                AddHeatRatioControl();
-                try
-                {
-                    (Container.Entity as IMyCubeBlock).OnClose += BatteryLogic_OnClose;
-                }
-                catch (Exception ex)
-                {
+                (Container.Entity as IMyCubeBlock).OnClose += BatteryLogic_OnClose;
+            }
+            catch (Exception ex)
+            {
 
-                }
-                heatData.IsInitialized = true;
             }
         }
 
         public override void UpdateBeforeSimulation100()
         {
-            if (heatData?.Block == null)
+            if (block == null)
                 return;
             
-            heatData.ApplyHeating();
-            (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
+            heatData.ApplyHeating(block);
+            block.RefreshCustomInfo();
         }
 
         public void AddHeatRatioControl()

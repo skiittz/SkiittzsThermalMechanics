@@ -1,111 +1,158 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using System.Text.RegularExpressions;
-using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI;
-using Sandbox.ModAPI.Interfaces.Terminal;
-using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
-using SpaceEngineers.Game.ModAPI;
-using VRage.Game;
-using VRage.Game.Entity;
-using VRage.ModAPI;
-using VRage.Render.Particles;
 using VRage.Utils;
 using VRageMath;
 
-namespace SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public class ThrusterHeatData
     {
-        public IMyThrust Block { get; }
         public float CurrentHeat { get; private set; }
-        private float passiveCooling;
-        public bool IsInitialized { get; set; }
+        private float passiveCooling => .25f;
         private float lastHeatDelta;
-        public ThrusterHeatData(IMyThrust block, float passiveCooling)
-        {
-            Block = block;
-            this.passiveCooling = passiveCooling;
-        }
 
-        public void ApplyHeating()
+        public void ApplyHeating(IMyThrust block)
         {
-            lastHeatDelta = CalculateHeating();
+            lastHeatDelta = CalculateHeating(block);
             CurrentHeat += lastHeatDelta;
-            CurrentHeat -= CalculateCooling(CurrentHeat);
+            CurrentHeat -= CalculateCooling(block, CurrentHeat);
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
         }
 
-        private float CalculateCooling(float availableHeatToSink)
+        private float CalculateCooling(IMyThrust block, float availableHeatToSink)
         {
-            return Utilities.GetHeatSinkLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+            return Utilities.GetHeatSinkLogic(block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
         }
 
-        private float CalculateHeating()
+        private float CalculateHeating(IMyThrust block)
         {
-            if (!Block.IsWorking)
+            if (!block.IsWorking)
                 return 0;
-            Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentThrust/ 1000000}) - (passiveCooling {passiveCooling})");
-            return (Block.CurrentThrust/1000000) - passiveCooling;
+            Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
+            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/ 1000000}) - (passiveCooling {passiveCooling})");
+            return (block.CurrentThrust/1000000) - passiveCooling;
         }
 
-        public void AppendCustomThermalInfo(StringBuilder customInfo)
+        public void AppendCustomThermalInfo(IMyThrust block, StringBuilder customInfo)
         {
             var debugInfo = new StringBuilder();
-            debugInfo.Append($"DEBUG INFO - {Block.CustomName}:\n");
+            debugInfo.Append($"DEBUG INFO - {block.CustomName}:\n");
             debugInfo.Append($"Current Heat: {CurrentHeat}\n");
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             customInfo.Append($"Current Heat Level: {CurrentHeat}\n");
         }
+
+        public static void SaveData(long entityId, ThrusterHeatData data)
+        {
+            try
+            {
+                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{entityId}.xml", typeof(ThrusterHeatData));
+                writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+                writer.Flush();
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                MyLog.Default.WriteLine($"Failed to save data: {e.Message}");
+            }
+        }
+
+        public static ThrusterHeatData LoadData(IMyThrust block)
+        {
+            var file = $"{block.EntityId}.xml";
+            try
+            {
+                if (MyAPIGateway.Utilities.FileExistsInLocalStorage(file, typeof(ThrusterHeatData)))
+                {
+                    var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(file, typeof(ThrusterHeatData));
+                    string content = reader.ReadToEnd();
+                    reader.Close();
+                    return MyAPIGateway.Utilities.SerializeFromXML<ThrusterHeatData>(content);
+                }
+            }
+            catch (Exception e)
+            {
+                MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
+            }
+
+            return new ThrusterHeatData();
+        }
     }
     public class PowerPlantHeatData
     {
-        public IMyPowerProducer Block { get; }
-        public float CurrentHeat { get; private set; }
-        public float HeatCapacity { get; }
-        private float passiveCooling;
-        public bool IsInitialized { get; set; }
-        private float lastHeatDelta;
+        public float CurrentHeat { get; set; }
+        public float HeatCapacity { get; set; }
+        public float PassiveCooling { get; set; }
+        public float lastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
-        private int overHeatCycles { get; set; }
+        public int overHeatCycles { get; set; }
 
-        public PowerPlantHeatData(IMyPowerProducer block, float heatCapacity, float passiveCooling)
+        public static void SaveData(long entityId, PowerPlantHeatData data)
         {
-            Block = block;
-            this.HeatCapacity = heatCapacity;
-            this.passiveCooling = passiveCooling;
+            try
+            {
+                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{entityId}.xml", typeof(PowerPlantHeatData));
+                writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+                writer.Flush();
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                MyLog.Default.WriteLine($"Failed to save data: {e.Message}");
+            }
         }
 
-        private float CalculateCooling(float availableHeatToSink)
+        public static bool LoadData(IMyPowerProducer block, out PowerPlantHeatData heatData)
         {
-            return Utilities.GetHeatSinkLogic(Block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+            var file = $"{block.EntityId}.xml";
+            try
+            {
+                if (MyAPIGateway.Utilities.FileExistsInLocalStorage(file, typeof(PowerPlantHeatData)))
+                {
+                    var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(file, typeof(PowerPlantHeatData));
+                    string content = reader.ReadToEnd();
+                    reader.Close();
+                    heatData = MyAPIGateway.Utilities.SerializeFromXML<PowerPlantHeatData>(content);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
+            }
+
+            heatData = null;
+            return false;
         }
 
-        private float CalculateHeating()
+        private float CalculateCooling(IMyPowerProducer block, float availableHeatToSink)
         {
-            if (!Block.IsWorking)
+            return Utilities.GetHeatSinkLogic(block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+        }
+
+        private float CalculateHeating(IMyPowerProducer block)
+        {
+            if (!block.IsWorking)
                 return 0;
-            Logger.Instance.LogDebug($"{Block.CustomName} is {(Block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{Block.CustomName} heating: (currentOutput {Block.CurrentOutput}) - (passiveCooling {passiveCooling})");
+            Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
+            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentOutput}) - (passiveCooling {PassiveCooling})");
             var powerProducers = new List<IMyPowerProducer>();
-            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Block.CubeGrid);
+            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
             gts.GetBlocksOfType(powerProducers, x => x.IsWorking);
 
             var additionalGeneratorCount = Math.Min(powerProducers.Count - 1, 0);
             var spamPenalty = 1 + (additionalGeneratorCount / 100);
-            return Block.CurrentOutput*spamPenalty - passiveCooling;
+            return block.CurrentOutput*spamPenalty - PassiveCooling;
         }
 
-        public void ApplyHeating()
+        public void ApplyHeating(IMyPowerProducer block)
         {
-            var heatGenerated = CalculateHeating();
-            var heatDissipated = CalculateCooling(CurrentHeat + heatGenerated);
+            var heatGenerated = CalculateHeating(block);
+            var heatDissipated = CalculateCooling(block, CurrentHeat + heatGenerated);
             lastHeatDelta = heatGenerated - heatDissipated;
             CurrentHeat += lastHeatDelta;
             if (CurrentHeat < 0)
@@ -113,34 +160,34 @@ namespace SkiittzsThermalMechanics
 
             if (CurrentHeat >= HeatCapacity)
             {
-                WarnPlayer($"Taking damage due to overheating!");
+                WarnPlayer(block, $"Taking damage due to overheating!");
                 overHeatCycles++;
                 var thermalFatigue = CurrentHeat + (CurrentHeat * (overHeatCycles/10));
-                Block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
-                if (Block.IsFunctional)
+                block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
+                if (block.IsFunctional)
                     CurrentHeat = HeatCapacity;
                 else
                 {
-                    WarnPlayer("Disabled due to heat damage.");
+                    WarnPlayer(block, "Disabled due to heat damage.");
                     CurrentHeat = 0;
                 }
             }
             else if (CurrentHeat > HeatCapacity * .8)
             {
-                Block.SetDamageEffect(true);
-                WarnPlayer($"Approaching heat threshold.");
+                block.SetDamageEffect(true);
+                WarnPlayer(block, $"Approaching heat threshold.");
             }
             else
-                Block.SetDamageEffect(false);
+                block.SetDamageEffect(false);
         }
 
         private const int messageDelay = 10;
         private int messageAttemptCounter = 0;
-        private void WarnPlayer(string message)
+        private void WarnPlayer(IMyPowerProducer block, string message)
         {
             if (messageAttemptCounter == 0)
             {
-                MyAPIGateway.Utilities.ShowMessage("Thermal Monitoring System", $"{Block.CubeGrid.CustomName}-{Block.CustomName}: {message}");
+                MyAPIGateway.Utilities.ShowMessage("Thermal Monitoring System", $"{block.CubeGrid.CustomName}-{block.CustomName}: {message}");
             }
 
             messageAttemptCounter++;
@@ -148,12 +195,12 @@ namespace SkiittzsThermalMechanics
                 messageAttemptCounter = 0;
         }
 
-        public void AppendCustomThermalInfo(StringBuilder customInfo)
+        public void AppendCustomThermalInfo(IMyPowerProducer block, StringBuilder customInfo)
         {
             var remainingSeconds = RemainingSeconds();
 
             var debugInfo = new StringBuilder();
-            debugInfo.Append($"DEBUG INFO - {Block.CustomName}:\n");
+            debugInfo.Append($"DEBUG INFO - {block.CustomName}:\n");
             debugInfo.Append($"Current Heat: {CurrentHeat}\n");
             debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
             debugInfo.Append($"Last Heat Delta: {lastHeatDelta}\n");

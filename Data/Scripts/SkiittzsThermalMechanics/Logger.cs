@@ -7,7 +7,7 @@ using VRage.Game;
 using VRage.Game.ModAPI;
 using VRage.Utils;
 
-namespace SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     [VRage.Game.Components.MySessionComponentDescriptor(VRage.Game.Components.MyUpdateOrder.NoUpdate)]
     class LoggerSession : VRage.Game.Components.MySessionComponentBase

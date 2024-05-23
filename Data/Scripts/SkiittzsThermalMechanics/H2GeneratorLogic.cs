@@ -1,32 +1,31 @@
-﻿using Sandbox.Common.ObjectBuilders;
-using Sandbox.ModAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Text;
-using Sandbox.ModAPI.Interfaces;
-using SkiittzsThermalMechanics;
+using Sandbox.Common.ObjectBuilders;
+using Sandbox.ModAPI;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
-using VRage.Game.ModAPI.Interfaces;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
-using Sandbox.ModAPI.Interfaces.Terminal;
-using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
 
-namespace SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_HydrogenEngine), false)]
     public class H2EngineLogic : MyGameLogicComponent
     {
         private PowerPlantHeatData heatData;
+        private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing H2 Engine Logic");
-            var block = (IMyPowerProducer)Entity;
-            var heatCapacity = block.MaxOutput * 100;
-            var passiveCooling = block.MaxOutput / 50;
-            heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
+            block = (IMyPowerProducer)Entity;
+
+            if (!PowerPlantHeatData.LoadData(block, out heatData))
+                heatData = new PowerPlantHeatData
+                {
+                    HeatCapacity = block.MaxOutput * 100,
+                    PassiveCooling = block.MaxOutput / 50
+                };
+
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += H2EngineLogic_AppendingCustomInfo;
         }
@@ -35,7 +34,7 @@ namespace SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<H2EngineLogic>();
-            logic.heatData.AppendCustomThermalInfo(customInfo);
+            logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
         }
 
         void H2EngineLogic_OnClose(IMyEntity obj)
@@ -46,6 +45,7 @@ namespace SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= H2EngineLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= H2EngineLogic_OnClose;
+                    PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<H2EngineLogic>().heatData);
                 }
             }
             catch (Exception ex)
@@ -56,27 +56,23 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            if (heatData.Block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+            if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
-            if (!heatData.IsInitialized)
+            try
             {
-                try
-                {
-                    (Container.Entity as IMyCubeBlock).OnClose += H2EngineLogic_OnClose;
-                }
-                catch (Exception ex)
-                {
+                (Container.Entity as IMyCubeBlock).OnClose += H2EngineLogic_OnClose;
+            }
+            catch (Exception ex)
+            {
 
-                }
-                heatData.IsInitialized = true;
             }
         }
 
         public override void UpdateBeforeSimulation100()
         {
-            heatData.ApplyHeating();
-            (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
+            heatData.ApplyHeating(block);
+            block.RefreshCustomInfo();
         }
     }
 }

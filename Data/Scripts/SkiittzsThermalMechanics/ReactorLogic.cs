@@ -5,26 +5,28 @@ using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
-using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics;
-using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 
-namespace SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Reactor), false)]
     public class ReactorLogic : MyGameLogicComponent
     {
         private PowerPlantHeatData heatData;
+        private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             Logger.Instance.LogDebug("Initializing Reactor Logic");
-            var block = (IMyPowerProducer)Entity;
-            var heatCapacity = block.MaxOutput*100;
-            var passiveCooling = block.MaxOutput/600;
-            heatData = new PowerPlantHeatData(block, heatCapacity, passiveCooling);
+            block = (IMyPowerProducer)Entity;
+            if(!PowerPlantHeatData.LoadData(block, out heatData))
+                heatData = new PowerPlantHeatData
+                {
+                    HeatCapacity = block.MaxOutput * 100,
+                    PassiveCooling = block.MaxOutput / 600
+                };
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;
         }
@@ -33,7 +35,7 @@ namespace SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<ReactorLogic>();
-            logic.heatData.AppendCustomThermalInfo(customInfo);
+            logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
         }
 
      
@@ -46,6 +48,7 @@ namespace SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ReactorLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= ReactorLogic_OnClose;
+                    PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<ReactorLogic>().heatData);
                 }
             }
             catch (Exception ex)
@@ -56,31 +59,27 @@ namespace SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            if (heatData.Block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+            if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
-            if (!heatData.IsInitialized)
+            AddHeatRatioControl();
+            try
             {
-                AddHeatRatioControl();
-                try
-                {
-                    (Container.Entity as IMyCubeBlock).OnClose += ReactorLogic_OnClose;
-                }
-                catch (Exception ex)
-                {
+                (Container.Entity as IMyCubeBlock).OnClose += ReactorLogic_OnClose;
+            }
+            catch (Exception ex)
+            {
 
-                }
-                heatData.IsInitialized = true;
             }
         }
 
         public override void UpdateBeforeSimulation100()
         {
-            if (heatData?.Block == null)
+            if (block == null)
                 return;
 
-            heatData.ApplyHeating();
-            (heatData.Block as IMyTerminalBlock).RefreshCustomInfo();
+            heatData.ApplyHeating(block);
+            block.RefreshCustomInfo();
         }
 
         public void AddHeatRatioControl()
