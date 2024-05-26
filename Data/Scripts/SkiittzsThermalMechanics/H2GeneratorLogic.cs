@@ -18,7 +18,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing H2 Engine Logic");
             block = (IMyPowerProducer)Entity;
-            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+            if (block == null)
                 return;
 
             if (!PowerPlantHeatData.LoadData(block, out heatData))
@@ -73,7 +73,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if(block == null || heatData == null) return;
+            if(block == null || heatData == null ) return;
 
             heatData.ApplyHeating(block);
             block.RefreshCustomInfo();

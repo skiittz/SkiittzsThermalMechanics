@@ -35,6 +35,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             return beacon.GameLogic.GetAs<HeatSinkLogic>();
         }
 
+        public static bool IsPlayerOwned(this IMyCubeBlock block)
+        {
+            var ownerId = block.OwnerId;
+            var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
+            return faction == null || !faction.IsEveryoneNpc();
+        }
+
         public static bool IsPlayerOwnedGrid(this IMyCubeGrid grid)
         {
             if (grid != null)

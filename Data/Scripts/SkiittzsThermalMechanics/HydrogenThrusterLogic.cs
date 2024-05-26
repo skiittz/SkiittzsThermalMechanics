@@ -24,7 +24,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Initializing H2 Thruster Logic");
 
             block = (IMyThrust)Container.Entity;
-            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+            if (block == null)
                 return;
 
             heatData = ThrusterHeatData.LoadData(block);
@@ -77,7 +77,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || heatData == null)
+            if (block == null || heatData == null )
                 return;
 
             heatData.ApplyHeating(block);

@@ -79,7 +79,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Initializing Radiator Logic");
 
             block = (Container.Entity as IMyUpgradeModule);
-            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+            if (block == null)
                 return;
 
             radiatorData = RadiatorData.LoadData(block);
@@ -132,7 +132,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || radiatorData == null) return;
+            if (block == null || radiatorData == null ) return;
 
             if (!block.Enabled)
                 return;

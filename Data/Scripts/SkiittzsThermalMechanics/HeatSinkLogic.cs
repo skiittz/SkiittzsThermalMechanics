@@ -71,7 +71,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Initializing Heat Sink Logic");
             block = (IMyBeacon)Entity;
-            if (block == null || !block.CubeGrid.IsPlayerOwnedGrid())
+            if (block == null)
                 return;
 
             heatSinkData = HeatSinkData.LoadData(block);
@@ -145,7 +145,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || heatSinkData == null) return;
+            if (block == null || heatSinkData == null ) return;
 
             heatSinkData.currentHeat -= Math.Min(heatSinkData.passiveCooling, heatSinkData.currentHeat);
             block.Radius = Math.Min(500000, heatSinkData.ventingHeat);

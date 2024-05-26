@@ -29,7 +29,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private float CalculateHeating(IMyThrust block)
         {
-            if (!block.IsWorking)
+            if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
             Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
             Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/ 1000000}) - (passiveCooling {passiveCooling})");
@@ -144,7 +144,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private float CalculateHeating(IMyPowerProducer block)
         {
-            if (!block.IsWorking)
+            if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
             Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
             Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentOutput}) - (passiveCooling {PassiveCooling})");
@@ -193,6 +193,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private int messageAttemptCounter = 0;
         private void WarnPlayer(IMyPowerProducer block, string message)
         {
+            if (block.OwnerId != MyAPIGateway.Session.Player.IdentityId)
+                return;
             if (messageAttemptCounter == 0)
             {
                 MyAPIGateway.Utilities.ShowMessage("Thermal Monitoring System", $"{block.CubeGrid.CustomName}-{block.CustomName}: {message}");
