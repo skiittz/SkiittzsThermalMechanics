@@ -29,7 +29,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             try
             {
-                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{entityId}.xml", typeof(RadiatorData));
+                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{Utilities.SaveDataFilePath}\\{entityId}.xml", typeof(RadiatorData));
                 writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
                 writer.Flush();
                 writer.Close();
