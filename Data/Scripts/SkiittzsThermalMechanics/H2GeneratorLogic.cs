@@ -73,6 +73,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
+            if(block == null || heatData == null) return;
+
             heatData.ApplyHeating(block);
             block.RefreshCustomInfo();
         }

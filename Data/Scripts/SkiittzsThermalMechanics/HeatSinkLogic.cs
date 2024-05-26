@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
@@ -144,6 +145,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
+            if (block == null || heatSinkData == null) return;
+
             heatSinkData.currentHeat -= Math.Min(heatSinkData.passiveCooling, heatSinkData.currentHeat);
             block.Radius = Math.Min(500000, heatSinkData.ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
@@ -131,6 +132,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
+            if (block == null || radiatorData == null) return;
+
             if (!block.Enabled)
                 return;
 

@@ -2,7 +2,9 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using System.Linq;
+using VRage.Game.ModAPI;
 using VRage.Game.ModAPI.Ingame;
+using VRage.Scripting;
 using IMyCubeBlock = VRage.Game.ModAPI.IMyCubeBlock;
 using IMyCubeGrid = VRage.Game.ModAPI.IMyCubeGrid;
 
@@ -39,13 +41,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             {
                 foreach (var block in grid.GetFatBlocks<IMyCubeBlock>())
                 {
-                    if (block.OwnerId != 0 && MyAPIGateway.Players.TryGetSteamId(block.OwnerId) > 0)
-                    {
-                        return true;
-                    }
+                    var ownerId = block.OwnerId;
+                    if (ownerId == 0 || MyAPIGateway.Players.TryGetSteamId(block.OwnerId) == 0)
+                        return false;
+
+                    var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
+                    if (faction != null && faction.IsEveryoneNpc())
+                        return false;
                 }
             }
-            return false;
+
+            return true;
         }
     }
 }
