@@ -16,7 +16,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public static class Utilities
     {
-        public static readonly string HeatRatioControlId = "HeatRatio";
         public static readonly string CurrentHeatControlId = "CurrentHeat";
 
         public static string SaveDataFilePath = $"{MyAPIGateway.Utilities.GamePaths.SavesPath}\\SkiittzThermalMechanics";
@@ -36,6 +35,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var beacon = beacons.FirstOrDefault();
             if (beacon == null)
                 return null;
+
+            beacon.Enabled = true;
             return beacon.GameLogic.GetAs<HeatSinkLogic>();
         }
 

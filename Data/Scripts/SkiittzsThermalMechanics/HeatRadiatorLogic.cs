@@ -135,7 +135,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block == null || radiatorData == null ) return;
 
             if (!block.Enabled)
+            {
+                radiatorData.currentDissipation = Math.Max(0, (radiatorData.currentDissipation - radiatorData.stepSize));
                 return;
+            }
 
             var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
             if (beacon == null)
