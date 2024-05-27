@@ -214,7 +214,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     try
                     {
-                        m_logger = Sandbox.ModAPI.MyAPIGateway.Utilities.WriteFileInLocalStorage(Filename + ".log", typeof(Logger));
+                        m_logger = Sandbox.ModAPI.MyAPIGateway.Utilities.WriteFileInWorldStorage(Filename + ".log", typeof(Logger));
                     }
                     catch { return; }
                 }

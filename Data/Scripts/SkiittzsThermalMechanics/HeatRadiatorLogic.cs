@@ -29,7 +29,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             try
             {
-                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{Utilities.SaveDataFilePath}\\{entityId}.xml", typeof(RadiatorData));
+                var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(RadiatorData));
                 writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
                 writer.Flush();
                 writer.Close();
@@ -45,9 +45,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var file = $"{block.EntityId}.xml";
             try
             {
-                if (MyAPIGateway.Utilities.FileExistsInLocalStorage(file, typeof(RadiatorData)))
+                if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(RadiatorData)))
                 {
-                    var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(file, typeof(RadiatorData));
+                    var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(RadiatorData));
                     string content = reader.ReadToEnd();
                     reader.Close();
                     return MyAPIGateway.Utilities.SerializeFromXML<RadiatorData>(content);

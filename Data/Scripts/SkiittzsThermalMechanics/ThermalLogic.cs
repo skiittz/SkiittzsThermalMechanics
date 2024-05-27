@@ -50,7 +50,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             try
             {
-                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{Utilities.SaveDataFilePath}\\{entityId}.xml", typeof(ThrusterHeatData));
+                var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData));
                 writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
                 writer.Flush();
                 writer.Close();
@@ -66,9 +66,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var file = $"{block.EntityId}.xml";
             try
             {
-                if (MyAPIGateway.Utilities.FileExistsInLocalStorage(file, typeof(ThrusterHeatData)))
+                if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(ThrusterHeatData)))
                 {
-                    var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(file, typeof(ThrusterHeatData));
+                    var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(ThrusterHeatData));
                     string content = reader.ReadToEnd();
                     reader.Close();
                     return MyAPIGateway.Utilities.SerializeFromXML<ThrusterHeatData>(content);
@@ -96,7 +96,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             try
             {
-                var writer = MyAPIGateway.Utilities.WriteFileInLocalStorage($"{Utilities.SaveDataFilePath}\\{entityId}.xml", typeof(PowerPlantHeatData));
+                var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(PowerPlantHeatData));
                 writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
                 writer.Flush();
                 writer.Close();
@@ -112,9 +112,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var file = $"{block.EntityId}.xml";
             try
             {
-                if (MyAPIGateway.Utilities.FileExistsInLocalStorage(file, typeof(PowerPlantHeatData)))
+                if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(PowerPlantHeatData)))
                 {
-                    var reader = MyAPIGateway.Utilities.ReadFileInLocalStorage(file, typeof(PowerPlantHeatData));
+                    var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(PowerPlantHeatData));
                     string content = reader.ReadToEnd();
                     reader.Close();
                     heatData = MyAPIGateway.Utilities.SerializeFromXML<PowerPlantHeatData>(content);
