@@ -65,7 +65,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
-            AddHeatRatioControl();
             try
             {
                 (Container.Entity as IMyCubeBlock).OnClose += BatteryLogic_OnClose;
@@ -82,19 +81,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 return;
             
             heatData.ApplyHeating(block);
+            block.AddHeatDataToCustomData(heatData.HeatRatio);
             block.RefreshCustomInfo();
-        }
-
-        public void AddHeatRatioControl()
-        {
-            var existingControls = new List<IMyTerminalControl>();
-            MyAPIGateway.TerminalControls.GetControls<IMyBatteryBlock>(out existingControls);
-            if (existingControls.Any(x => x.Id == Utilities.HeatRatioControlId))
-                return;
-
-            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBatteryBlock>(Utilities.HeatRatioControlId);
-            heatPercent.Getter = x => heatData.HeatRatio;
-            MyAPIGateway.TerminalControls.AddControl<IMyBatteryBlock>(heatPercent);
         }
     }
 }

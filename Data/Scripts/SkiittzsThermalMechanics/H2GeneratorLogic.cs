@@ -76,6 +76,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if(block == null || heatData == null ) return;
 
             heatData.ApplyHeating(block);
+            block.AddHeatDataToCustomData(heatData.HeatRatio);
             block.RefreshCustomInfo();
         }
     }

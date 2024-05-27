@@ -1,7 +1,11 @@
-﻿using Sandbox.Game.Entities;
+﻿using System;
+using Sandbox.Game.Entities;
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using VRage;
 using VRage.Game.ModAPI;
 using VRage.Game.ModAPI.Ingame;
 using VRage.Scripting;
@@ -60,5 +64,62 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             return true;
         }
+
+        public static void AddHeatDataToCustomData(this IMyTerminalBlock block, float heatRatio)
+        {
+            Dictionary<string, string> customData = new Dictionary<string, string>();
+            var existingData = block.CustomData
+                .Split('\n');
+
+            foreach (var item in existingData)
+            {
+                if (item.Contains(":"))
+                {
+                    var components = item.Split(':');
+                    customData.Add(components[0], components[1]);
+                }
+                else
+                    customData.Add(item, string.Empty);
+            }
+            customData["HeatRatio"] = heatRatio.ToString();
+
+            var stringBuilder = new StringBuilder();
+            foreach (var item in customData)
+            {
+                if (string.IsNullOrEmpty(item.Key))
+                    continue;
+                if (string.IsNullOrEmpty(item.Value))
+                    stringBuilder.Append($"{item.Key}\n");
+                else
+                    stringBuilder.Append($"{item.Key}:{item.Value}\n");
+            }
+
+            block.CustomData = stringBuilder.ToString();
+        }
+        //private void test()
+        //{
+        //    var powerProducers = new List<IMyPowerProducer>();
+        //    var beacons = new List<IMyBeacon>();
+        //    IMyGridTerminalSystem GridTerminalSystem;
+        //    GridTerminalSystem.GetBlocksOfType(powerProducers);
+        //    GridTerminalSystem.GetBlocksOfType(beacons);
+
+        //    var blocks = powerProducers.Select(x => x as IMyTerminalBlock)
+        //        .Union(beacons.Select(x => x as IMyTerminalBlock));
+        //    foreach (var block in blocks)
+        //    {
+        //        var customData = block.CustomData;
+        //        var lines = customData.Split('\n');
+        //        foreach (var line in lines)
+        //        {
+        //            if (line.Contains(":"))
+        //            {
+        //                var items = line.Split(':');
+        //                if (items[0] == "HeatRatio")
+        //                    Echo($"{block.CustomName}-HeatRatio:{items[1]}");
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

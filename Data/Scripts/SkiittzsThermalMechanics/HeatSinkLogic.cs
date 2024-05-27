@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
+using Sandbox.ModAPI.Interfaces;
 using Sandbox.ModAPI.Interfaces.Terminal;
 using VRage.Game;
 using VRage.Game.Components;
@@ -65,7 +66,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class HeatSinkLogic : MyGameLogicComponent
     {
         private IMyBeacon block;
-        private HeatSinkData heatSinkData;
+        public HeatSinkData HeatSinkData;
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
@@ -74,7 +75,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block == null)
                 return;
 
-            heatSinkData = HeatSinkData.LoadData(block);
+            HeatSinkData = HeatSinkData.LoadData(block);
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += HeatSinkLogic_AppendingCustomInfo;
@@ -84,15 +85,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public float ActiveCooling(float incomingHeat)
         {
-            if (heatSinkData.availableCapacity > incomingHeat)
+            if (HeatSinkData.availableCapacity > incomingHeat)
             {
-                heatSinkData.currentHeat += incomingHeat;
+                HeatSinkData.currentHeat += incomingHeat;
                 return incomingHeat;
             }
             else
             {
-                var remainingHeat = incomingHeat - heatSinkData.availableCapacity;
-                heatSinkData.currentHeat = heatSinkData.heatCapacity;
+                var remainingHeat = incomingHeat - HeatSinkData.availableCapacity;
+                HeatSinkData.currentHeat = HeatSinkData.heatCapacity;
                 return incomingHeat - remainingHeat;
             }
         }
@@ -101,12 +102,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             var debugInfo = new StringBuilder();
             debugInfo.Append($"DEBUG INFO - {arg1.CustomName}:\n");
-            debugInfo.Append($"Current Heat: {heatSinkData.currentHeat}\n");
-            debugInfo.Append($"Heat Capacity: {heatSinkData.heatCapacity}\n");
+            debugInfo.Append($"Current Heat: {HeatSinkData.currentHeat}\n");
+            debugInfo.Append($"Heat Capacity: {HeatSinkData.heatCapacity}\n");
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
-            customInfo.Append($"Heat Level: {(logic.heatSinkData.currentHeat / logic.heatSinkData.heatCapacity) * 100}%\n");
+            customInfo.Append($"Heat Level: {(logic.HeatSinkData.currentHeat / logic.HeatSinkData.heatCapacity) * 100}%\n");
             customInfo.Append($"Current IR Detectable Distance: {logic.block.Radius:N0} meters \n");
         }
 
@@ -118,7 +119,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= HeatSinkLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= HeatSinkLogic_OnClose;
-                    HeatSinkData.SaveData(obj.EntityId, obj.GameLogic.GetAs<HeatSinkLogic>().heatSinkData);
+                    HeatSinkData.SaveData(obj.EntityId, obj.GameLogic.GetAs<HeatSinkLogic>().HeatSinkData);
                 }
             }
             catch (Exception ex)
@@ -132,7 +133,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
-            AddHeatRatioControl();
             try
             {
                 (Container.Entity as IMyCubeBlock).OnClose += HeatSinkLogic_OnClose;
@@ -145,17 +145,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || heatSinkData == null ) return;
+            if (block == null || HeatSinkData == null ) return;
+            HeatSinkData.ventingHeat *= 0.95f;
 
-            heatSinkData.currentHeat -= Math.Min(heatSinkData.passiveCooling, heatSinkData.currentHeat);
-            block.Radius = Math.Min(500000, heatSinkData.ventingHeat);
+            HeatSinkData.currentHeat -= Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat);
+            block.Radius = Math.Min(500000, HeatSinkData.ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
-            heatSinkData.ventingHeat *= 0.95f;
+
+            block.AddHeatDataToCustomData(HeatSinkData.HeatRatio);
         }
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)
         {
-            var currentHeat = heatSinkData.currentHeat;
+            var currentHeat = HeatSinkData.currentHeat;
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
 
             var beacons = new List<IMyBeacon>();
@@ -188,23 +190,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         }
 
-        public void AddHeatRatioControl()
-        {
-            var existingControls = new List<IMyTerminalControl>();
-            MyAPIGateway.TerminalControls.GetControls<IMyBeacon>(out existingControls);
-            if (existingControls.Any(x => x.Id == Utilities.HeatRatioControlId))
-                return;
-
-            var heatPercent = MyAPIGateway.TerminalControls.CreateProperty<float, IMyBeacon>(Utilities.HeatRatioControlId);
-            heatPercent.Getter = x => heatSinkData.HeatRatio;
-            MyAPIGateway.TerminalControls.AddControl<IMyBeacon>(heatPercent);
-        }
-
         public float RemoveHeat(float heat)
         {
-            var dissipatedHeat = Math.Min(heat, heatSinkData.currentHeat);
-            heatSinkData.currentHeat -= dissipatedHeat;
-            heatSinkData.ventingHeat += dissipatedHeat;
+            var dissipatedHeat = Math.Min(heat, HeatSinkData.currentHeat);
+            HeatSinkData.currentHeat -= dissipatedHeat;
+            HeatSinkData.ventingHeat += dissipatedHeat;
 
             return dissipatedHeat;
         }
