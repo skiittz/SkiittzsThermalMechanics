@@ -117,6 +117,8 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HydrogenThrusterLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Logger.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ReactorLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptExample.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptHookCreator.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ThermalLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -73,6 +73,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             {
 
             }
+            ScriptHookCreator.AddBatteryHeatRatioControl();
         }
 
         public override void UpdateBeforeSimulation100()
@@ -81,7 +82,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 return;
             
             heatData.ApplyHeating(block);
-            block.AddHeatDataToCustomData(heatData.HeatRatio);
             block.RefreshCustomInfo();
         }
     }

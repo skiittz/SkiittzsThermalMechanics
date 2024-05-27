@@ -141,6 +141,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             {
 
             }
+            ScriptHookCreator.AddBeaconHeatRatioControl();
         }
 
         public override void UpdateBeforeSimulation100()
@@ -151,8 +152,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             HeatSinkData.currentHeat -= Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat);
             block.Radius = Math.Min(500000, HeatSinkData.ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
-
-            block.AddHeatDataToCustomData(HeatSinkData.HeatRatio);
         }
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)
