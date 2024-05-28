@@ -156,6 +156,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)
         {
+            var tgt = target as IMyEntity;
+            if (tgt == null || tgt.EntityId != block.EntityId)
+                return;
+
+            if(HeatSinkData == null)
+                return;
+
             var currentHeat = HeatSinkData.currentHeat;
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
 
