@@ -13,7 +13,11 @@ using VRage.ObjectBuilders;
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Thrust), false
-    ,new []{ "LargeBlockLargeHydrogenThrust", "LargeBlockSmallHydrogenThrust", "SmallBlockLargeHydrogenThrust", "SmallBlockSmallHydrogenThrust" }
+    ,new []{ "LargeBlockLargeHydrogenThrust", "LargeBlockSmallHydrogenThrust", 
+        "SmallBlockLargeHydrogenThrust", "SmallBlockSmallHydrogenThrust",
+        "LargeBlockLargeHydrogenThrustIndustrial", "LargeBlockSmallHydrogenThrustIndustrial",
+        "SmallBlockLargeHydrogenThrustIndustrial", "SmallBlockSmallHydrogenThrustIndustrial"
+    }
     )]
     public class HydrogenThrusterLogic : MyGameLogicComponent
     {
@@ -37,7 +41,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Logger.Instance.LogDebug("Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<HydrogenThrusterLogic>();
-            logic.heatData.AppendCustomThermalInfo(block, customInfo);
+            if (logic == null)
+                return;
+            logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
         }
 
 
