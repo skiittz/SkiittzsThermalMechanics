@@ -12,7 +12,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public float CurrentHeat { get; private set; }
         private float passiveCooling => .25f;
         private float lastHeatDelta;
-
+        private const float thrustDivisor = 1000000;
         public void ApplyHeating(IMyThrust block)
         {
             lastHeatDelta = CalculateHeating(block);
@@ -32,8 +32,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
             Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/ 1000000}) - (passiveCooling {passiveCooling})");
-            return (block.CurrentThrust/1000000) - passiveCooling;
+            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/thrustDivisor}) - (passiveCooling {passiveCooling})");
+            return (block.CurrentThrust/thrustDivisor) - passiveCooling;
         }
 
         public void AppendCustomThermalInfo(IMyThrust block, StringBuilder customInfo)

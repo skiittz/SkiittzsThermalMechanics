@@ -147,9 +147,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void UpdateBeforeSimulation100()
         {
             if (block == null || HeatSinkData == null ) return;
-            HeatSinkData.ventingHeat *= 0.95f;
+            HeatSinkData.ventingHeat *= 0.999f;
 
-            HeatSinkData.currentHeat -= Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat);
+            HeatSinkData.currentHeat = Math.Max(0, HeatSinkData.currentHeat - Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat));
             block.Radius = Math.Min(500000, HeatSinkData.ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
         }
