@@ -71,10 +71,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             block = (IMyBeacon)Entity;
-            Logger.Instance.LogDebug("Initializing", block);
-
             if (block == null)
                 return;
+
+            Logger.Instance.LogDebug("Initializing", block);
 
             HeatSinkData = HeatSinkData.LoadData(block);
 
@@ -102,11 +102,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void HeatSinkLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            var debugInfo = new StringBuilder();
-            debugInfo.Append($"DEBUG INFO - {arg1.CustomName}:\n");
-            debugInfo.Append($"Current Heat: {HeatSinkData.currentHeat}\n");
-            debugInfo.Append($"Heat Capacity: {HeatSinkData.heatCapacity}\n");
-            Logger.Instance.LogDebug(debugInfo.ToString());
+            Logger.Instance.LogDebug("Appending Custom Info", arg1);
 
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
             var heatLevel = ((logic.HeatSinkData.currentHeat / logic.HeatSinkData.heatCapacity) * 100).LowerBoundedBy(0);

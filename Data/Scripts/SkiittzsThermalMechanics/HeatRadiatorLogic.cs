@@ -77,10 +77,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             block = (Container.Entity as IMyUpgradeModule);
-            Logger.Instance.LogDebug("Initializing", block);
-
             if (block == null)
                 return;
+
+            Logger.Instance.LogDebug("Initializing", block);
 
             radiatorData = RadiatorData.LoadData(block);
             
@@ -90,10 +90,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            var debugInfo = new StringBuilder();
-            debugInfo.Append($"DEBUG INFO - {arg1.CustomName}:\n");
-            Logger.Instance.LogDebug(debugInfo.ToString());
-
+            Logger.Instance.LogDebug("Appending Custom Info",arg1);
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
             customInfo.Append($"Dissipating Heat: {logic.radiatorData.currentDissipation.ToString("F1")}MW ({(logic.radiatorData.heatRatio *100).ToString("N0")}%)");
         }

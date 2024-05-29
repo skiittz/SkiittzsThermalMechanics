@@ -17,10 +17,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             block = (IMyPowerProducer)Entity;
-            Logger.Instance.LogDebug("Initializing", block);
-
             if (block == null)
                 return;
+
+            Logger.Instance.LogDebug("Initializing", block);
 
             if (!PowerPlantHeatData.LoadData(block, out heatData))
                 heatData = new PowerPlantHeatData
@@ -35,7 +35,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void H2EngineLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            Logger.Instance.LogDebug("Appending Custom Info");
+            Logger.Instance.LogDebug("Appending Custom Info", arg1);
             var logic = arg1.GameLogic.GetAs<H2EngineLogic>();
             logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
         }

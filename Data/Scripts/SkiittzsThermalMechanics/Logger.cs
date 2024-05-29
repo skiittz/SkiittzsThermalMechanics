@@ -142,6 +142,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public void LogDebug(string message, IMyTerminalBlock block)
         {
+            if (block == null)
+            {
+                LogDebug($"{message}-failed, block is null");
+                return;
+            }
+
+            if (block.CubeGrid == null)
+            {
+                LogDebug($"NullGrid.{block.Name}:{message}");
+            }
             var blockName = string.IsNullOrEmpty(block.CustomName) ? block.Name : block.CustomName;
             LogDebug($"{block.CubeGrid.CustomName}.{blockName}({block.EntityId}):{message}");
         }

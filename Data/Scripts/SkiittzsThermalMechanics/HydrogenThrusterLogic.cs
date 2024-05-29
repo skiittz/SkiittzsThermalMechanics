@@ -26,10 +26,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             block = (IMyThrust)Container.Entity;
-            Logger.Instance.LogDebug("Initializing", block);
-
             if (block == null)
                 return;
+
+            Logger.Instance.LogDebug("Initializing", block);
 
             heatData = ThrusterHeatData.LoadData(block);
 
@@ -39,7 +39,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void ThrusterLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            Logger.Instance.LogDebug($"{arg1.CubeGrid.CustomName}.{arg1.CustomName}({arg1.EntityId}):Appending Custom Info");
+            Logger.Instance.LogDebug("Appending Custom Info", arg1);
             var logic = arg1.GameLogic.GetAs<HydrogenThrusterLogic>();
             if (logic == null)
                 return;
