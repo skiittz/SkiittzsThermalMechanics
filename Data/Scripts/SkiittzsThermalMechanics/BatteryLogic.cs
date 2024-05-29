@@ -20,8 +20,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Battery Logic");
             block = (IMyPowerProducer)Entity;
+            Logger.Instance.LogDebug("Initializing", block);
+            
             if (block == null)
                 return;
 
@@ -51,7 +52,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= BatteryLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= BatteryLogic_OnClose;
-                    PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<BatteryLogic>().heatData);
+                    if(block.IsPlayerOwned())
+                        PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<BatteryLogic>().heatData);
                 }
             }
             catch (Exception ex)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sandbox.ModAPI;
 using VRage;
 using VRage.Game;
 using VRage.Game.ModAPI;
@@ -139,6 +140,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         }
         #endregion
 
+        public void LogDebug(string message, IMyTerminalBlock block)
+        {
+            var blockName = string.IsNullOrEmpty(block.CustomName) ? block.Name : block.CustomName;
+            LogDebug($"{block.CubeGrid.CustomName}.{blockName}({block.EntityId}):{message}");
+        }
         public void LogDebug(string message)
         {
             if (!(Active && Debug))

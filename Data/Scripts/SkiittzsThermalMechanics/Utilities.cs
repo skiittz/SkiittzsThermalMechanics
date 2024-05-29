@@ -46,5 +46,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
             return faction == null || !faction.IsEveryoneNpc();
         }
+
+        public static float LowerBoundedBy(this float input, float bound)
+        {
+            return Math.Max(input, bound);
+        }
+
+        public static float UpperBoundedBy(this float input, float bound)
+        {
+            return Math.Min(input, bound);
+        }
     }
 }

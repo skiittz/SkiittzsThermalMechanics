@@ -25,9 +25,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private IMyThrust block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing H2 Thruster Logic");
-
             block = (IMyThrust)Container.Entity;
+            Logger.Instance.LogDebug("Initializing", block);
+
             if (block == null)
                 return;
 
@@ -39,7 +39,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void ThrusterLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            Logger.Instance.LogDebug("Appending Custom Info");
+            Logger.Instance.LogDebug($"{arg1.CubeGrid.CustomName}.{arg1.CustomName}({arg1.EntityId}):Appending Custom Info");
             var logic = arg1.GameLogic.GetAs<HydrogenThrusterLogic>();
             if (logic == null)
                 return;
@@ -56,7 +56,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ThrusterLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= ThrusterLogic_OnClose;
-                    ThrusterHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<HydrogenThrusterLogic>().heatData);
+                    var logic = obj.GameLogic.GetAs<HydrogenThrusterLogic>();
+                    if (logic == null || !logic.block.IsPlayerOwned()) return;
+                    ThrusterHeatData.SaveData(obj.EntityId, logic.heatData);
                 }
             }
             catch (Exception ex)
@@ -83,7 +85,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || heatData == null )
+            if (block == null || heatData == null || !block.IsPlayerOwned() )
                 return;
 
             heatData.ApplyHeating(block);

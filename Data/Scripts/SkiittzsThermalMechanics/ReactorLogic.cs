@@ -19,8 +19,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Reactor Logic");
             block = (IMyPowerProducer)Entity;
+            Logger.Instance.LogDebug("Initializing", block);
+
             if (block == null)
                 return;
 
@@ -51,7 +52,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ReactorLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= ReactorLogic_OnClose;
-                    PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<ReactorLogic>().heatData);
+                    if (block.IsPlayerOwned())
+                        PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<ReactorLogic>().heatData);
                 }
             }
             catch (Exception ex)

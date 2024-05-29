@@ -9,10 +9,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public class ThrusterHeatData
     {
-        public float CurrentHeat { get; private set; }
+        public float CurrentHeat { get; set; }
         private float passiveCooling => .25f;
         private float lastHeatDelta;
-        private const float thrustDivisor = 1000000;
+        private const float thrustDivisor = 100000;
         public void ApplyHeating(IMyThrust block)
         {
             lastHeatDelta = CalculateHeating(block);
@@ -48,6 +48,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public static void SaveData(long entityId, ThrusterHeatData data)
         {
+            if (data == null) return;
             try
             {
                 var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData));

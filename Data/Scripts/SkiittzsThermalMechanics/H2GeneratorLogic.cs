@@ -16,8 +16,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private IMyPowerProducer block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing H2 Engine Logic");
             block = (IMyPowerProducer)Entity;
+            Logger.Instance.LogDebug("Initializing", block);
+
             if (block == null)
                 return;
 
@@ -47,7 +48,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= H2EngineLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= H2EngineLogic_OnClose;
-                    PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<H2EngineLogic>().heatData);
+                    if (block.IsPlayerOwned())
+                        PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<H2EngineLogic>().heatData);
                 }
             }
             catch (Exception ex)

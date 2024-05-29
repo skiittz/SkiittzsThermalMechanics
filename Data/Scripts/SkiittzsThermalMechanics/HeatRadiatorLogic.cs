@@ -76,9 +76,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private IMyUpgradeModule block;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Radiator Logic");
-
             block = (Container.Entity as IMyUpgradeModule);
+            Logger.Instance.LogDebug("Initializing", block);
+
             if (block == null)
                 return;
 

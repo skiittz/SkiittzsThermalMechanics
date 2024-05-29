@@ -59,7 +59,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
             }
 
-            return new HeatSinkData { heatCapacity = block.BlockDefinition.SubtypeName == "LargeHeatSink" ? 1000000f : 500000f};
+            return new HeatSinkData { heatCapacity = block.BlockDefinition.SubtypeName == "LargeHeatSink" ? 500000f : 250000f};
         }
     }
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink" })]
@@ -70,8 +70,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            Logger.Instance.LogDebug("Initializing Heat Sink Logic");
             block = (IMyBeacon)Entity;
+            Logger.Instance.LogDebug("Initializing", block);
+
             if (block == null)
                 return;
 
@@ -83,8 +84,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, OnBlockDestroyed);
         }
 
-        public float ActiveCooling(float incomingHeat)
+        public float ActiveCooling(float heatValue)
         {
+            var incomingHeat = heatValue.LowerBoundedBy(0);
             if (HeatSinkData.availableCapacity > incomingHeat)
             {
                 HeatSinkData.currentHeat += incomingHeat;
@@ -107,7 +109,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
-            customInfo.Append($"Heat Level: {(logic.HeatSinkData.currentHeat / logic.HeatSinkData.heatCapacity) * 100}%\n");
+            var heatLevel = ((logic.HeatSinkData.currentHeat / logic.HeatSinkData.heatCapacity) * 100).LowerBoundedBy(0);
+            customInfo.Append($"Heat Level: {heatLevel:N0}%\n");
             customInfo.Append($"Current IR Detectable Distance: {logic.block.Radius:N0} meters \n");
         }
 
