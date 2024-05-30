@@ -24,13 +24,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 return;
 
             Logger.Instance.LogDebug("Initializing", block);
-
-            if (!PowerPlantHeatData.LoadData(block, out heatData))
-                heatData = new PowerPlantHeatData
-                {
-                    HeatCapacity = block.MaxOutput * 100,
-                    PassiveCooling = block.MaxOutput / 600
-                };
+            heatData = PowerPlantHeatData.LoadData(block);
+            heatData.HeatCapacity = block.MaxOutput * 100;
+            heatData.PassiveCooling = block.MaxOutput / 600;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;
         }

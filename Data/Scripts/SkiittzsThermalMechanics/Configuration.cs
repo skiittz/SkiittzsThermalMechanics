@@ -5,7 +5,7 @@ using VRageMath;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
-    public static class Configuration
+    public static partial class Configuration
     {
         private const string fileName = "BlockSettings.xml";
         public static bool IsLoaded = false;
@@ -13,11 +13,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static Dictionary<string, Dictionary<string, string>> BlockSettings;
         public static void Load()
         {
-            if (MyAPIGateway.Utilities.FileExistsInWorldStorage("BlockSettings",
-                    typeof(List<BlockType>)))
+            if (IsLoaded) return;
+            if (MyAPIGateway.Utilities.FileExistsInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession)))
             {
                 var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(fileName,
-                    typeof(List<BlockType>));
+                    typeof(SkiittzThermalMechanicsSession));
                 var content = reader.ReadToEnd();
                 reader.Close();
 
@@ -41,29 +41,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
             writer.Flush();
             writer.Close();
-        }
-
-        public static IEnumerable<BlockType> Defaults()
-        {
-            yield return new BlockType
-            {
-                SubTypeId = "SmallHeatRadiatorBlock",
-                Settings = new List<BlockSetting>
-                {
-                    new BlockSetting{ Name = "MaxDissipation", Setting = "5"},
-                    new BlockSetting{ Name = "StepSize", Setting = ".025"}
-                }
-            };
-
-            yield return new BlockType
-            {
-                SubTypeId = "LargeHeatRadiatorBlock",
-                Settings = new List<BlockSetting>
-                {
-                    new BlockSetting{ Name = "MaxDissipation", Setting = "50"},
-                    new BlockSetting{ Name = "StepSize", Setting = ".25"}
-                }
-            };
         }
 
         public static bool TryGetValue(string type, string configName, out string value)

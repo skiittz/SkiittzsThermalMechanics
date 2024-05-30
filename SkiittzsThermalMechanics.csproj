@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BatteryLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\DefaultConfigs.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSinkLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2GeneratorLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatRadiatorLogic.cs" />

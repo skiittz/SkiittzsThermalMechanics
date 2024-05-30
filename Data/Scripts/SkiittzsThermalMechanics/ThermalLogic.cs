@@ -108,9 +108,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             }
         }
 
-        public static bool LoadData(IMyPowerProducer block, out PowerPlantHeatData heatData)
+        public static PowerPlantHeatData LoadData(IMyPowerProducer block)
         {
             var file = $"{block.EntityId}.xml";
+            var heatData = new PowerPlantHeatData();
             try
             {
                 if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(PowerPlantHeatData)))
@@ -119,7 +120,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     string content = reader.ReadToEnd();
                     reader.Close();
                     heatData = MyAPIGateway.Utilities.SerializeFromXML<PowerPlantHeatData>(content);
-                    return true;
                 }
             }
             catch (Exception e)
@@ -127,8 +127,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
             }
 
-            heatData = null;
-            return false;
+            LoadConfigFileValues(ref heatData, block.BlockDefinition.SubtypeId);
+            return heatData;
+        }
+
+        public static void LoadConfigFileValues(ref PowerPlantHeatData data, string subTypeId)
+        {
+            if (!Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+            float heatCapacity;
+            float passiveCooling;
+            if(Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))
+                data.HeatCapacity = heatCapacity;
+            if (Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
+                data.PassiveCooling = passiveCooling;
         }
 
         private float CalculateCooling(IMyPowerProducer block, float availableHeatToSink)

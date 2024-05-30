@@ -73,15 +73,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             return data;
         }
 
-        public static void LoadConfigFileValues(ref RadiatorData data, string type)
+        public static void LoadConfigFileValues(ref RadiatorData data, string subTypeId)
         {
-            if (!Configuration.BlockSettings.ContainsKey(type)) return;
+            if (!Configuration.BlockSettings.ContainsKey(subTypeId)) return;
 
             float maxDissipationConfig;
             float stepSizeConfig;
-            if(Configuration.TryGetValue(type,"MaxDissipation", out maxDissipationConfig))
+            if(Configuration.TryGetValue(subTypeId,"MaxDissipation", out maxDissipationConfig))
                 data.maxDissipation = maxDissipationConfig;
-            if (Configuration.TryGetValue(type,"StepSize", out stepSizeConfig))
+            if (Configuration.TryGetValue(subTypeId,"StepSize", out stepSizeConfig))
                 data.stepSize = stepSizeConfig;
         }
     }

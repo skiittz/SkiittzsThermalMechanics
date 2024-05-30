@@ -25,14 +25,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 return;
 
             Logger.Instance.LogDebug("Initializing", block);
-            
-            if (!PowerPlantHeatData.LoadData(block, out heatData))
-                heatData = new PowerPlantHeatData
-                {
-                    HeatCapacity = (block as IMyBatteryBlock).MaxInput * 400,
-                    PassiveCooling = (block as IMyBatteryBlock).MaxInput / 30
-                };
-            
+            heatData = PowerPlantHeatData.LoadData(block);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += BatteryLogic_AppendingCustomInfo;
         }
