@@ -97,6 +97,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void RadiatorLogic_OnClose(IMyEntity obj)
         {
+            Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -114,6 +115,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
+            Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
+
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
             CreateControls();
@@ -129,7 +132,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || radiatorData == null ) return;
+            if (block == null || radiatorData == null || !block.IsPlayerOwned()) return;
+
+            Logger.Instance.LogDebug("Simulating Heat", block);
 
             if (!block.Enabled)
             {

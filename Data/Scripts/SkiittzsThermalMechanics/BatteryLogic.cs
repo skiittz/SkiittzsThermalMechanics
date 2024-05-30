@@ -46,6 +46,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void BatteryLogic_OnClose(IMyEntity obj)
         {
+            Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -64,6 +65,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
+            Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
+
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
@@ -80,9 +83,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || heatData == null )
+            Logger.Instance.LogDebug("Entering simulation method");
+            if (block == null || heatData == null || !block.IsPlayerOwned())
                 return;
-            
+
+            Logger.Instance.LogDebug("Simulating Heat", block);
+
             heatData.ApplyHeating(block);
             block.RefreshCustomInfo();
         }

@@ -112,6 +112,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void HeatSinkLogic_OnClose(IMyEntity obj)
         {
+            Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -129,6 +130,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
+            Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
+
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
@@ -145,10 +148,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
-            if (block == null || HeatSinkData == null ) return;
+            if (block == null || HeatSinkData == null || !block.IsPlayerOwned()) return;
+            
+            Logger.Instance.LogDebug("Simulating Heat", block);
+
             HeatSinkData.ventingHeat *= 0.999f;
 
-            HeatSinkData.currentHeat = Math.Max(0, HeatSinkData.currentHeat - Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat));
+            HeatSinkData.currentHeat = (HeatSinkData.currentHeat - Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat)).LowerBoundedBy(0);
             block.Radius = Math.Min(500000, HeatSinkData.ventingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
         }

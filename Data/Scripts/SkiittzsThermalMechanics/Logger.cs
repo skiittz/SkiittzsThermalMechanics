@@ -150,10 +150,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             if (block.CubeGrid == null)
             {
-                LogDebug($"NullGrid.{block.Name}:{message}");
+                LogDebug($"NullGrid.{block.Name}[{block.BlockDefinition.SubtypeId}]:{message}");
             }
             var blockName = string.IsNullOrEmpty(block.CustomName) ? block.Name : block.CustomName;
-            LogDebug($"{block.CubeGrid.CustomName}.{blockName}({block.EntityId}):{message}");
+            LogDebug($"{block.CubeGrid.CustomName}.{blockName}[{block.BlockDefinition.SubtypeId}]({block.EntityId}):{message}");
         }
         public void LogDebug(string message)
         {
