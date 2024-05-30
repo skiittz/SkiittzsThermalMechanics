@@ -130,7 +130,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             }
         }
 
-        public override void UpdateBeforeSimulation100()
+        public override void UpdateAfterSimulation100()
         {
             if (block == null || radiatorData == null || !block.IsPlayerOwned()) return;
 

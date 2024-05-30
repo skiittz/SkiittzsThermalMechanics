@@ -146,9 +146,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             ScriptHookCreator.AddBeaconHeatRatioControl();
         }
 
-        public override void UpdateBeforeSimulation100()
+        public override void UpdateAfterSimulation100()
         {
-            Logger.Instance.LogDebug("HeatSinkLogic.UpdateBeforeSimulation100");
+            Logger.Instance.LogDebug("HeatSinkLogic.UpdateAfterSimulation100");
             if (block == null || HeatSinkData == null || !block.IsPlayerOwned()) return;
             
             Logger.Instance.LogDebug("Simulating Heat", block);

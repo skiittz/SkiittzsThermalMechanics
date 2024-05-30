@@ -81,7 +81,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             ScriptHookCreator.AddBatteryHeatRatioControl();
         }
 
-        public override void UpdateBeforeSimulation100()
+        public override void UpdateAfterSimulation100()
         {
             Logger.Instance.LogDebug("Entering simulation method");
             if (block == null || heatData == null || !block.IsPlayerOwned())

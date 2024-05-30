@@ -77,7 +77,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             ScriptHookCreator.AddH2HeatRatioControl();
         }
 
-        public override void UpdateBeforeSimulation100()
+        public override void UpdateAfterSimulation100()
         {
             if(block == null || heatData == null || !block.IsPlayerOwned() ) return;
 
