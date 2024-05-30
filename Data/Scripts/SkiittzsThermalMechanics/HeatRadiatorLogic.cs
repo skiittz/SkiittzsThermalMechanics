@@ -60,7 +60,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             return new RadiatorData
             {
-                maxDissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 3f : 30f,
+                maxDissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 5f : 50f,
                 minColor = Color.Black,
                 maxColor = Color.Red
             };

@@ -148,6 +148,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateBeforeSimulation100()
         {
+            Logger.Instance.LogDebug("HeatSinkLogic.UpdateBeforeSimulation100");
             if (block == null || HeatSinkData == null || !block.IsPlayerOwned()) return;
             
             Logger.Instance.LogDebug("Simulating Heat", block);
