@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sandbox.ModAPI;
+using VRageMath;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
@@ -8,34 +9,35 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     {
         private const string fileName = "BlockSettings.xml";
         public static bool IsLoaded = false;
-        public static Dictionary<string,BlockType> BlockSettings;
+        private static List<BlockType> configs;
+        public static Dictionary<string, Dictionary<string, string>> BlockSettings;
         public static void Load()
         {
             if (MyAPIGateway.Utilities.FileExistsInWorldStorage("BlockSettings",
-                    typeof(Dictionary<string, BlockType>)))
+                    typeof(List<BlockType>)))
             {
                 var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(fileName,
                     typeof(List<BlockType>));
                 var content = reader.ReadToEnd();
                 reader.Close();
 
-                BlockSettings =
-                    MyAPIGateway.Utilities.SerializeFromXML<List<BlockType>>(content)
-                        .ToDictionary(x => x.SubTypeId);
+                configs =
+                    MyAPIGateway.Utilities.SerializeFromXML<List<BlockType>>(content);
             }
             else
             {
-                BlockSettings = Defaults().ToDictionary(x => x.SubTypeId);
+                configs = Defaults().ToList();
                 Save();
             }
 
+            BlockSettings = configs.ToDictionary(x => x.SubTypeId, x => x.Settings.ToDictionary(y => y.Name, y => y.Setting));
             IsLoaded = true;
         }
 
         public static void Save()
         {
             var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession));
-            var content = BlockSettings.Select(x => x.Value).ToList();
+            var content = configs.ToList();
             writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
             writer.Flush();
             writer.Close();
@@ -62,6 +64,36 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     new BlockSetting{ Name = "StepSize", Setting = ".25"}
                 }
             };
+        }
+
+        public static bool TryGetValue(string type, string configName, out string value)
+        {
+            value = string.Empty;
+            if (!BlockSettings.ContainsKey(type))
+                return false;
+            if (!BlockSettings[type].ContainsKey(configName))
+                return false;
+
+            value = BlockSettings[type][configName];
+            return true;
+        }
+
+        public static bool TryGetValue(string type, string configName, out float value)
+        {
+            value = 0f;
+            if (!BlockSettings.ContainsKey(type))
+                return false;
+            if (!BlockSettings[type].ContainsKey(configName))
+                return false;
+
+            string strVal;
+            if (!TryGetValue(type, configName, out strVal))
+                return false;
+
+            if(float.TryParse(strVal, out value))
+                return true;
+
+            return false;
         }
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Xml.Serialization;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
@@ -18,8 +19,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public class RadiatorData
     {
+        [XmlIgnore]
         public float maxDissipation { get; set; }
-        public float stepSize => 0.25f;
+        [XmlIgnore]
+        public float stepSize {get;set;}
         public float currentDissipation { get; set; }
         public float heatRatio => currentDissipation / maxDissipation;
         public Color minColor { get; set; }
@@ -43,6 +46,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static RadiatorData LoadData(IMyUpgradeModule block)
         {
             var file = $"{block.EntityId}.xml";
+            RadiatorData data = null;
             try
             {
                 if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(RadiatorData)))
@@ -50,7 +54,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(RadiatorData));
                     string content = reader.ReadToEnd();
                     reader.Close();
-                    return MyAPIGateway.Utilities.SerializeFromXML<RadiatorData>(content);
+                    data = MyAPIGateway.Utilities.SerializeFromXML<RadiatorData>(content);
                 }
             }
             catch (Exception e)
@@ -58,12 +62,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
             }
 
-            return new RadiatorData
-            {
-                maxDissipation = block.BlockDefinition.SubtypeName == "SmallHeatRadiatorBlock" ? 5f : 50f,
-                minColor = Color.Black,
-                maxColor = Color.Red
-            };
+            if(data == null)
+                data =  new RadiatorData
+                {
+                    minColor = Color.Black,
+                    maxColor = Color.Red
+                };
+
+            LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId);
+            return data;
+        }
+
+        public static void LoadConfigFileValues(ref RadiatorData data, string type)
+        {
+            if (!Configuration.BlockSettings.ContainsKey(type)) return;
+
+            float maxDissipationConfig;
+            float stepSizeConfig;
+            if(Configuration.TryGetValue(type,"MaxDissipation", out maxDissipationConfig))
+                data.maxDissipation = maxDissipationConfig;
+            if (Configuration.TryGetValue(type,"StepSize", out stepSizeConfig))
+                data.stepSize = stepSizeConfig;
         }
     }
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new []
