@@ -6,6 +6,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     {
         #region Radiators
 
+        #region DLC
         public static IEnumerable<BlockType> Defaults()
         {
             yield return new BlockType
@@ -27,10 +28,34 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     new BlockSetting { Name = "StepSize", Setting = ".25" }
                 }
             };
-
             #endregion
 
-        #region Batteries
+            #region NonDlc
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallHeatRadiatorBlockUgly",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MaxDissipation", Setting = "5" },
+                    new BlockSetting { Name = "StepSize", Setting = ".025" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeHeatRadiatorBlockUgly",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MaxDissipation", Setting = "50" },
+                    new BlockSetting { Name = "StepSize", Setting = ".25" }
+                }
+            };
+
+            #endregion
+            #endregion
+
+            #region Batteries
 
             #region Vanilla
             yield return new BlockType
@@ -202,6 +227,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             #region Heatsinks
 
+            #region DLC
             yield return new BlockType
             {
                 SubTypeId = "LargeHeatSink",
@@ -221,6 +247,31 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
                 }
             };
+            #endregion
+
+            #region NonDlc
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeHeatSinkUgly",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "500000" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallHeatSinkUgly",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "50000" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                }
+            };
+
+            #endregion
             #endregion
 
             #region Thrusters

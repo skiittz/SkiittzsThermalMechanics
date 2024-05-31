@@ -7,9 +7,13 @@
 
     <Entry Class="LargeBlocks" BlueprintSubtypeId="UpgradeModule/LargeHeatRadiatorBlock" />
     <Entry Class="SmallBlocks" BlueprintSubtypeId="UpgradeModule/SmallHeatRadiatorBlock" />
-
+    <Entry Class="LargeBlocks" BlueprintSubtypeId="UpgradeModule/LargeHeatRadiatorBlockUgly" />
+    <Entry Class="SmallBlocks" BlueprintSubtypeId="UpgradeModule/SmallHeatRadiatorBlockUgly" />
+    
     <Entry Class="LargeBlocks" BlueprintSubtypeId="Beacon/LargeHeatSink" />
     <Entry Class="SmallBlocks" BlueprintSubtypeId="Beacon/SmallHeatSink" />
+    <Entry Class="LargeBlocks" BlueprintSubtypeId="Beacon/LargeHeatSinkUgly" />
+    <Entry Class="SmallBlocks" BlueprintSubtypeId="Beacon/SmallHeatSinkUgly" />
 
   </BlueprintClassEntries>
 </Definitions>

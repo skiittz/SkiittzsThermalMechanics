@@ -79,7 +79,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         }
     }
 
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink" })]
+    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink", "LargeHeatSinkUgly", "SmallHeatSinkUgly" })]
     public class HeatSinkLogic : MyGameLogicComponent
     {
         private IMyBeacon block;

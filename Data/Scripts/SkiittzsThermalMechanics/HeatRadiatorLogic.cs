@@ -87,7 +87,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     }
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new []
     {
-        "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock"
+        "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock","LargeHeatRadiatorBlockUgly", "SmallHeatRadiatorBlockUgly"
     })]
     public class HeatRadiatorLogic : MyGameLogicComponent
     {
@@ -269,6 +269,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private void SetBladeRotation()
         {
             var entity = (MyEntity)block;
+            if (!entity.Subparts.Any())
+                return;
                 // Define the rotation limits
                 var minRotation = MathHelper.ToRadians(-45); // Fully closed position
                 var maxRotation = MathHelper.ToRadians(45); // Fully open position (90 degrees in radians)

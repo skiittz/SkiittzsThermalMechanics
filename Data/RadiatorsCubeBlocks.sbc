@@ -69,7 +69,8 @@
             <LightRadiusBounds Min="1" Max="10" Default="3.6" />
             <LightOffsetBounds Min="0" Max="5" Default="0.5" />
             <IdleSound>BlockOxyGenIdle</IdleSound>
-        </Definition>
+            <DLC>Warfare2</DLC>
+  </Definition>
 
         <Definition xsi:type="MyObjectBuilder_UpgradeModuleDefinition">
             <Id>
@@ -136,6 +137,121 @@
             <LightIntensityBounds Min="0.5" Max="10" Default="2" />
             <LightRadiusBounds Min="1" Max="10" Default="3.6" />
             <LightOffsetBounds Min="0" Max="5" Default="0.5" />
+            <DLC>Warfare2</DLC>
         </Definition>
+
+    <Definition xsi:type="MyObjectBuilder_UpgradeModuleDefinition">
+      <Id>
+        <TypeId>UpgradeModule</TypeId>
+        <SubtypeId>LargeHeatRadiatorBlockUgly</SubtypeId>
+      </Id>
+      <DisplayName>Heat Radiator</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\HeatVent.dds</Icon>
+      <Description>Provides grid cooling by venting heat into space</Description>
+      <CubeSize>Large</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <PowerDependency>0.6</PowerDependency>
+      <ColorMinimalPower Hex ="#FF0000" />
+      <ColorMaximalPower Hex ="#FFC514" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\Large\light.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="15" />
+        <Component Subtype="Construction" Count="20" />
+        <Component Subtype="LargeTube" Count="10" />
+        <Component Subtype="Motor" Count="5" />
+        <Component Subtype="Thrust" Count="25" />
+        <Component Subtype="Superconductor" Count="25" />
+        <Component Subtype="SteelPlate" Count="10" />
+      </Components>
+      <CriticalComponent Subtype="Thrust" Index="0" />
+      <MountPoints>
+        <MountPoint Side="Back" StartX="0.2" StartY="0.2" EndX="0.8" EndY="0.8" Default="true" />
+        <MountPoint Side="Left" StartX="0.5" StartY="0.38" EndX="0.9" EndY="0.62" />
+        <MountPoint Side="Right" StartX="0.1" StartY="0.38" EndX="0.5" EndY="0.62" />
+        <MountPoint Side="Bottom" StartX="0.38" StartY="0.5" EndX="0.62" EndY="0.9" />
+        <MountPoint Side="Top" StartX="0.38" StartY="0.1" EndX="0.62" EndY="0.5" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.33" File="Models\Cubes\Large\LightConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\LightConstruction_2.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\LightConstruction_3.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>HeatRadiatorBlockUgly</BlockPairName>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>20</BuildTimeSeconds>
+      <RequiredPowerInput>0.0002</RequiredPowerInput>
+      <Public>true</Public>
+      <MirroringX>Y</MirroringX>
+      <MirroringY>X</MirroringY>
+      <DamageEffectName>Damage_WeapExpl_Damaged</DamageEffectName>
+      <DamagedSound>ParticleWeapExpl</DamagedSound>
+      <PCU>50</PCU>
+      <IsAirTight>true</IsAirTight>
+      <EmissiveMaterialName>Emissive</EmissiveMaterialName>
+      <LightDummyName>light</LightDummyName>
+      <LightFalloffBounds Min="0" Max="3" Default="1.3" />
+      <LightIntensityBounds Min="0.5" Max="10" Default="2" />
+      <LightRadiusBounds Min="1" Max="10" Default="3.6" />
+      <LightOffsetBounds Min="0" Max="5" Default="0.5" />
+      <IdleSound>BlockOxyGenIdle</IdleSound>
+    </Definition>
+
+    <Definition xsi:type="MyObjectBuilder_UpgradeModuleDefinition">
+      <Id>
+        <TypeId>UpgradeModule</TypeId>
+        <SubtypeId>SmallHeatRadiatorBlockUgly</SubtypeId>
+      </Id>
+      <DisplayName>Heat Radiator</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\HeatVent_small.dds</Icon>
+      <Description>Provides grid cooling by venting heat into space</Description>
+      <CubeSize>Small</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <PowerDependency>0.6</PowerDependency>
+      <ColorMinimalPower Hex ="#FF0000" />
+      <ColorMaximalPower Hex ="#FFC514" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\Small\light.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="1" />
+        <Component Subtype="Construction" Count="1" />
+        <Component Subtype="LargeTube" Count="1" />
+        <Component Subtype="Motor" Count="1" />
+        <Component Subtype="Thrust" Count="1" />
+        <Component Subtype="Superconductor" Count="5" />
+        <Component Subtype="SteelPlate" Count="1" />
+      </Components>
+      <CriticalComponent Subtype="Thrust" Index="0" />
+      <MountPoints>
+        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" />
+        <MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+        <MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\LightConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\LightConstruction_2.mwm" />
+      </BuildProgressModels>     
+      <BlockPairName>HeatRadiatorBlockUgly</BlockPairName>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>6</BuildTimeSeconds>
+      <RequiredPowerInput>0.0002</RequiredPowerInput>
+      <Public>true</Public>
+      <MirroringX>Y</MirroringX>
+      <MirroringY>X</MirroringY>
+      <DamageEffectName>Damage_WeapExpl_Damaged</DamageEffectName>
+      <DamagedSound>ParticleWeapExpl</DamagedSound>
+      <PCU>50</PCU>
+      <IsAirTight>true</IsAirTight>
+      <EmissiveMaterialName>Emissive</EmissiveMaterialName>
+      <LightDummyName>light</LightDummyName>
+      <LightFalloffBounds Min="0" Max="3" Default="1.3" />
+      <LightIntensityBounds Min="0.5" Max="10" Default="2" />
+      <LightRadiusBounds Min="1" Max="10" Default="3.6" />
+      <LightOffsetBounds Min="0" Max="5" Default="0.5" />
+    </Definition>
   </CubeBlocks>
 </Definitions>

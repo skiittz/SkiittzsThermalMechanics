@@ -12,8 +12,12 @@
       <ItemIds>
         <string>UpgradeModule/LargeHeatRadiatorBlock</string>
         <string>UpgradeModule/SmallHeatRadiatorBlock</string>
+        <string>UpgradeModule/LargeHeatRadiatorBlockUgly</string>
+        <string>UpgradeModule/SmallHeatRadiatorBlockUgly</string>
         <string>Beacon/LargeHeatSink</string>
         <string>Beacon/SmallHeatSink</string>
+        <string>Beacon/LargeHeatSinkUgly</string>
+        <string>Beacon/SmallHeatSinkUgly</string>
       </ItemIds>
     </Category> 
   </CategoryClasses>
