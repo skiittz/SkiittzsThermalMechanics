@@ -10,13 +10,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class ThrusterHeatData
     {
         public float CurrentHeat { get; set; }
-        private float passiveCooling => .25f;
-        private float lastHeatDelta;
-        private const float thrustDivisor = 100000;
+        public float PassiveCooling { get; set; }
+        public float LastHeatDelta { get; set; }
+        public float MwHeatPerNewtonThrust { get; set; }
+
         public void ApplyHeating(IMyThrust block)
         {
-            lastHeatDelta = CalculateHeating(block);
-            CurrentHeat += lastHeatDelta;
+            LastHeatDelta = CalculateHeating(block);
+            CurrentHeat += LastHeatDelta;
             CurrentHeat -= CalculateCooling(block, CurrentHeat);
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
@@ -32,8 +33,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
             Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/thrustDivisor}) - (passiveCooling {passiveCooling})");
-            return (block.CurrentThrust/thrustDivisor) - passiveCooling;
+            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/ MwHeatPerNewtonThrust}) - (passiveCooling {PassiveCooling})");
+            return (block.CurrentThrust/ MwHeatPerNewtonThrust) - PassiveCooling;
         }
 
         public void AppendCustomThermalInfo(IMyThrust block, StringBuilder customInfo)

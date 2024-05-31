@@ -222,6 +222,95 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 }
             };
             #endregion
+
+            #region Thrusters
+
+            #region Vanilla
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockLargeHydrogenThrust",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.25" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockSmallHydrogenThrust",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockLargeHydrogenThrust",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockSmallHydrogenThrust",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0025" }
+                }
+            };
+            #endregion
+            #region Vanilla
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockLargeHydrogenThrustIndustrial",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.25" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockSmallHydrogenThrustIndustrial",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockLargeHydrogenThrustIndustrial",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockSmallHydrogenThrustIndustrial",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0025" }
+                }
+            };
+            #endregion
+
+            #endregion
         }
     }
 }
