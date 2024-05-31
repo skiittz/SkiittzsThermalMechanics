@@ -158,26 +158,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!block.Enabled)
             {
                 radiatorData.currentDissipation = Math.Max(0, (radiatorData.currentDissipation - radiatorData.stepSize));
-                return;
             }
+            else
+            {
+                var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
+                if (beacon == null)
+                    return;
 
-            var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
-            if (beacon == null)
-                return;
-
-            if (radiatorData.currentDissipation < 0)
-                radiatorData.currentDissipation = 0;
-            if (radiatorData.currentDissipation > radiatorData.maxDissipation)
-                radiatorData.currentDissipation = radiatorData.maxDissipation;
-
-            var dissipatedHeat = beacon.RemoveHeat(radiatorData.currentDissipation);
-            if (dissipatedHeat < radiatorData.currentDissipation)
-                radiatorData.currentDissipation -= radiatorData.stepSize;
-            if(dissipatedHeat == radiatorData.currentDissipation)
-                if(radiatorData.currentDissipation + radiatorData.stepSize < radiatorData.maxDissipation)
-                    radiatorData.currentDissipation += radiatorData.stepSize;
-                else
+                if (radiatorData.currentDissipation < 0)
+                    radiatorData.currentDissipation = 0;
+                if (radiatorData.currentDissipation > radiatorData.maxDissipation)
                     radiatorData.currentDissipation = radiatorData.maxDissipation;
+
+                var dissipatedHeat = beacon.RemoveHeat(radiatorData.currentDissipation);
+                if (dissipatedHeat < radiatorData.currentDissipation)
+                    radiatorData.currentDissipation -= radiatorData.stepSize;
+                if (dissipatedHeat == radiatorData.currentDissipation)
+                    if (radiatorData.currentDissipation + radiatorData.stepSize < radiatorData.maxDissipation)
+                        radiatorData.currentDissipation += radiatorData.stepSize;
+                    else
+                        radiatorData.currentDissipation = radiatorData.maxDissipation;
+            }
 
             Animate();
             block.RefreshCustomInfo();
