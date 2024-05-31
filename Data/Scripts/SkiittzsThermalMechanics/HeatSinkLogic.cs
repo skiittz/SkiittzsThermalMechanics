@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Xml.Serialization;
 using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces;
@@ -20,9 +21,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class HeatSinkData
     {
         public float CurrentHeat;
+        [XmlIgnore]
         public float HeatCapacity { get; set; }
         public float AvailableCapacity => HeatCapacity - CurrentHeat;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
+        [XmlIgnore] 
         public float PassiveCooling { get; set; }
         public float VentingHeat;
 

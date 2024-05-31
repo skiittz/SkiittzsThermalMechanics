@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 using Sandbox.ModAPI;
 using VRage.Utils;
 using VRageMath;
@@ -10,8 +11,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class ThrusterHeatData
     {
         public float CurrentHeat { get; set; }
+        [XmlIgnore]
         public float PassiveCooling { get; set; }
         public float LastHeatDelta { get; set; }
+        [XmlIgnore]
         public float MwHeatPerNewtonThrust { get; set; }
 
         public void ApplyHeating(IMyThrust block)
@@ -87,12 +90,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class PowerPlantHeatData
     {
         public float CurrentHeat { get; set; }
+        [XmlIgnore]
         public float HeatCapacity { get; set; }
+        [XmlIgnore]
         public float PassiveCooling { get; set; }
-        public float lastHeatDelta;
+        public float LastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
-        public int overHeatCycles { get; set; }
-        private float availableHeatCapacity => HeatCapacity - CurrentHeat;
+        public int OverHeatCycles { get; set; }
+        public float AvailableHeatCapacity => HeatCapacity - CurrentHeat;
 
         public static void SaveData(long entityId, PowerPlantHeatData data)
         {
@@ -150,7 +155,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public float FeedHeatBack(float incomingHeat)
         {
-            var acceptedHeat = Math.Min(incomingHeat, availableHeatCapacity);
+            var acceptedHeat = Math.Min(incomingHeat, AvailableHeatCapacity);
             CurrentHeat += acceptedHeat;
             return acceptedHeat;
         }
@@ -174,16 +179,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             var heatGenerated = CalculateHeating(block);
             var heatDissipated = CalculateCooling(block, CurrentHeat + heatGenerated);
-            lastHeatDelta = heatGenerated - heatDissipated;
-            CurrentHeat += lastHeatDelta;
+            LastHeatDelta = heatGenerated - heatDissipated;
+            CurrentHeat += LastHeatDelta;
             if (CurrentHeat < 0)
                 CurrentHeat = 0;
 
             if (CurrentHeat >= HeatCapacity)
             {
                 WarnPlayer(block, $"Taking damage due to overheating!");
-                overHeatCycles++;
-                var thermalFatigue = CurrentHeat + (CurrentHeat * (overHeatCycles/10));
+                OverHeatCycles++;
+                var thermalFatigue = CurrentHeat + (CurrentHeat * (OverHeatCycles/10));
                 block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
                 if (block.IsFunctional)
                     CurrentHeat = HeatCapacity;
@@ -226,19 +231,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             debugInfo.Append($"DEBUG INFO - {block.CustomName}:\n");
             debugInfo.Append($"Current Heat: {CurrentHeat}\n");
             debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
-            debugInfo.Append($"Last Heat Delta: {lastHeatDelta}\n");
+            debugInfo.Append($"Last Heat Delta: {LastHeatDelta}\n");
             debugInfo.Append($"Remaining Seconds: {remainingSeconds}");
             Logger.Instance.LogDebug(debugInfo.ToString());
 
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
-            customInfo.Append($"Time until {(lastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
+            customInfo.Append($"Time until {(LastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
         }
 
         private const float SecondsPer100Ticks = 1.667f;
         private float RemainingSeconds()
         {
-            var numerator = lastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat;
-            var denominator = lastHeatDelta == 0 ? 1 : Math.Abs(lastHeatDelta);
+            var numerator = LastHeatDelta > 0 ? HeatCapacity - CurrentHeat : CurrentHeat;
+            var denominator = LastHeatDelta == 0 ? 1 : Math.Abs(LastHeatDelta);
             return (numerator / denominator) * SecondsPer100Ticks;
         }
 
