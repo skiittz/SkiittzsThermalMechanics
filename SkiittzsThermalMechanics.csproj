@@ -134,6 +134,8 @@
     <None Include="Data\BlueprintClasses.sbc" />
     <None Include="Data\RadiatorsCubeBlocks.sbc" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="thumb.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

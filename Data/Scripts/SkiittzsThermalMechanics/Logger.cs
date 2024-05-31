@@ -43,7 +43,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             Active = true;
             Enabled = true;
-            Debug = true;
+            Debug = false;
         }
 
         public override string ToString()
