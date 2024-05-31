@@ -22,8 +22,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             Logger.Instance.LogDebug("Initializing", block);
             heatData = PowerPlantHeatData.LoadData(block);
-            heatData.HeatCapacity = block.MaxOutput * 500;
-            heatData.PassiveCooling = block.MaxOutput / 5;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += H2EngineLogic_AppendingCustomInfo;
         }

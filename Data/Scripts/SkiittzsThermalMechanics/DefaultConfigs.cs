@@ -87,7 +87,118 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             };
 
             #endregion
-        #endregion
+            #endregion
+
+            #region Reactors
+            #region Vanilla
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockSmallGenerator",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "50" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0008" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockLargeGenerator",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "1475" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.02458" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockSmallGenerator",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "1500" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                }
+            }; 
+            
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockLargeGenerator",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "30000" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.5" }
+                }
+            };
+            #endregion
+            #region Warfare 2
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockSmallGeneratorWarfare2",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "50" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0008" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockLargeGeneratorWarfare2",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "1475" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.02458" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockSmallGeneratorWarfare2",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "1500" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockLargeGeneratorWarfare2",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "30000" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.5" }
+                }
+            };
+            #endregion
+            #endregion
+
+            #region H2 Engines
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeHydrogenEngine",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "2500" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "1" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallHydrogenEngine",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "250" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.1" }
+                }
+            };
+
+            #endregion
         }
     }
 }
