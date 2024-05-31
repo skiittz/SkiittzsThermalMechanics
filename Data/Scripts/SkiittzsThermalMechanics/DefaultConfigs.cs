@@ -199,6 +199,29 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             };
 
             #endregion
+
+            #region Heatsinks
+
+            yield return new BlockType
+            {
+                SubTypeId = "LargeHeatSink",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "500000" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallHeatSink",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting { Name = "HeatCapacity", Setting = "50000" },
+                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                }
+            };
+            #endregion
         }
     }
 }

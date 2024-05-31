@@ -19,12 +19,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public class HeatSinkData
     {
-        public float currentHeat;
-        public float heatCapacity;
-        public float availableCapacity => heatCapacity - currentHeat;
-        public float HeatRatio => (currentHeat / heatCapacity);
-        public float passiveCooling = 0.01f;
-        public float ventingHeat;
+        public float CurrentHeat;
+        public float HeatCapacity { get; set; }
+        public float AvailableCapacity => HeatCapacity - CurrentHeat;
+        public float HeatRatio => (CurrentHeat / HeatCapacity);
+        public float PassiveCooling { get; set; }
+        public float VentingHeat;
 
         public static void SaveData(long entityId, HeatSinkData data)
         {
@@ -44,6 +44,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static HeatSinkData LoadData(IMyBeacon block)
         {
             var file = $"{block.EntityId}.xml";
+            var data = new HeatSinkData();
             try
             {
                 if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(HeatSinkData)))
@@ -51,7 +52,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(HeatSinkData));
                     string content = reader.ReadToEnd();
                     reader.Close();
-                    return MyAPIGateway.Utilities.SerializeFromXML<HeatSinkData>(content);
+                    data = MyAPIGateway.Utilities.SerializeFromXML<HeatSinkData>(content);
                 }
             }
             catch (Exception e)
@@ -59,9 +60,22 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
             }
 
-            return new HeatSinkData { heatCapacity = block.BlockDefinition.SubtypeName == "LargeHeatSink" ? 500000f : 250000f};
+            LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId);
+            return data;
+        }
+
+        public static void LoadConfigFileValues(ref HeatSinkData data, string subTypeId)
+        {
+            if (!Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+            float heatCapacity;
+            float passiveCooling;
+            if (Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))
+                data.HeatCapacity = heatCapacity;
+            if (Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
+                data.PassiveCooling = passiveCooling;
         }
     }
+
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink" })]
     public class HeatSinkLogic : MyGameLogicComponent
     {
@@ -87,15 +101,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public float ActiveCooling(float heatValue)
         {
             var incomingHeat = heatValue.LowerBoundedBy(0);
-            if (HeatSinkData.availableCapacity > incomingHeat)
+            if (HeatSinkData.AvailableCapacity > incomingHeat)
             {
-                HeatSinkData.currentHeat += incomingHeat;
+                HeatSinkData.CurrentHeat += incomingHeat;
                 return incomingHeat;
             }
             else
             {
-                var remainingHeat = incomingHeat - HeatSinkData.availableCapacity;
-                HeatSinkData.currentHeat = HeatSinkData.heatCapacity;
+                var remainingHeat = incomingHeat - HeatSinkData.AvailableCapacity;
+                HeatSinkData.CurrentHeat = HeatSinkData.HeatCapacity;
                 return incomingHeat - remainingHeat;
             }
         }
@@ -105,7 +119,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             Logger.Instance.LogDebug("Appending Custom Info", arg1);
 
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
-            var heatLevel = ((logic.HeatSinkData.currentHeat / logic.HeatSinkData.heatCapacity) * 100).LowerBoundedBy(0);
+            var heatLevel = ((logic.HeatSinkData.CurrentHeat / logic.HeatSinkData.HeatCapacity) * 100).LowerBoundedBy(0);
             customInfo.Append($"Heat Level: {heatLevel:N0}%\n");
             customInfo.Append($"Current IR Detectable Distance: {logic.block.Radius:N0} meters \n");
         }
@@ -153,10 +167,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             
             Logger.Instance.LogDebug("Simulating Heat", block);
 
-            HeatSinkData.ventingHeat *= 0.999f;
+            HeatSinkData.VentingHeat *= 0.999f;
 
-            HeatSinkData.currentHeat = (HeatSinkData.currentHeat - Math.Min(HeatSinkData.passiveCooling, HeatSinkData.currentHeat)).LowerBoundedBy(0);
-            block.Radius = Math.Min(500000, HeatSinkData.ventingHeat);
+            HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
+            block.Radius = Math.Min(500000, HeatSinkData.VentingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
         }
 
@@ -169,7 +183,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if(HeatSinkData == null)
                 return;
 
-            var currentHeat = HeatSinkData.currentHeat;
+            var currentHeat = HeatSinkData.CurrentHeat;
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
 
             var beacons = new List<IMyBeacon>();
@@ -204,9 +218,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public float RemoveHeat(float heat)
         {
-            var dissipatedHeat = Math.Min(heat, HeatSinkData.currentHeat);
-            HeatSinkData.currentHeat -= dissipatedHeat;
-            HeatSinkData.ventingHeat += dissipatedHeat;
+            var dissipatedHeat = Math.Min(heat, HeatSinkData.CurrentHeat);
+            HeatSinkData.CurrentHeat -= dissipatedHeat;
+            HeatSinkData.VentingHeat += dissipatedHeat;
 
             return dissipatedHeat;
         }
