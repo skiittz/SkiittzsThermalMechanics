@@ -310,6 +310,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             };
             #endregion
 
+            yield return new BlockType
+            {
+                SubTypeId = "ChatBot",
+                Settings = new List<BlockSetting>
+                {
+                    new BlockSetting{ Name = "ChatBotName", Setting = "ChattyMcChatface" },
+                    new BlockSetting{ Name = "ChatFrequencyLimiter", Setting = "20"},
+                    new BlockSetting{ Name = "ChatBotCommand_StopMessages", Setting = "stfu"},
+                    new BlockSetting{ Name = "ChatBotCommand_Help", Setting = "help"},
+                    new BlockSetting{ Name = "ChatBotCommand_ReEnable", Setting = "on"}
+                }
+            };
+
             #endregion
         }
     }

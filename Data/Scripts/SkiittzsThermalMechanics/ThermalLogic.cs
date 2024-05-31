@@ -199,7 +199,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             if (CurrentHeat >= HeatCapacity)
             {
-                WarnPlayer(block, $"Taking damage due to overheating!");
+                ChatBot.WarnPlayer(block, $"Taking damage due to overheating!");
                 OverHeatCycles++;
                 var thermalFatigue = CurrentHeat + (CurrentHeat * (OverHeatCycles / 10));
                 block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
@@ -207,33 +207,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     CurrentHeat = HeatCapacity;
                 else
                 {
-                    WarnPlayer(block, "Disabled due to heat damage.");
+                    ChatBot.WarnPlayer(block, "Disabled due to heat damage.");
                     CurrentHeat = 0;
                 }
             }
             else if (CurrentHeat > HeatCapacity * .8)
             {
                 block.SetDamageEffect(true);
-                WarnPlayer(block, $"Approaching heat threshold.");
+                ChatBot.WarnPlayer(block, $"Approaching heat threshold.");
             }
             else
                 block.SetDamageEffect(false);
-        }
-
-        private const int messageDelay = 10;
-        private int messageAttemptCounter = 0;
-        private void WarnPlayer(IMyPowerProducer block, string message)
-        {
-            if (block.OwnerId != MyAPIGateway.Session.Player.IdentityId)
-                return;
-            if (messageAttemptCounter == 0)
-            {
-                MyAPIGateway.Utilities.ShowMessage("Thermal Monitoring System", $"{block.CubeGrid.CustomName}-{block.CustomName}: {message}");
-            }
-
-            messageAttemptCounter++;
-            if (messageAttemptCounter == messageDelay)
-                messageAttemptCounter = 0;
         }
 
         public void AppendCustomThermalInfo(IMyPowerProducer block, StringBuilder customInfo)

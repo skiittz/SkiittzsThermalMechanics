@@ -111,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BatteryLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatCommandHandler.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\DefaultConfigs.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSinkLogic.cs" />

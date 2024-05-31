@@ -27,11 +27,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink"));
             beacons = beacons.OrderByDescending(x => x.Radius).ToList();
 
+            if(!beacons.Any())
+                ChatBot.WarnPlayer(grid, "It seems you have no heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!");
 
             if (beacons.Count > 1)
                 for (int i = 1; i < beacons.Count; i++)
                     beacons[i].Enabled = false;
-
+            
             var beacon = beacons.FirstOrDefault();
             if (beacon == null)
                 return null;

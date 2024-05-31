@@ -7,7 +7,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public static partial class Configuration
     {
-        private const string fileName = "BlockSettings.xml";
+        private const string fileName = "Settings.xml";
         public static bool IsLoaded = false;
         private static List<BlockType> configs;
         public static Dictionary<string, Dictionary<string, string>> BlockSettings;
@@ -32,6 +32,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             BlockSettings = configs.ToDictionary(x => x.SubTypeId, x => x.Settings.ToDictionary(y => y.Name, y => y.Setting));
             IsLoaded = true;
+
+            if (BlockSettings.ContainsKey("ChatBot"))
+                ChatBot.InitConfigs(BlockSettings["ChatBot"]);
+            ChatBot.LoadDisabledPlayers();
         }
 
         public static void Save()

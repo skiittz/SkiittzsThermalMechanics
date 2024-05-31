@@ -175,6 +175,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
             block.Radius = Math.Min(500000, HeatSinkData.VentingHeat);
             (block as IMyTerminalBlock).RefreshCustomInfo();
+
+            if(HeatSinkData.HeatRatio >= 0.8)
+                ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!");
+            else if (HeatSinkData.HeatRatio >= 0.5)
+                ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?");
         }
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)
