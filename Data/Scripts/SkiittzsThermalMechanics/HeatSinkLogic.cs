@@ -184,6 +184,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 return;
 
             var currentHeat = HeatSinkData.CurrentHeat;
+            var ventingHeat = HeatSinkData.VentingHeat;
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
 
             var beacons = new List<IMyBeacon>();
@@ -192,6 +193,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             {
                 var gameLogic = heatSink.GameLogic.GetAs<HeatSinkLogic>();
                 var sunkHeat = gameLogic.ActiveCooling(currentHeat);
+                gameLogic.HeatSinkData.VentingHeat += ventingHeat;
                 currentHeat -= sunkHeat;
             }
 
@@ -208,9 +210,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     heatData = powerProducer.GameLogic.GetAs<H2EngineLogic>().heatData;
                 else
                     continue;
-                
 
-                var sunkHeat = heatData.FeedHeatBack(currentHeat);
+                var ventingHeatPortion = ventingHeat / powerProducers.Count;
+                var sunkHeat = heatData.FeedHeatBack(currentHeat+ventingHeatPortion);
                 currentHeat -= sunkHeat;
             }
 
