@@ -36,8 +36,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
             Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
-            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust/ MwHeatPerNewtonThrust}) - (passiveCooling {PassiveCooling})");
-            return (block.CurrentThrust/ MwHeatPerNewtonThrust) - PassiveCooling;
+            Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust * MwHeatPerNewtonThrust}) - (passiveCooling {PassiveCooling})");
+            return (block.CurrentThrust * MwHeatPerNewtonThrust) - PassiveCooling;
         }
 
         public void AppendCustomThermalInfo(IMyThrust block, StringBuilder customInfo)
@@ -69,6 +69,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static ThrusterHeatData LoadData(IMyThrust block)
         {
             var file = $"{block.EntityId}.xml";
+            var data = new ThrusterHeatData();
             try
             {
                 if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(ThrusterHeatData)))
@@ -76,7 +77,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(ThrusterHeatData));
                     string content = reader.ReadToEnd();
                     reader.Close();
-                    return MyAPIGateway.Utilities.SerializeFromXML<ThrusterHeatData>(content);
+                    data = MyAPIGateway.Utilities.SerializeFromXML<ThrusterHeatData>(content);
                 }
             }
             catch (Exception e)
@@ -84,7 +85,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
             }
 
-            return new ThrusterHeatData();
+            LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId);
+            return data;
+        }
+
+        public static void LoadConfigFileValues(ref ThrusterHeatData data, string subTypeId)
+        {
+            if (!Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+            float mwHeatPerNewtonThrust;
+            float passiveCooling;
+            if (Configuration.TryGetValue(subTypeId, "MwHeatPerNewtonThrust", out mwHeatPerNewtonThrust))
+                data.MwHeatPerNewtonThrust = mwHeatPerNewtonThrust;
+            if (Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
+                data.PassiveCooling = passiveCooling;
         }
     }
     public class PowerPlantHeatData
@@ -142,7 +155,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (!Configuration.BlockSettings.ContainsKey(subTypeId)) return;
             float heatCapacity;
             float passiveCooling;
-            if(Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))
+            if (Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))
                 data.HeatCapacity = heatCapacity;
             if (Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
                 data.PassiveCooling = passiveCooling;
@@ -172,7 +185,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             var additionalGeneratorCount = Math.Min(powerProducers.Count - 1, 0);
             var spamPenalty = 1 + (additionalGeneratorCount / 100);
-            return block.CurrentOutput*spamPenalty - PassiveCooling;
+            return block.CurrentOutput * spamPenalty - PassiveCooling;
         }
 
         public void ApplyHeating(IMyPowerProducer block)
@@ -188,7 +201,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             {
                 WarnPlayer(block, $"Taking damage due to overheating!");
                 OverHeatCycles++;
-                var thermalFatigue = CurrentHeat + (CurrentHeat * (OverHeatCycles/10));
+                var thermalFatigue = CurrentHeat + (CurrentHeat * (OverHeatCycles / 10));
                 block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
                 if (block.IsFunctional)
                     CurrentHeat = HeatCapacity;
