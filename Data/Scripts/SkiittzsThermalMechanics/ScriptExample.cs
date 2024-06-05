@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +9,7 @@ using Sandbox.ModAPI.Interfaces.Terminal;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
-    /*
+    
     public class ScriptExample : MyGridProgram
     {
         public void Main(string argument, UpdateType updateSource)
@@ -30,5 +30,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             }
         }
     }
-    */
+    
 }
+*/
