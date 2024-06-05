@@ -132,8 +132,10 @@
     <None Include="Data\BlockCategories.sbc" />
     <None Include="Data\BlueprintClasses.sbc" />
     <None Include="Data\RadiatorsCubeBlocks.sbc" />
+    <None Include="modinfo.sbmi" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="metadata.mod" />
     <Content Include="thumb.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
