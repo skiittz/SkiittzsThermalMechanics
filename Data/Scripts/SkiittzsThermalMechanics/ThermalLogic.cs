@@ -35,8 +35,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
-            //Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
-            //Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentThrust * MwHeatPerNewtonThrust}) - (passiveCooling {PassiveCooling})");
             return (block.CurrentThrust * MwHeatPerNewtonThrust) - PassiveCooling;
         }
 
@@ -45,7 +43,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var debugInfo = new StringBuilder();
             debugInfo.Append($"DEBUG INFO - {block.CustomName}:\n");
             debugInfo.Append($"Current Heat: {CurrentHeat}\n");
-            //Logger.Instance.LogDebug(debugInfo.ToString());
 
             customInfo.Append($"Current Heat Level: {CurrentHeat}\n");
         }
@@ -177,8 +174,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             if (!block.IsWorking || !block.IsPlayerOwned())
                 return 0;
-            //Logger.Instance.LogDebug($"{block.CustomName} is {(block.Enabled ? "Enabled" : "Disabled")}");
-            //Logger.Instance.LogDebug($"{block.CustomName} heating: (currentOutput {block.CurrentOutput}) - (passiveCooling {PassiveCooling})");
+
             var powerProducers = new List<IMyPowerProducer>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
             gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
@@ -230,7 +226,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
             debugInfo.Append($"Last Heat Delta: {LastHeatDelta}\n");
             debugInfo.Append($"Remaining Seconds: {remainingSeconds}");
-            //Logger.Instance.LogDebug(debugInfo.ToString());
 
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
             customInfo.Append($"Time until {(LastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
@@ -246,9 +241,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private static string TimeUntilOverheatDisplay(float remainingSeconds)
         {
-            //Logger.Instance.LogDebug($"Display Timespan for remaining seconds: {remainingSeconds}");
             var timeSpan = TimeSpan.FromSeconds(remainingSeconds);
-
             return timeSpan.ToString("hh\\:mm\\:ss");
         }
     }

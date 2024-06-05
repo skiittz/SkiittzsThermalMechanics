@@ -90,8 +90,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block == null)
                 return;
 
-            //Logger.Instance.LogDebug("Initializing", block);
-
             HeatSinkData = HeatSinkData.LoadData(block);
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
@@ -118,8 +116,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void HeatSinkLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            //Logger.Instance.LogDebug("Appending Custom Info", arg1);
-
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
             var heatLevel = ((logic.HeatSinkData.CurrentHeat / logic.HeatSinkData.HeatCapacity) * 100).LowerBoundedBy(0);
             customInfo.Append($"Heat Level: {heatLevel:N0}%\n");
@@ -128,7 +124,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void HeatSinkLogic_OnClose(IMyEntity obj)
         {
-            //Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -146,8 +141,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            //Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
-
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
 
@@ -164,11 +157,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateAfterSimulation100()
         {
-            //Logger.Instance.LogDebug("HeatSinkLogic.UpdateAfterSimulation100");
             if (block == null || HeatSinkData == null || !block.IsPlayerOwned()) return;
             
-            //Logger.Instance.LogDebug("Simulating Heat", block);
-
             HeatSinkData.VentingHeat *= 0.999f;
 
             HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);

@@ -107,8 +107,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block == null)
                 return;
 
-            //Logger.Instance.LogDebug("Initializing", block);
-
             radiatorData = RadiatorData.LoadData(block);
 
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
@@ -117,7 +115,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            //Logger.Instance.LogDebug("Appending Custom Info",arg1);
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
             customInfo.Append(
                 $"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)");
@@ -125,7 +122,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void RadiatorLogic_OnClose(IMyEntity obj)
         {
-            //Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -143,8 +139,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            //Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
-
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
             CreateControls();
@@ -175,8 +169,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
                 weatherMult = 1 / Configuration.WeatherSettings[currentWeatherEffect.Weather];
             }
-
-            //Logger.Instance.LogDebug("Simulating Heat", block);
 
             if (!block.Enabled)
             {
