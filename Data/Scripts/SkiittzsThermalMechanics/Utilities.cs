@@ -44,7 +44,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public static bool IsPlayerOwned(this IMyCubeBlock block)
         {
-            Logger.Instance.LogDebug("IsPlayerOwned", block as IMyTerminalBlock);
+            //Logger.Instance.LogDebug("IsPlayerOwned", block as IMyTerminalBlock);
             var ownerId = block.OwnerId;
             var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
             return faction == null || !faction.IsEveryoneNpc();

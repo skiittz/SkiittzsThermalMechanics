@@ -1,341 +1,343 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Sandbox.ModAPI;
-using VRage;
-using VRage.Game;
-using VRage.Game.ModAPI;
-using VRage.Utils;
+﻿//logger sometimes crashes and needs to be pulled out.  keeping here temporarily as a reference point, im going to have to write my own.
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
-{
-    [VRage.Game.Components.MySessionComponentDescriptor(VRage.Game.Components.MyUpdateOrder.NoUpdate)]
-    class LoggerSession : VRage.Game.Components.MySessionComponentBase
-    {
-        public override void Init(MyObjectBuilder_SessionComponent sessionComponent)
-        {
-            base.Init(sessionComponent);
-            Logger.Instance.Init();
-        }
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using Sandbox.ModAPI;
+//using VRage;
+//using VRage.Game;
+//using VRage.Game.ModAPI;
+//using VRage.Utils;
 
-        protected override void UnloadData()
-        {
-            base.UnloadData();
-            Logger.Instance.Close();
-        }
-    }
+//namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+//{
+//    [VRage.Game.Components.MySessionComponentDescriptor(VRage.Game.Components.MyUpdateOrder.NoUpdate)]
+//    class LoggerSession : VRage.Game.Components.MySessionComponentBase
+//    {
+//        public override void Init(MyObjectBuilder_SessionComponent sessionComponent)
+//        {
+//            base.Init(sessionComponent);
+//            //Logger.Instance.Init();
+//        }
 
-    // This is a singleton class for logging
-    // This should be generic, so it can be included without modification in other mods.
-    public class Logger
-    {
-        System.IO.TextWriter m_logger = null;
-        static private Logger m_instance = null;
-        StringBuilder m_cache = new StringBuilder(60);
-        string m_filename = "debug";            // Default filename if not specified
-        int m_indent = 0;
-        bool m_init = false;
-        bool m_loggedSession = false;
-        string m_modName = typeof(Logger).ToString();
+//        protected override void UnloadData()
+//        {
+//            base.UnloadData();
+//            //Logger.Instance.Close();
+//        }
+//    }
 
-        private Logger()
-        {
-            Active = true;
-            Enabled = true;
-            Debug = false;
-        }
+//    // This is a singleton class for logging
+//    // This should be generic, so it can be included without modification in other mods.
+//    public class Logger
+//    {
+//        System.IO.TextWriter m_logger = null;
+//        static private Logger m_instance = null;
+//        StringBuilder m_cache = new StringBuilder(60);
+//        string m_filename = "debug";            // Default filename if not specified
+//        int m_indent = 0;
+//        bool m_init = false;
+//        bool m_loggedSession = false;
+//        string m_modName = typeof(Logger).ToString();
 
-        public override string ToString()
-        {
-            return this.GetType().FullName;
-        }
+//        private Logger()
+//        {
+//            Active = false;
+//            Enabled = false;
+//            Debug = false;
+//        }
 
-        static public Logger Instance
-        {
-            get
-            {
-                if (m_instance == null)
-                    m_instance = new Logger();
-                return m_instance;
-            }
-        }
+//        public override string ToString()
+//        {
+//            return this.GetType().FullName;
+//        }
 
-        /// <summary>
-        /// Toggles whether to log messages (exceptions are always logged).
-        /// </summary>
-        public bool Active { get; set; }
+//        static public Logger Instance
+//        {
+//            get
+//            {
+//                if (m_instance == null)
+//                    m_instance = new Logger();
+//                return m_instance;
+//            }
+//        }
 
-        /// <summary>
-        /// Toggles whether to log exceptions even if not Active. This is useful during startup.
-        /// </summary>
-        public bool Enabled { get; set; }
+//        /// <summary>
+//        /// Toggles whether to log messages (exceptions are always logged).
+//        /// </summary>
+//        public bool Active { get; set; }
 
-        /// <summary>
-        /// Enable debug logging (admin only)
-        /// </summary>
-        public bool Debug { get; set; }
+//        /// <summary>
+//        /// Toggles whether to log exceptions even if not Active. This is useful during startup.
+//        /// </summary>
+//        public bool Enabled { get; set; }
 
-        public void Init(string filename = null, bool force = false)
-        {
-            if (!string.IsNullOrEmpty(filename))
-                m_modName = filename;
+//        /// <summary>
+//        /// Enable debug logging (admin only)
+//        /// </summary>
+//        public bool Debug { get; set; }
 
-            if (!m_init || !string.IsNullOrEmpty(filename) || force)
-            {
-                m_init = true;
+//        public void Init(string filename = null, bool force = false)
+//        {
+//            if (!string.IsNullOrEmpty(filename))
+//                m_modName = filename;
 
-                if (!string.IsNullOrEmpty(filename))
-                    Filename = filename;
+//            if (!m_init || !string.IsNullOrEmpty(filename) || force)
+//            {
+//                m_init = true;
 
-                LogMessage("Starting new session: " + filename);
-                LogSession();
-            }
-        }
+//                if (!string.IsNullOrEmpty(filename))
+//                    Filename = filename;
 
-        public int IndentLevel
-        {
-            get { return m_indent; }
-            set
-            {
-                if (value < 0)
-                    value = 0;
-                m_indent = value;
-            }
-        }
+//                LogMessage("Starting new session: " + filename);
+//                LogSession();
+//            }
+//        }
 
-        public string Filename
-        {
-            get { return m_filename; }
-            set { m_filename = value; }
-        }
+//        public int IndentLevel
+//        {
+//            get { return m_indent; }
+//            set
+//            {
+//                if (value < 0)
+//                    value = 0;
+//                m_indent = value;
+//            }
+//        }
 
-        public void LogSession()
-        {
-            if (!m_loggedSession && Sandbox.ModAPI.MyAPIGateway.Session != null)
-            {
-                LogMessage(string.Format("IsServer: {0}", Sandbox.ModAPI.MyAPIGateway.Session.IsServer));
-                LogMessage(string.Format("CreativeMode: {0}", Sandbox.ModAPI.MyAPIGateway.Session.CreativeMode));
-                LogMessage(string.Format("OnlineMode: {0}", Sandbox.ModAPI.MyAPIGateway.Session.OnlineMode));
-                LogMessage(string.Format("IsDedicated: {0}", Sandbox.ModAPI.MyAPIGateway.Utilities?.IsDedicated));
-                m_loggedSession = true;
-            }
-        }
+//        public string Filename
+//        {
+//            get { return m_filename; }
+//            set { m_filename = value; }
+//        }
 
-        #region Mulithreaded logging
-        public void LogDebugOnGameThread(string message)
-        {
-            if (Debug)
-                Sandbox.ModAPI.MyAPIGateway.Utilities.InvokeOnGameThread(delegate { Instance.LogDebug(message); });
-        }
+//        public void LogSession()
+//        {
+//            if (!m_loggedSession && Sandbox.ModAPI.MyAPIGateway.Session != null)
+//            {
+//                LogMessage(string.Format("IsServer: {0}", Sandbox.ModAPI.MyAPIGateway.Session.IsServer));
+//                LogMessage(string.Format("CreativeMode: {0}", Sandbox.ModAPI.MyAPIGateway.Session.CreativeMode));
+//                LogMessage(string.Format("OnlineMode: {0}", Sandbox.ModAPI.MyAPIGateway.Session.OnlineMode));
+//                LogMessage(string.Format("IsDedicated: {0}", Sandbox.ModAPI.MyAPIGateway.Utilities?.IsDedicated));
+//                m_loggedSession = true;
+//            }
+//        }
 
-        public void LogMessageOnGameThread(string message)
-        {
-            Sandbox.ModAPI.MyAPIGateway.Utilities.InvokeOnGameThread(delegate { Instance.LogMessage(message); });
-        }
+//        #region Mulithreaded logging
+//        public void LogDebugOnGameThread(string message)
+//        {
+//            if (Debug)
+//                Sandbox.ModAPI.MyAPIGateway.Utilities.InvokeOnGameThread(delegate { Instance.LogDebug(message); });
+//        }
 
-        public void LogExceptionOnGameThread(Exception ex, bool showNotice = true)
-        {
-            Sandbox.ModAPI.MyAPIGateway.Utilities.InvokeOnGameThread(delegate { Instance.LogException(ex, showNotice); });
-        }
-        #endregion
+//        public void LogMessageOnGameThread(string message)
+//        {
+//            Sandbox.ModAPI.MyAPIGateway.Utilities.InvokeOnGameThread(delegate { Instance.LogMessage(message); });
+//        }
 
-        public void LogDebug(string message, IMyTerminalBlock block)
-        {
-            if (block == null)
-            {
-                LogDebug($"{message}-failed, block is null");
-                return;
-            }
+//        public void LogExceptionOnGameThread(Exception ex, bool showNotice = true)
+//        {
+//            Sandbox.ModAPI.MyAPIGateway.Utilities.InvokeOnGameThread(delegate { Instance.LogException(ex, showNotice); });
+//        }
+//        #endregion
 
-            if (block.CubeGrid == null)
-            {
-                LogDebug($"NullGrid.{block.Name}[{block.BlockDefinition.SubtypeId}]:{message}");
-            }
-            var blockName = string.IsNullOrEmpty(block.CustomName) ? block.Name : block.CustomName;
-            LogDebug($"{block.CubeGrid.CustomName}.{blockName}[{block.BlockDefinition.SubtypeId}]({block.EntityId}):{message}");
-        }
-        public void LogDebug(string message)
-        {
-            if (!(Active && Debug))
-                return;
+//        public void LogDebug(string message, IMyTerminalBlock block)
+//        {
+//            if (block == null)
+//            {
+//                LogDebug($"{message}-failed, block is null");
+//                return;
+//            }
 
-            if ((Sandbox.ModAPI.MyAPIGateway.Multiplayer != null && Sandbox.ModAPI.MyAPIGateway.Multiplayer.IsServer) ||
-                (Sandbox.ModAPI.MyAPIGateway.Session != null && Sandbox.ModAPI.MyAPIGateway.Session.Player != null && Sandbox.ModAPI.MyAPIGateway.Session.Player.PromoteLevel >= MyPromoteLevel.Admin))
-                LogMessage(message, severity: MyLogSeverity.Debug);
-        }
+//            if (block.CubeGrid == null)
+//            {
+//                LogDebug($"NullGrid.{block.Name}[{block.BlockDefinition.SubtypeId}]:{message}");
+//            }
+//            var blockName = string.IsNullOrEmpty(block.CustomName) ? block.Name : block.CustomName;
+//            LogDebug($"{block.CubeGrid.CustomName}.{blockName}[{block.BlockDefinition.SubtypeId}]({block.EntityId}):{message}");
+//        }
+//        public void LogDebug(string message)
+//        {
+//            if (!(Active && Debug))
+//                return;
 
-        public void LogAssert(bool trueExpression, string message)
-        {
-            if (!Active)
-                return;
+//            if ((Sandbox.ModAPI.MyAPIGateway.Multiplayer != null && Sandbox.ModAPI.MyAPIGateway.Multiplayer.IsServer) ||
+//                (Sandbox.ModAPI.MyAPIGateway.Session != null && Sandbox.ModAPI.MyAPIGateway.Session.Player != null && Sandbox.ModAPI.MyAPIGateway.Session.Player.PromoteLevel >= MyPromoteLevel.Admin))
+//                LogMessage(message, severity: MyLogSeverity.Debug);
+//        }
 
-            if (!trueExpression)
-            {
-                var assertmsg = new StringBuilder(message.Length + 30);
-                assertmsg.Append("ASSERT FAILURE: ");
-                assertmsg.Append(message);
-                LogMessage(assertmsg.ToString(), severity: MyLogSeverity.Warning);
-            }
-        }
+//        public void LogAssert(bool trueExpression, string message)
+//        {
+//            if (!Active)
+//                return;
 
-        public delegate void LoggerCallback(string param1, int time = 2000);
+//            if (!trueExpression)
+//            {
+//                var assertmsg = new StringBuilder(message.Length + 30);
+//                assertmsg.Append("ASSERT FAILURE: ");
+//                assertmsg.Append(message);
+//                LogMessage(assertmsg.ToString(), severity: MyLogSeverity.Warning);
+//            }
+//        }
 
-        public void LogException(Exception ex, bool showNotice = true)
-        {
-            if (!Enabled)
-                return;
+//        public delegate void LoggerCallback(string param1, int time = 2000);
 
-            if (showNotice && Sandbox.ModAPI.MyAPIGateway.Utilities != null && Sandbox.ModAPI.MyAPIGateway.Session != null)
-            {
-                if (Sandbox.ModAPI.MyAPIGateway.Session.Player == null)
-                    Sandbox.ModAPI.MyAPIGateway.Utilities.SendMessage(Filename + ": AN ERROR OCCURED! Please report to server admin! Admin: look for " + Filename + ".log.");
-                else
-                    Sandbox.ModAPI.MyAPIGateway.Utilities.ShowMessage(Filename, "AN ERROR OCCURED! Please report and send " + Filename + ".log in the mod storage directory!");
-            }
+//        public void LogException(Exception ex, bool showNotice = true)
+//        {
+//            if (!Enabled)
+//                return;
 
-            // Make sure we ALWAYS log an exception
-            var previousActive = Active;
-            Active = true;
-            Instance.LogMessage(string.Format("Exception: {0}\r\n{1}", ex.Message, ex.StackTrace), severity: MyLogSeverity.Error);
+//            if (showNotice && Sandbox.ModAPI.MyAPIGateway.Utilities != null && Sandbox.ModAPI.MyAPIGateway.Session != null)
+//            {
+//                if (Sandbox.ModAPI.MyAPIGateway.Session.Player == null)
+//                    Sandbox.ModAPI.MyAPIGateway.Utilities.SendMessage(Filename + ": AN ERROR OCCURED! Please report to server admin! Admin: look for " + Filename + ".log.");
+//                else
+//                    Sandbox.ModAPI.MyAPIGateway.Utilities.ShowMessage(Filename, "AN ERROR OCCURED! Please report and send " + Filename + ".log in the mod storage directory!");
+//            }
 
-            if (ex.InnerException != null)
-            {
-                Instance.LogMessage("Inner Exception Information:", severity: MyLogSeverity.Error);
-                Instance.LogException(ex.InnerException, showNotice);
-            }
-            Active = previousActive;
-        }
+//            // Make sure we ALWAYS log an exception
+//            var previousActive = Active;
+//            Active = true;
+//            Instance.LogMessage(string.Format("Exception: {0}\r\n{1}", ex.Message, ex.StackTrace), severity: MyLogSeverity.Error);
 
-        public void LogMessage(string message, LoggerCallback callback = null, int time = 2000, MyLogSeverity severity = MyLogSeverity.Info)
-        {
-            if (!Active)
-                return;
+//            if (ex.InnerException != null)
+//            {
+//                Instance.LogMessage("Inner Exception Information:", severity: MyLogSeverity.Error);
+//                Instance.LogException(ex.InnerException, showNotice);
+//            }
+//            Active = previousActive;
+//        }
 
-            m_cache.Append(DateTime.Now.ToString("[HH:mm:ss.fff] "));
+//        public void LogMessage(string message, LoggerCallback callback = null, int time = 2000, MyLogSeverity severity = MyLogSeverity.Info)
+//        {
+//            if (!Active)
+//                return;
 
-            for (int x = 0; x < IndentLevel; x++)
-                m_cache.Append("  ");
+//            m_cache.Append(DateTime.Now.ToString("[HH:mm:ss.fff] "));
 
-            m_cache.AppendFormat("{0}{1}", message, (m_logger != null ? m_logger.NewLine : "\r\n"));
+//            for (int x = 0; x < IndentLevel; x++)
+//                m_cache.Append("  ");
 
-            if (callback != null)
-                callback(message, time);          // Callback to pass message to another logger (ie. ShowNotification)
+//            m_cache.AppendFormat("{0}{1}", message, (m_logger != null ? m_//Logger.NewLine : "\r\n"));
 
-            MyLog.Default.Log(severity, m_modName + ": " + message);
+//            if (callback != null)
+//                callback(message, time);          // Callback to pass message to another logger (ie. ShowNotification)
 
-            if (m_init)
-            {
-                if (m_logger == null)
-                {
-                    try
-                    {
-                        m_logger = Sandbox.ModAPI.MyAPIGateway.Utilities.WriteFileInWorldStorage(Filename + ".log", typeof(Logger));
-                    }
-                    catch { return; }
-                }
+//            MyLog.Default.Log(severity, m_modName + ": " + message);
 
-                //Sandbox.ModAPI.MyAPIGateway.Utilities.ShowNotification("writing: " + message);
-                m_logger.Write(m_cache);
-                m_logger.Flush();
-                m_cache.Clear();
-            }
-        }
+//            if (m_init)
+//            {
+//                if (m_logger == null)
+//                {
+//                    try
+//                    {
+//                        m_logger = Sandbox.ModAPI.MyAPIGateway.Utilities.WriteFileInWorldStorage(Filename + ".log", typeof(Logger));
+//                    }
+//                    catch { return; }
+//                }
 
-        public void Close()
-        {
-            if (!m_init)
-                return;
+//                //Sandbox.ModAPI.MyAPIGateway.Utilities.ShowNotification("writing: " + message);
+//                m_//Logger.Write(m_cache);
+//                m_//Logger.Flush();
+//                m_cache.Clear();
+//            }
+//        }
 
-            if (m_logger == null)
-                return;
+//        public void Close()
+//        {
+//            if (!m_init)
+//                return;
 
-            if (m_cache.Length > 0)
-                m_logger.Write(m_cache);
+//            if (m_logger == null)
+//                return;
 
-            m_cache.Clear();
-            IndentLevel = 0;
-            LogMessage("Ending session");
-            m_logger.Flush();
-            m_logger.Close();
-            m_logger = null;
-            m_init = false;
-        }
-    }
+//            if (m_cache.Length > 0)
+//                m_//Logger.Write(m_cache);
 
-    public static class PlayerExtensions
-    {
-        // This should only be called on the client where it will have an effect, so we can cache it for now
-        // TODO: Refresh this cache on a promotion event
-        static Dictionary<ulong, bool> _cachedResult = new Dictionary<ulong, bool>();
+//            m_cache.Clear();
+//            IndentLevel = 0;
+//            LogMessage("Ending session");
+//            m_//Logger.Flush();
+//            m_//Logger.Close();
+//            m_logger = null;
+//            m_init = false;
+//        }
+//    }
+
+//    public static class PlayerExtensions
+//    {
+//        // This should only be called on the client where it will have an effect, so we can cache it for now
+//        // TODO: Refresh this cache on a promotion event
+//        static Dictionary<ulong, bool> _cachedResult = new Dictionary<ulong, bool>();
 
 
-        /// <summary>
-        /// Determines if the player is an Administrator of the active game session.
-        /// </summary>
-        /// <param name="player"></param>
-        /// <returns>True if is specified player is an Administrator in the active game.</returns>
-        public static bool IsAdminOld(this IMyPlayer player)
-        {
-            // Offline mode. You are the only player.
-            if (Sandbox.ModAPI.MyAPIGateway.Session.OnlineMode == MyOnlineModeEnum.OFFLINE)
-            {
-                return true;
-            }
+//        /// <summary>
+//        /// Determines if the player is an Administrator of the active game session.
+//        /// </summary>
+//        /// <param name="player"></param>
+//        /// <returns>True if is specified player is an Administrator in the active game.</returns>
+//        public static bool IsAdminOld(this IMyPlayer player)
+//        {
+//            // Offline mode. You are the only player.
+//            if (Sandbox.ModAPI.MyAPIGateway.Session.OnlineMode == MyOnlineModeEnum.OFFLINE)
+//            {
+//                return true;
+//            }
 
-            // Hosted game, and the player is hosting the server.
-            if (player.IsHost())
-            {
-                return true;
-            }
+//            // Hosted game, and the player is hosting the server.
+//            if (player.IsHost())
+//            {
+//                return true;
+//            }
 
-            if (!_cachedResult.ContainsKey(player.SteamUserId))
-            {
-                // determine if client is admin of Dedicated server.
-                var clients = Sandbox.ModAPI.MyAPIGateway.Session.GetCheckpoint("null").Clients;
-                if (clients != null)
-                {
-                    var client = clients.FirstOrDefault(c => c.SteamId == player.SteamUserId && c.IsAdmin);
-                    _cachedResult[player.SteamUserId] = (client != null);
-                    return _cachedResult[player.SteamUserId];
-                    // If user is not in the list, automatically assume they are not an Admin.
-                }
+//            if (!_cachedResult.ContainsKey(player.SteamUserId))
+//            {
+//                // determine if client is admin of Dedicated server.
+//                var clients = Sandbox.ModAPI.MyAPIGateway.Session.GetCheckpoint("null").Clients;
+//                if (clients != null)
+//                {
+//                    var client = clients.FirstOrDefault(c => c.SteamId == player.SteamUserId && c.IsAdmin);
+//                    _cachedResult[player.SteamUserId] = (client != null);
+//                    return _cachedResult[player.SteamUserId];
+//                    // If user is not in the list, automatically assume they are not an Admin.
+//                }
 
-                // clients is null when it's not a dedicated server.
-                // Otherwise Treat everyone as Normal Player.
-                _cachedResult[player.SteamUserId] = false;
-                return false;
-            }
-            else
-            {
-                //Logger.Instance.LogMessage("Using cached value");
-                if (Logger.Instance.Debug)
-                    Sandbox.ModAPI.MyAPIGateway.Utilities.ShowNotification("Used cached admin check.", 100);
-                return _cachedResult[player.SteamUserId];
-            }
-        }
+//                // clients is null when it's not a dedicated server.
+//                // Otherwise Treat everyone as Normal Player.
+//                _cachedResult[player.SteamUserId] = false;
+//                return false;
+//            }
+//            else
+//            {
+//                ////Logger.Instance.LogMessage("Using cached value");
+//                if (//Logger.Instance.Debug)
+//                    Sandbox.ModAPI.MyAPIGateway.Utilities.ShowNotification("Used cached admin check.", 100);
+//                return _cachedResult[player.SteamUserId];
+//            }
+//        }
 
-        public static bool IsHost(this IMyPlayer player)
-        {
-            return Sandbox.ModAPI.MyAPIGateway.Multiplayer.IsServerPlayer(player.Client);
-        }
-    }
+//        public static bool IsHost(this IMyPlayer player)
+//        {
+//            return Sandbox.ModAPI.MyAPIGateway.Multiplayer.IsServerPlayer(player.Client);
+//        }
+//    }
 
-    public static class Profiler
-    {
-        public static bool Enabled = true;
-        private static string prefix = Logger.Instance.Filename + "_";
+//    public static class Profiler
+//    {
+//        public static bool Enabled = true;
+//        private static string prefix = //Logger.Instance.Filename + "_";
 
-        public static void Begin(string name)
-        {
-            if (Enabled)
-                MySimpleProfiler.Begin(prefix + name);
-        }
+//        public static void Begin(string name)
+//        {
+//            if (Enabled)
+//                MySimpleProfiler.Begin(prefix + name);
+//        }
 
-        public static void End(string name)
-        {
-            if (Enabled)
-                MySimpleProfiler.End(prefix + name);
-        }
-    }
-}
+//        public static void End(string name)
+//        {
+//            if (Enabled)
+//                MySimpleProfiler.End(prefix + name);
+//        }
+//    }
+//}

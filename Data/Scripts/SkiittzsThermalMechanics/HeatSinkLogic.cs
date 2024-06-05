@@ -21,15 +21,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     public class HeatSinkData
     {
         public float CurrentHeat;
-        [XmlIgnore]
-        public float HeatCapacity { get; set; }
+        [XmlIgnore] public float HeatCapacity { get; set; }
         public float AvailableCapacity => HeatCapacity - CurrentHeat;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
-        [XmlIgnore] 
-        public float PassiveCooling { get; set; }
+        [XmlIgnore] public float PassiveCooling { get; set; }
         public float VentingHeat;
+        public float WeatherMult = 1;
 
-        public static void SaveData(long entityId, HeatSinkData data)
+    public static void SaveData(long entityId, HeatSinkData data)
         {
             try
             {
@@ -91,7 +90,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block == null)
                 return;
 
-            Logger.Instance.LogDebug("Initializing", block);
+            //Logger.Instance.LogDebug("Initializing", block);
 
             HeatSinkData = HeatSinkData.LoadData(block);
 
@@ -119,7 +118,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void HeatSinkLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            Logger.Instance.LogDebug("Appending Custom Info", arg1);
+            //Logger.Instance.LogDebug("Appending Custom Info", arg1);
 
             var logic = arg1.GameLogic.GetAs<HeatSinkLogic>();
             var heatLevel = ((logic.HeatSinkData.CurrentHeat / logic.HeatSinkData.HeatCapacity) * 100).LowerBoundedBy(0);
@@ -129,7 +128,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void HeatSinkLogic_OnClose(IMyEntity obj)
         {
-            Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
+            //Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -147,7 +146,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
+            //Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
 
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
@@ -165,15 +164,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateAfterSimulation100()
         {
-            Logger.Instance.LogDebug("HeatSinkLogic.UpdateAfterSimulation100");
+            //Logger.Instance.LogDebug("HeatSinkLogic.UpdateAfterSimulation100");
             if (block == null || HeatSinkData == null || !block.IsPlayerOwned()) return;
             
-            Logger.Instance.LogDebug("Simulating Heat", block);
+            //Logger.Instance.LogDebug("Simulating Heat", block);
 
             HeatSinkData.VentingHeat *= 0.999f;
 
             HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
-            block.Radius = Math.Min(500000, HeatSinkData.VentingHeat);
+            block.Radius = Math.Min(500000, HeatSinkData.VentingHeat*HeatSinkData.WeatherMult);
             (block as IMyTerminalBlock).RefreshCustomInfo();
 
             if(HeatSinkData.HeatRatio >= 0.8)
@@ -226,9 +225,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         }
 
-        public float RemoveHeat(float heat)
+        public float RemoveHeat(float heat, float weatherMult)
         {
-            var dissipatedHeat = Math.Min(heat, HeatSinkData.CurrentHeat);
+            var dissipatedHeat = Math.Min(heat, HeatSinkData.CurrentHeat) * weatherMult;
             HeatSinkData.CurrentHeat -= dissipatedHeat;
             HeatSinkData.VentingHeat += dissipatedHeat;
 

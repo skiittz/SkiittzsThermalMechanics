@@ -4,28 +4,29 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
     public static partial class Configuration
     {
-        #region Radiators
-
-        #region DLC
-        public static IEnumerable<BlockType> Defaults()
+        
+        public static IEnumerable<BlockType> DefaultBlockSettings()
         {
+            #region Radiators
+
+            #region DLC
             yield return new BlockType
             {
                 SubTypeId = "SmallHeatRadiatorBlock",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MaxDissipation", Setting = "5" },
-                    new BlockSetting { Name = "StepSize", Setting = ".025" }
+                    new Setting { Name = "MaxDissipation", Value = "5" },
+                    new Setting { Name = "StepSize", Value = ".025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeHeatRadiatorBlock",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MaxDissipation", Setting = "50" },
-                    new BlockSetting { Name = "StepSize", Setting = ".25" }
+                    new Setting { Name = "MaxDissipation", Value = "50" },
+                    new Setting { Name = "StepSize", Value = ".25" }
                 }
             };
             #endregion
@@ -35,20 +36,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "SmallHeatRadiatorBlockUgly",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MaxDissipation", Setting = "5" },
-                    new BlockSetting { Name = "StepSize", Setting = ".025" }
+                    new Setting { Name = "MaxDissipation", Value = "5" },
+                    new Setting { Name = "StepSize", Value = ".025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeHeatRadiatorBlockUgly",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MaxDissipation", Setting = "50" },
-                    new BlockSetting { Name = "StepSize", Setting = ".25" }
+                    new Setting { Name = "MaxDissipation", Value = "50" },
+                    new Setting { Name = "StepSize", Value = ".25" }
                 }
             };
 
@@ -61,30 +62,30 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockBatteryBlock",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "4800" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.4" }
+                    new Setting { Name = "HeatCapacity", Value = "4800" },
+                    new Setting { Name = "PassiveCooling", Value = "0.4" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockBatteryBlock",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "1600" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.13" }
+                    new Setting { Name = "HeatCapacity", Value = "1600" },
+                    new Setting { Name = "PassiveCooling", Value = "0.13" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockSmallBatteryBlock",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "80" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                    new Setting { Name = "HeatCapacity", Value = "80" },
+                    new Setting { Name = "PassiveCooling", Value = "0.01" }
                 }
             };
             #endregion
@@ -94,20 +95,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockBatteryBlockWarfare2",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "4800" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.4" }
+                    new Setting { Name = "HeatCapacity", Value = "4800" },
+                    new Setting { Name = "PassiveCooling", Value = "0.4" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockBatteryBlockWarfare2",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "1600" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.13" }
+                    new Setting { Name = "HeatCapacity", Value = "1600" },
+                    new Setting { Name = "PassiveCooling", Value = "0.13" }
                 }
             };
 
@@ -120,40 +121,40 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockSmallGenerator",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "50" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0008" }
+                    new Setting { Name = "HeatCapacity", Value = "50" },
+                    new Setting { Name = "PassiveCooling", Value = "0.0008" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockLargeGenerator",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "1475" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.02458" }
+                    new Setting { Name = "HeatCapacity", Value = "1475" },
+                    new Setting { Name = "PassiveCooling", Value = "0.02458" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockSmallGenerator",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "1500" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                    new Setting { Name = "HeatCapacity", Value = "1500" },
+                    new Setting { Name = "PassiveCooling", Value = "0.025" }
                 }
             }; 
             
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockLargeGenerator",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "30000" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.5" }
+                    new Setting { Name = "HeatCapacity", Value = "30000" },
+                    new Setting { Name = "PassiveCooling", Value = "0.5" }
                 }
             };
             #endregion
@@ -162,40 +163,40 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockSmallGeneratorWarfare2",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "50" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0008" }
+                    new Setting { Name = "HeatCapacity", Value = "50" },
+                    new Setting { Name = "PassiveCooling", Value = "0.0008" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockLargeGeneratorWarfare2",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "1475" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.02458" }
+                    new Setting { Name = "HeatCapacity", Value = "1475" },
+                    new Setting { Name = "PassiveCooling", Value = "0.02458" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockSmallGeneratorWarfare2",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "1500" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                    new Setting { Name = "HeatCapacity", Value = "1500" },
+                    new Setting { Name = "PassiveCooling", Value = "0.025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockLargeGeneratorWarfare2",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "30000" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.5" }
+                    new Setting { Name = "HeatCapacity", Value = "30000" },
+                    new Setting { Name = "PassiveCooling", Value = "0.5" }
                 }
             };
             #endregion
@@ -206,20 +207,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "LargeHydrogenEngine",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "2500" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "1" }
+                    new Setting { Name = "HeatCapacity", Value = "2500" },
+                    new Setting { Name = "PassiveCooling", Value = "1" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallHydrogenEngine",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "250" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.1" }
+                    new Setting { Name = "HeatCapacity", Value = "250" },
+                    new Setting { Name = "PassiveCooling", Value = "0.1" }
                 }
             };
 
@@ -231,20 +232,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "LargeHeatSink",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "500000" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                    new Setting { Name = "HeatCapacity", Value = "500000" },
+                    new Setting { Name = "PassiveCooling", Value = "0.01" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallHeatSink",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "50000" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                    new Setting { Name = "HeatCapacity", Value = "50000" },
+                    new Setting { Name = "PassiveCooling", Value = "0.01" }
                 }
             };
             #endregion
@@ -254,20 +255,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "LargeHeatSinkUgly",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "500000" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                    new Setting { Name = "HeatCapacity", Value = "500000" },
+                    new Setting { Name = "PassiveCooling", Value = "0.01" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallHeatSinkUgly",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "HeatCapacity", Setting = "50000" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.01" }
+                    new Setting { Name = "HeatCapacity", Value = "50000" },
+                    new Setting { Name = "PassiveCooling", Value = "0.01" }
                 }
             };
 
@@ -281,100 +282,378 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockLargeHydrogenThrust",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.25" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.25" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockSmallHydrogenThrust",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockLargeHydrogenThrust",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockSmallHydrogenThrust",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0025" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.0025" }
                 }
             };
             #endregion
-            #region Vanilla
+            #region DLC
 
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockLargeHydrogenThrustIndustrial",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.25" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.25" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "LargeBlockSmallHydrogenThrustIndustrial",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockLargeHydrogenThrustIndustrial",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.025" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.025" }
                 }
             };
 
             yield return new BlockType
             {
                 SubTypeId = "SmallBlockSmallHydrogenThrustIndustrial",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting { Name = "MwHeatPerNewtonThrust", Setting = "0.000001" },
-                    new BlockSetting { Name = "PassiveCooling", Setting = "0.0025" }
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
+                    new Setting { Name = "PassiveCooling", Value = "0.0025" }
                 }
             };
             #endregion
 
-            yield return new BlockType
+            #endregion
+        }
+
+        public static ChatBotSettings DefaultChatBotSettings()
+        {
+            return new ChatBotSettings
             {
-                SubTypeId = "ChatBot",
-                Settings = new List<BlockSetting>
+                Settings = new List<Setting>
                 {
-                    new BlockSetting{ Name = "ChatBotName", Setting = "ChattyMcChatface" },
-                    new BlockSetting{ Name = "ChatFrequencyLimiter", Setting = "20"},
-                    new BlockSetting{ Name = "ChatBotCommand_StopMessages", Setting = "stfu"},
-                    new BlockSetting{ Name = "ChatBotCommand_Help", Setting = "help"},
-                    new BlockSetting{ Name = "ChatBotCommand_ReEnable", Setting = "on"}
+                    new Setting { Name = "ChatBotName", Value = "ChattyMcChatface" },
+                    new Setting { Name = "ChatFrequencyLimiter", Value = "20" },
+                    new Setting { Name = "ChatBotCommand_StopMessages", Value = "stfu" },
+                    new Setting { Name = "ChatBotCommand_Help", Value = "help" },
+                    new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" }
+                }
+            };
+        }
+
+        public static IEnumerable<WeatherSetting> DefaultWeatherSettings()
+        {
+            yield return new WeatherSetting
+            {
+                WeatherType = "SnowLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.25"
+                    }
                 }
             };
 
-            #endregion
+            yield return new WeatherSetting
+            {
+                WeatherType = "MarsSnow",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.25"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "SnowHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.1"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "FogLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.8"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "FogHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.7"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "AlienFogLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.8"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "AlienFogHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.7"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "MarsStormLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "2.0"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "MarsStormHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "2.0"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "RainLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.9"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "RainHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.8"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "AlienRainLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.8"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "AlienRainHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.7"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "SandStormLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "2.0"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "SandStormHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "2.0"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "ElectricStorm",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "2.0"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "ThunderstormLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.8"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "ThunderstormHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.7"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "AlienThunderstormLight",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.8"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "AlienThunderstormHeavy",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "0.7"
+                    }
+                }
+            };
+
+            yield return new WeatherSetting
+            {
+                WeatherType = "Dust",
+                Settings = new List<Setting>
+                {
+                    new Setting
+                    {
+                        Name = "TempScale",
+                        Value = "1.35"
+                    }
+                }
+            };
         }
     }
 }

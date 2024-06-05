@@ -23,7 +23,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (block == null)
                 return;
 
-            Logger.Instance.LogDebug("Initializing", block);
+            //Logger.Instance.LogDebug("Initializing", block);
             heatData = PowerPlantHeatData.LoadData(block);
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;
@@ -31,7 +31,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void ReactorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            Logger.Instance.LogDebug("Appending Custom Info", arg1);
+            //Logger.Instance.LogDebug("Appending Custom Info", arg1);
             var logic = arg1.GameLogic.GetAs<ReactorLogic>();
             logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
         }
@@ -40,7 +40,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         void ReactorLogic_OnClose(IMyEntity obj)
         {
-            Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
+            //Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -59,7 +59,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
+            //Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
 
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
@@ -79,7 +79,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             if (block == null || heatData == null || !block.IsPlayerOwned() ) return;
 
-            Logger.Instance.LogDebug("Simulating Heat", block);
+            //Logger.Instance.LogDebug("Simulating Heat", block);
 
             heatData.ApplyHeating(block);
             block.RefreshCustomInfo();

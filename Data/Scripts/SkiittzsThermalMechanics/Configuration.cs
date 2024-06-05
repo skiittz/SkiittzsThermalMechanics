@@ -9,8 +9,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
     {
         private const string fileName = "Settings.xml";
         public static bool IsLoaded = false;
-        private static List<BlockType> configs;
+        private static ModSettings configs;
         public static Dictionary<string, Dictionary<string, string>> BlockSettings;
+        public static Dictionary<string, float> WeatherSettings;
         public static void Load()
         {
             if (IsLoaded) return;
@@ -22,27 +23,30 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 reader.Close();
 
                 configs =
-                    MyAPIGateway.Utilities.SerializeFromXML<List<BlockType>>(content);
+                    MyAPIGateway.Utilities.SerializeFromXML<ModSettings>(content);
             }
             else
             {
-                configs = Defaults().ToList();
+                configs = ModSettings.Default();
                 Save();
             }
 
-            BlockSettings = configs.ToDictionary(x => x.SubTypeId, x => x.Settings.ToDictionary(y => y.Name, y => y.Setting));
+            BlockSettings = configs.BlockTypeSettings.ToDictionary(x => x.SubTypeId, x => x.Settings.ToDictionary(y => y.Name, y => y.Value));
+            WeatherSettings =
+                configs.WeatherSettings
+                    .Select(x => new {x.WeatherType, x.Settings.Single(y => y.Name == "TempScale").Value})
+                    .ToDictionary(x => x.WeatherType, x => float.Parse(x.Value));
             IsLoaded = true;
 
-            if (BlockSettings.ContainsKey("ChatBot"))
-                ChatBot.InitConfigs(BlockSettings["ChatBot"]);
+            if (configs.ChatBotSettings != null)
+                ChatBot.InitConfigs(configs.ChatBotSettings.Settings.ToDictionary(x => x.Name, x => x.Value));
             ChatBot.LoadDisabledPlayers();
         }
-
+        
         public static void Save()
         {
             var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession));
-            var content = configs.ToList();
-            writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
+            writer.Write(MyAPIGateway.Utilities.SerializeToXML(configs));
             writer.Flush();
             writer.Close();
         }
@@ -78,15 +82,44 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         }
     }
 
+    public class ModSettings
+    {
+        public List<BlockType> BlockTypeSettings { get; set; }
+        public ChatBotSettings ChatBotSettings { get; set; }
+        public List<WeatherSetting> WeatherSettings { get; set; }
+
+        public static ModSettings Default()
+        {
+            return new ModSettings
+            {
+                BlockTypeSettings = Configuration.DefaultBlockSettings().ToList(),
+                ChatBotSettings = Configuration.DefaultChatBotSettings(),
+                WeatherSettings = Configuration.DefaultWeatherSettings().ToList()
+            };
+        }
+    }
+
     public class BlockType
     {
         public string SubTypeId { get; set; }
-        public List<BlockSetting> Settings { get; set; }
+        public List<Setting> Settings { get; set; }
     }
 
-    public class BlockSetting
+    public class ChatBotSettings
+    {
+        public List<Setting> Settings { get; set; }
+    }
+
+    public class WeatherSetting
+    {
+        public string WeatherType { get; set; }
+        public List<Setting> Settings { get; set; }
+    }
+
+    public class Setting
     {
         public string Name { get; set; }
-        public string Setting { get; set; }
+        public string Value { get; set; }
+        public string Description { get; set; }
     }
 }

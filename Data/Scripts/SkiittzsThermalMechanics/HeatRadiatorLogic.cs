@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 using Sandbox.Common.ObjectBuilders;
+using Sandbox.Game.Entities;
+using Sandbox.Game.World;
 using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
+using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.Entity;
 using VRage.Game.ModAPI;
@@ -85,38 +89,43 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 data.StepSize = stepSizeConfig;
         }
     }
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new []
+
+    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new[]
     {
-        "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock","LargeHeatRadiatorBlockUgly", "SmallHeatRadiatorBlockUgly"
+        "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock", "LargeHeatRadiatorBlockUgly", "SmallHeatRadiatorBlockUgly"
     })]
     public class HeatRadiatorLogic : MyGameLogicComponent
     {
+        private float weatherMult = 1.0f;
+        private int ticksSinceWeatherCheck = 0;
         private RadiatorData radiatorData;
         private IMyUpgradeModule block;
+
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             block = (Container.Entity as IMyUpgradeModule);
             if (block == null)
                 return;
 
-            Logger.Instance.LogDebug("Initializing", block);
+            //Logger.Instance.LogDebug("Initializing", block);
 
             radiatorData = RadiatorData.LoadData(block);
-            
+
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
         }
 
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
-            Logger.Instance.LogDebug("Appending Custom Info",arg1);
+            //Logger.Instance.LogDebug("Appending Custom Info",arg1);
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
-            customInfo.Append($"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio *100).ToString("N0")}%)");
+            customInfo.Append(
+                $"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)");
         }
 
         void RadiatorLogic_OnClose(IMyEntity obj)
         {
-            Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
+            //Logger.Instance.LogDebug("On Close", obj as IMyTerminalBlock);
             try
             {
                 if (Entity != null)
@@ -134,7 +143,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateOnceBeforeFrame()
         {
-            Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
+            //Logger.Instance.LogDebug("UpdateOnceBeforeFrame", block);
 
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
                 return;
@@ -153,7 +162,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             if (block == null || radiatorData == null || !block.IsPlayerOwned()) return;
 
-            Logger.Instance.LogDebug("Simulating Heat", block);
+            ticksSinceWeatherCheck = ticksSinceWeatherCheck >= 1000 ? 0 : ticksSinceWeatherCheck + 100;
+            if (ticksSinceWeatherCheck == 0)
+            {
+                MyObjectBuilder_WeatherEffect currentWeatherEffect;
+                var position = block.PositionComp.GetPosition();
+                if (!MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) || !Configuration.WeatherSettings.ContainsKey(currentWeatherEffect.Weather))
+                {
+                    weatherMult = 1;
+                    return;
+                }
+
+                weatherMult = 1 / Configuration.WeatherSettings[currentWeatherEffect.Weather];
+            }
+
+            //Logger.Instance.LogDebug("Simulating Heat", block);
 
             if (!block.Enabled)
             {
@@ -170,7 +193,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 if (radiatorData.CurrentDissipation > radiatorData.MaxDissipation)
                     radiatorData.CurrentDissipation = radiatorData.MaxDissipation;
 
-                var dissipatedHeat = beacon.RemoveHeat(radiatorData.CurrentDissipation);
+                var dissipatedHeat = beacon.RemoveHeat(radiatorData.CurrentDissipation, weatherMult);
                 if (dissipatedHeat < radiatorData.CurrentDissipation)
                     radiatorData.CurrentDissipation -= radiatorData.StepSize;
                 if (dissipatedHeat == radiatorData.CurrentDissipation)

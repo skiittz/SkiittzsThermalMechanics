@@ -10,7 +10,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void Init(MyObjectBuilder_SessionComponent sessionComponent)
         {
             base.Init(sessionComponent);
-            Logger.Instance.LogDebug("Initializing session component");
+            //Logger.Instance.LogDebug("Initializing session component");
 
             Configuration.Load();
         }
