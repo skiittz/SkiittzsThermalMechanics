@@ -154,7 +154,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateAfterSimulation100()
         {
-            if (block == null || radiatorData == null || !block.IsPlayerOwned()) return;
+            if (block == null || radiatorData == null || !block.IsOwnedByCurrentPlayer()) return;
 
             ticksSinceWeatherCheck = ticksSinceWeatherCheck >= 1000 ? 0 : ticksSinceWeatherCheck + 100;
             if (ticksSinceWeatherCheck == 0)

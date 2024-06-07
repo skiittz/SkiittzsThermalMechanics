@@ -39,7 +39,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= H2EngineLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= H2EngineLogic_OnClose;
-                    if (block.IsPlayerOwned())
+                    if (block.IsOwnedByCurrentPlayer())
                         PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<H2EngineLogic>().heatData);
                 }
             }
@@ -67,7 +67,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateAfterSimulation100()
         {
-            if(block == null || heatData == null || !block.IsPlayerOwned() ) return;
+            if(block == null || heatData == null || !block.IsOwnedByCurrentPlayer() ) return;
 
             heatData.ApplyHeating(block);
             block.RefreshCustomInfo();

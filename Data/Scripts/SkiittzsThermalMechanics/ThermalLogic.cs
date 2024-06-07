@@ -33,7 +33,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private float CalculateHeating(IMyThrust block)
         {
-            if (!block.IsWorking || !block.IsPlayerOwned())
+            if (!block.IsWorking || !block.IsOwnedByCurrentPlayer())
                 return 0;
             return (block.CurrentThrust * MwHeatPerNewtonThrust) - PassiveCooling;
         }
@@ -172,7 +172,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private float CalculateHeating(IMyPowerProducer block)
         {
-            if (!block.IsWorking || !block.IsPlayerOwned())
+            if (!block.IsWorking || !block.IsOwnedByCurrentPlayer())
                 return 0;
 
             var powerProducers = new List<IMyPowerProducer>();
@@ -186,6 +186,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public void ApplyHeating(IMyPowerProducer block)
         {
+            if (block == null || !block.IsOwnedByCurrentPlayer()) return;
             var heatGenerated = CalculateHeating(block);
             var heatDissipated = CalculateCooling(block, CurrentHeat + heatGenerated);
             LastHeatDelta = heatGenerated - heatDissipated;

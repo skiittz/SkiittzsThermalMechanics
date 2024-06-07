@@ -42,9 +42,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             return beacon.GameLogic.GetAs<HeatSinkLogic>();
         }
 
-        public static bool IsPlayerOwned(this IMyCubeBlock block)
+        public static bool IsOwnedByCurrentPlayer(this IMyCubeBlock block)
         {
             var ownerId = block.OwnerId;
+            var currentPlayerId = MyAPIGateway.Session.Player.IdentityId;
+            if (ownerId != currentPlayerId) return false;
+
             var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
             return faction == null || !faction.IsEveryoneNpc();
         }
