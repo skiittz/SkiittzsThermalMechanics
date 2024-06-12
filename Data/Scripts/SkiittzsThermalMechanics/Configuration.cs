@@ -22,8 +22,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 var content = reader.ReadToEnd();
                 reader.Close();
 
-                configs =
-                    MyAPIGateway.Utilities.SerializeFromXML<ModSettings>(content);
+                try
+                {
+                    configs =
+                        MyAPIGateway.Utilities.SerializeFromXML<ModSettings>(content);
+                }
+                catch
+                {
+                    configs = ModSettings.Default();
+                }
             }
             else
             {

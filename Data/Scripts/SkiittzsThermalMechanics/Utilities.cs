@@ -46,7 +46,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             var ownerId = block.OwnerId;
             var currentPlayerId = MyAPIGateway.Session.Player.IdentityId;
-            if (ownerId != currentPlayerId) return false;
+            if (ownerId == currentPlayerId) return true;
 
             var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
             return faction == null || !faction.IsEveryoneNpc();
