@@ -17,7 +17,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public static void WarnPlayer(IMyTerminalBlock block, string message)
         {
-            if (block.OwnerId != MyAPIGateway.Session.Player.IdentityId || _disabledPlayerIds.Contains(MyAPIGateway.Session.Player.IdentityId))
+            var playerId = Utilities.TryGetCurrentPlayerId();
+            if (block == null || !block.IsOwnedByCurrentPlayer() || _disabledPlayerIds.Contains(playerId))
                 return;
             if (_messageAttemptCounter == 0)
             {
@@ -31,7 +32,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public static void WarnPlayer(IMyCubeGrid grid, string message)
         {
-            if (!grid.BigOwners.Contains(MyAPIGateway.Session.Player.IdentityId) || _disabledPlayerIds.Contains(MyAPIGateway.Session.Player.IdentityId))
+            var playerId = Utilities.TryGetCurrentPlayerId();
+            if (!grid.BigOwners.Contains(playerId) || _disabledPlayerIds.Contains(playerId))
                 return;
             if (_messageAttemptCounter == 0)
             {
@@ -80,7 +82,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public static void IntroduceMyself()
         {
-            var playerId = MyAPIGateway.Session.Player.IdentityId;
+            var playerId = Utilities.TryGetCurrentPlayerId();
             if (_disabledPlayerIds.Contains(playerId) || _introducedPlayersThisSession.Contains(playerId)) return;
 
             var message = new StringBuilder();

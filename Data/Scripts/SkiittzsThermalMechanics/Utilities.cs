@@ -42,14 +42,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             return beacon.GameLogic.GetAs<HeatSinkLogic>();
         }
 
-        public static bool IsOwnedByCurrentPlayer(this IMyCubeBlock block)
+        public static bool IsOwnedByAPlayer(this IMyCubeBlock block)
         {
+            if (block == null || MyAPIGateway.Session == null) return false;
+
             var ownerId = block.OwnerId;
-            var currentPlayerId = MyAPIGateway.Session.Player.IdentityId;
+            var currentPlayerId = Utilities.TryGetCurrentPlayerId();
             if (ownerId == currentPlayerId) return true;
 
-            var faction = MyAPIGateway.Session.Factions.TryGetPlayerFaction(ownerId);
+            var faction = MyAPIGateway.Session?.Factions?.TryGetPlayerFaction(ownerId);
             return faction == null || !faction.IsEveryoneNpc();
+        }
+
+        public static bool IsOwnedByCurrentPlayer(this IMyCubeBlock block)
+        {
+            if (block == null || MyAPIGateway.Session == null) return false;
+
+            var ownerId = block.OwnerId;
+            var currentPlayerId = Utilities.TryGetCurrentPlayerId();
+            if (ownerId == currentPlayerId) return true;
+
+            return false;
         }
 
         public static float LowerBoundedBy(this float input, float bound)
@@ -60,6 +73,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static float UpperBoundedBy(this float input, float bound)
         {
             return Math.Min(input, bound);
+        }
+
+        public static long TryGetCurrentPlayerId()
+        {
+            return MyAPIGateway.Session?.Player?.IdentityId ?? 0;
         }
     }
 }

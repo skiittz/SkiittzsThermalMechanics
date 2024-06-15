@@ -157,7 +157,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public override void UpdateAfterSimulation100()
         {
-            if (block == null || HeatSinkData == null || !block.IsOwnedByCurrentPlayer()) return;
+            if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer()) return;
             
             HeatSinkData.VentingHeat *= 0.999f;
 
