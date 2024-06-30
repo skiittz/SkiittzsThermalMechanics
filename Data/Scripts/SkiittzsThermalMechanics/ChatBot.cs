@@ -114,6 +114,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 case "ReEnable":
                     EnableMessagesForPlayer(MyAPIGateway.Session.Player.IdentityId);
                     break;
+                case "Reload":
+                    if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
+                    {
+                        Configuration.Load();
+                        var definitions = Configuration.BlockSettings.Select(x => x.Key);
+                        MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"{MyAPIGateway.Utilities.GamePaths.SavesPath} reloaded for block types: {string.Join(",",definitions)}");
+                    }
+                    else
+                        MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This command can only be run by an admin");
+                    break;
                 default:
                     PrintUnknownCommand();
                     break;
@@ -151,7 +161,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private static Dictionary<string, string> commandMappings = new Dictionary<string, string>
         {
             {"stfu","StopMessages"},
-            {"help","Help"}
+            {"help","Help"},
+            {"reload","Reload"}
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {

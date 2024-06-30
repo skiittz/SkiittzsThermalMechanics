@@ -14,6 +14,12 @@
         <string>UpgradeModule/SmallHeatRadiatorBlock</string>
         <string>UpgradeModule/LargeHeatRadiatorBlockUgly</string>
         <string>UpgradeModule/SmallHeatRadiatorBlockUgly</string>
+        
+        <string>UpgradeModule/BasicLargeHeatRadiatorBlock</string>
+        <string>UpgradeModule/BasicSmallHeatRadiatorBlock</string>
+        <string>UpgradeModule/BasicLargeHeatRadiatorBlockUgly</string>
+        <string>UpgradeModule/BasicSmallHeatRadiatorBlockUgly</string>
+        
         <string>Beacon/LargeHeatSink</string>
         <string>Beacon/SmallHeatSink</string>
         <string>Beacon/LargeHeatSinkUgly</string>

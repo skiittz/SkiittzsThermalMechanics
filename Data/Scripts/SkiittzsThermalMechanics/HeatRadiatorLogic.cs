@@ -79,7 +79,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public static void LoadConfigFileValues(ref RadiatorData data, string subTypeId)
         {
-            if (!Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+            if (!Configuration.BlockSettings.ContainsKey(subTypeId))
+            {
+                data.MaxDissipation = 0.0001f;
+                data.StepSize = 0.0001f;
+            };
 
             float maxDissipationConfig;
             float stepSizeConfig;
@@ -92,7 +96,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new[]
     {
-        "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock", "LargeHeatRadiatorBlockUgly", "SmallHeatRadiatorBlockUgly"
+        "LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock", "LargeHeatRadiatorBlockUgly", "SmallHeatRadiatorBlockUgly",
+        "BasicLargeHeatRadiatorBlock", "BasicSmallHeatRadiatorBlock", "BasicLargeHeatRadiatorBlockUgly", "BasicSmallHeatRadiatorBlockUgly"
     })]
     public class HeatRadiatorLogic : MyGameLogicComponent
     {
@@ -116,6 +121,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
+            customInfo.Append($"DEBUG: SubTypeId:{logic.block.BlockDefinition.SubtypeId}\n");
             customInfo.Append(
                 $"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)");
         }

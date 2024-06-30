@@ -7,6 +7,55 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         
         public static IEnumerable<BlockType> DefaultBlockSettings()
         {
+            #region Basic Radiators
+
+            #region DLC
+            yield return new BlockType
+            {
+                SubTypeId = "BasicSmallHeatRadiatorBlock",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MaxDissipation", Value = "0.1" },
+                    new Setting { Name = "StepSize", Value = "0.0005" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "BasicLargeHeatRadiatorBlock",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MaxDissipation", Value = "1" },
+                    new Setting { Name = "StepSize", Value = "0.005" }
+                }
+            };
+            #endregion
+
+            #region NonDlc
+
+            yield return new BlockType
+            {
+                SubTypeId = "BasicSmallHeatRadiatorBlockUgly",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MaxDissipation", Value = "0.1" },
+                    new Setting { Name = "StepSize", Value = "0.0005" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "BasicLargeHeatRadiatorBlockUgly",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MaxDissipation", Value = "1" },
+                    new Setting { Name = "StepSize", Value = "0.005" }
+                }
+            };
+
+            #endregion
+            #endregion
+
             #region Radiators
 
             #region DLC
@@ -16,7 +65,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "5" },
-                    new Setting { Name = "StepSize", Value = ".025" }
+                    new Setting { Name = "StepSize", Value = "0.025" }
                 }
             };
 
@@ -26,7 +75,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "50" },
-                    new Setting { Name = "StepSize", Value = ".25" }
+                    new Setting { Name = "StepSize", Value = "0.25" }
                 }
             };
             #endregion
@@ -39,7 +88,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "5" },
-                    new Setting { Name = "StepSize", Value = ".025" }
+                    new Setting { Name = "StepSize", Value = "0.025" }
                 }
             };
 
@@ -49,7 +98,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "50" },
-                    new Setting { Name = "StepSize", Value = ".25" }
+                    new Setting { Name = "StepSize", Value = "0.25" }
                 }
             };
 
@@ -375,7 +424,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     new Setting { Name = "ChatFrequencyLimiter", Value = "20" },
                     new Setting { Name = "ChatBotCommand_StopMessages", Value = "stfu" },
                     new Setting { Name = "ChatBotCommand_Help", Value = "help" },
-                    new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" }
+                    new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" },
+                    new Setting { Name = "ChatBotCommand_Reload", Value = "reload"}
                 }
             };
         }

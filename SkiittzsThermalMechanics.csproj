@@ -131,6 +131,7 @@
     <None Include="Data\HeatSinkCubeBlock.sbc" />
     <None Include="Data\BlockCategories.sbc" />
     <None Include="Data\BlueprintClasses.sbc" />
+    <None Include="Data\BasicRadiatorsCubeBlocks.sbc" />
     <None Include="Data\RadiatorsCubeBlocks.sbc" />
     <None Include="modinfo.sbmi" />
   </ItemGroup>
