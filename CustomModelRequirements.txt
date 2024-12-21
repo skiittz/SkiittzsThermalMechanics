@@ -1,3 +1,5 @@
+All blocks should fit the general aesthetic of vanilla blocks
+
 Heat Sink:
     - Should occupy the same space as a vanilla beacon
       |- 1x1 small grid
