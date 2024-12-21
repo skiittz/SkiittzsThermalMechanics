@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using Sandbox.ModAPI;
+using SpaceEngineers.Game.ModAPI;
 using VRage.Utils;
 using VRageMath;
 
@@ -182,7 +183,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             var additionalGeneratorCount = Math.Min(powerProducers.Count - 1, 0);
             var spamPenalty = 1 + (additionalGeneratorCount / 100);
-            return block.CurrentOutput * spamPenalty - PassiveCooling;
+            if(spamPenalty > 1.1)
+                ChatBot.WarnPlayer(block, $"Wow that's a lot of power plants!  Did you know that spamming generators will incur a penalty?  You are currently generating {additionalGeneratorCount}% more  heat than you'd otherwise be.  It's better to use fewer, more powerful power plants.", MessageSeverity.Tutorial);
+            return (block.CurrentOutput * spamPenalty) - PassiveCooling;
         }
 
         public void ApplyHeating(IMyPowerProducer block)

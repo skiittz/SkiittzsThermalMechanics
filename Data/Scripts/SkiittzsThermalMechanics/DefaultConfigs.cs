@@ -427,7 +427,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" },
                     new Setting { Name = "ChatBotCommand_Reload", Value = "reload"},
                     new Setting {Name = "ChatBotCommand_StopTutorial", Value = "iamnotanewb"},
-                    new Setting {Name = "ChatBotCommand_StartTutorial", Value = "spankemedaddy_iamnewb"}
+                    new Setting {Name = "ChatBotCommand_StartTutorial", Value = "spankmedaddy_iamnewb"}
 				}
 			};
         }
