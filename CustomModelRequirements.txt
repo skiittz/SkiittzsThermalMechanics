@@ -10,5 +10,5 @@ Radiator:
   - Should occupy the same space as vanilla heat vent
       |- 1x1 both small and large grid
   - Should have emissive parts that can be colored, preferably with animated vent slats like the vanilla heat vent
-  - Should have a conveyor port
+  - Should have at least 1 conveyor port
   - Makeshift variant - same as above, should feel like it serves the same purpose but is more cheaply made/inefficient
