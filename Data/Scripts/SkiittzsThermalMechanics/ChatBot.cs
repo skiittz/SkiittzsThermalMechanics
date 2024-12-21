@@ -13,53 +13,76 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static int MessageDelay {get; set; }
         private static int _messageAttemptCounter = 0;
         private static List<long> _disabledPlayerIds;
-        private static List<long> _introducedPlayersThisSession = new List<long>();
+        private static List<long> _warningOnlyPlayerIds;
+		private static List<long> _introducedPlayersThisSession = new List<long>();
 
-        public static void WarnPlayer(IMyTerminalBlock block, string message)
+        public static void WarnPlayer(IMyTerminalBlock block, string message, MessageSeverity messageSeverity)
         {
-            var playerId = Utilities.TryGetCurrentPlayerId();
-            if (block == null || !block.IsOwnedByCurrentPlayer() || _disabledPlayerIds.Contains(playerId))
+            if (block == null || !block.IsOwnedByCurrentPlayer())
                 return;
-            if (_messageAttemptCounter == 0)
-            {
-                MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"{block.CubeGrid.CustomName}-{block.CustomName}: {message}");
-            }
 
-            _messageAttemptCounter++;
-            if (_messageAttemptCounter == MessageDelay)
-                _messageAttemptCounter = 0;
+            WarnPlayer($"{block.CubeGrid.CustomName}-{block.CustomName}: {message}", messageSeverity);
         }
 
-        public static void WarnPlayer(IMyCubeGrid grid, string message)
+        public static void WarnPlayer(IMyCubeGrid grid, string message, MessageSeverity messageSeverity)
         {
             var playerId = Utilities.TryGetCurrentPlayerId();
-            if (!grid.BigOwners.Contains(playerId) || _disabledPlayerIds.Contains(playerId))
+            if (!grid.BigOwners.Contains(playerId))
                 return;
-            if (_messageAttemptCounter == 0)
-            {
-                MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"{grid.CustomName}: {message}");
-            }
-
-            _messageAttemptCounter++;
-            if (_messageAttemptCounter == MessageDelay)
-                _messageAttemptCounter = 0;
+            WarnPlayer( playerId, $"{grid.CustomName}: {message}", messageSeverity);
         }
 
-        private const string fileName = "ChatBotDisabledPlayerIds.xml";
-        private static void SaveDisabledPlayers()
+        private static void WarnPlayer(string message, MessageSeverity messageSeverity)
         {
-            var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession));
+	        var playerId = Utilities.TryGetCurrentPlayerId();
+			WarnPlayer(playerId, message, messageSeverity);
+		}
+
+		private static void WarnPlayer(long playerId, string message, MessageSeverity messageSeverity)
+        {
+			if (_disabledPlayerIds.Contains(playerId))
+		        return;
+
+			if (messageSeverity == MessageSeverity.Tutorial && _warningOnlyPlayerIds.Contains(playerId))
+				return;
+
+	        if (_messageAttemptCounter == 0)
+	        {
+		        MyAPIGateway.Utilities.ShowMessage(ChatBotName, message);
+	        }
+
+	        _messageAttemptCounter++;
+	        if (_messageAttemptCounter == MessageDelay)
+		        _messageAttemptCounter = 0;
+
+		}
+
+		private const string disabledPlayersFileName = "ChatBotDisabledPlayerIds.xml";
+		private const string warningOnlyPlayersFileName = "ChatBotWarningOnlyPlayerIds.xml";
+
+		private static void SaveDisabledPlayers()
+        {
+			var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(disabledPlayersFileName, typeof(SkiittzThermalMechanicsSession));
             var content = _disabledPlayerIds;
             writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
             writer.Flush();
             writer.Close();
         }
 
-        public static void LoadDisabledPlayers()
+        private static void SaveWarningOnlyPlayers()
         {
-            if (MyAPIGateway.Utilities.FileExistsInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession)))
+	        var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession));
+	        var content = _warningOnlyPlayerIds;
+	        writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
+	        writer.Flush();
+	        writer.Close();
+        }
+
+		public static void LoadDisabledPlayers()
+        {
+            if (MyAPIGateway.Utilities.FileExistsInWorldStorage(disabledPlayersFileName, typeof(SkiittzThermalMechanicsSession)))
             {
-                var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession));
+                var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(disabledPlayersFileName, typeof(SkiittzThermalMechanicsSession));
                 var content = reader.ReadToEnd();
                 reader.Close();
                 _disabledPlayerIds = MyAPIGateway.Utilities.SerializeFromXML<List<long>>(content);
@@ -68,7 +91,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 _disabledPlayerIds = new List<long>();
         }
 
-        public static void DisableMessagesForPlayer(long playerId)
+        public static void LoadWarningOnlyPlayers()
+        {
+	        if (MyAPIGateway.Utilities.FileExistsInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession)))
+	        {
+		        var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession));
+		        var content = reader.ReadToEnd();
+		        reader.Close();
+		        _warningOnlyPlayerIds = MyAPIGateway.Utilities.SerializeFromXML<List<long>>(content);
+	        }
+	        else
+		        _warningOnlyPlayerIds = new List<long>();
+        }
+
+		public static void DisableMessagesForPlayer(long playerId)
         {
             _disabledPlayerIds.Add(playerId);
             SaveDisabledPlayers();
@@ -80,7 +116,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             SaveDisabledPlayers();
         }
 
-        public static void IntroduceMyself()
+        public static void DisableTutorialMessagesForPlayer(long playerId)
+        {
+            _warningOnlyPlayerIds.Add(playerId);
+            SaveWarningOnlyPlayers();
+        }
+
+        public static void EnableTutorialMessagesForPlayer(long playerId)
+        {
+	        _warningOnlyPlayerIds.Remove(playerId);
+	        SaveWarningOnlyPlayers();
+        }
+
+		public static void IntroduceMyself()
         {
             var playerId = Utilities.TryGetCurrentPlayerId();
             if (_disabledPlayerIds.Contains(playerId) || _introducedPlayersThisSession.Contains(playerId)) return;
@@ -119,12 +167,18 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     {
                         Configuration.Load();
                         var definitions = Configuration.BlockSettings.Select(x => x.Key);
-                        MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"{MyAPIGateway.Utilities.GamePaths.SavesPath} reloaded for block types: {string.Join(",",definitions)}");
+                        MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"configs reloaded for block types: {string.Join(",",definitions)}");
                     }
                     else
                         MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This command can only be run by an admin");
                     break;
-                default:
+                case "StopTutorial":
+	                DisableTutorialMessagesForPlayer(MyAPIGateway.Session.Player.IdentityId);
+	                break;
+                case "StartTutorial":
+	                DisableTutorialMessagesForPlayer(MyAPIGateway.Session.Player.IdentityId);
+	                break;
+				default:
                     PrintUnknownCommand();
                     break;
             }
@@ -147,13 +201,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                         message.AppendLine($"{prefix}: Displays info about available commands");
                         break;
                     case "StopMessages":
-                        message.AppendLine($"{prefix}:Turn off messages from {ChatBotName}");
+                        message.AppendLine($"{prefix}:Turn off all messages from {ChatBotName}");
                         break;
                     case "ReEnable":
                         message.AppendLine($"{prefix}:Turn on messages from {ChatBotName}");
                         break;
-                }
-            }
+                    case "StopTutorial":
+	                    message.AppendLine($"{prefix}:Turn off tutorial messages from {ChatBotName} (warnings will still display)");
+	                    break;
+                    case "StartTutorial":
+	                    message.AppendLine($"{prefix}:Turn on tutorial messages from {ChatBotName}");
+	                    break;
+
+				}
+			}
             MyAPIGateway.Utilities.ShowMessage(ChatBotName, message.ToString());
 
         }
@@ -161,8 +222,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private static Dictionary<string, string> commandMappings = new Dictionary<string, string>
         {
             {"stfu","StopMessages"},
+            {"speak","ReEnable"},
             {"help","Help"},
-            {"reload","Reload"}
+            {"reload","Reload"},
+            {"iamnotanewb", "StopTutorial"},
+            {"spankemedaddy_iamnewb","StartTutorial"}
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {
@@ -171,7 +235,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 : 0;
             ChatBotName = settings.ContainsKey("ChatBotName")
                 ? settings["ChatBotName"]
-                : "ArseBot8000";
+                : "AssemblerDaddy_OreGasm69";
             foreach (var command in settings.Where(x => x.Key.StartsWith("ChatBotCommand_")))
             {
                 commandMappings[command.Value] = command.Key.Replace("ChatBotCommand_", "");
@@ -179,5 +243,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             MyAPIGateway.Session.OnSessionReady += IntroduceMyself;
         }
+    }
+
+    public enum MessageSeverity
+    {
+        Tutorial,
+        Warning
     }
 }

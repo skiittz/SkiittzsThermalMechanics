@@ -166,9 +166,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             (block as IMyTerminalBlock).RefreshCustomInfo();
 
             if(HeatSinkData.HeatRatio >= 0.8)
-                ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!");
+                ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Warning);
             else if (HeatSinkData.HeatRatio >= 0.5)
-                ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?");
+                ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?", MessageSeverity.Tutorial);
         }
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)

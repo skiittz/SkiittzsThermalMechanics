@@ -420,14 +420,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             {
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "ChatBotName", Value = "ChattyMcChatface" },
+                    new Setting { Name = "ChatBotName", Value = "AssemblerDaddy_OreGasm69" },
                     new Setting { Name = "ChatFrequencyLimiter", Value = "20" },
                     new Setting { Name = "ChatBotCommand_StopMessages", Value = "stfu" },
                     new Setting { Name = "ChatBotCommand_Help", Value = "help" },
                     new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" },
-                    new Setting { Name = "ChatBotCommand_Reload", Value = "reload"}
-                }
-            };
+                    new Setting { Name = "ChatBotCommand_Reload", Value = "reload"},
+                    new Setting {Name = "ChatBotCommand_StopTutorial", Value = "iamnotanewb"},
+                    new Setting {Name = "ChatBotCommand_StartTutorial", Value = "spankemedaddy_iamnewb"}
+				}
+			};
         }
 
         public static IEnumerable<WeatherSetting> DefaultWeatherSettings()

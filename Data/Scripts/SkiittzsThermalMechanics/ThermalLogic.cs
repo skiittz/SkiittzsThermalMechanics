@@ -107,6 +107,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public float LastHeatDelta;
         public float HeatRatio => (CurrentHeat / HeatCapacity);
         public int OverHeatCycles { get; set; }
+        public float ThermalFatigue => 1+(OverHeatCycles / 100);
         public float AvailableHeatCapacity => HeatCapacity - CurrentHeat;
 
         public static void SaveData(long entityId, PowerPlantHeatData data)
@@ -196,22 +197,24 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             if (CurrentHeat >= HeatCapacity)
             {
-                ChatBot.WarnPlayer(block, $"Taking damage due to overheating!");
+                ChatBot.WarnPlayer(block, $"Taking damage due to overheating!", MessageSeverity.Warning);
                 OverHeatCycles++;
-                var thermalFatigue = CurrentHeat + (CurrentHeat * (OverHeatCycles / 10));
+                if(OverHeatCycles > 10)
+                    ChatBot.WarnPlayer(block, $"Due to repeated overheating, this block is suffering from thermal fatigue.  It will generate more heat than usual.  This effect is permanent.", MessageSeverity.Tutorial);
+                var thermalFatigue = CurrentHeat + (CurrentHeat * ThermalFatigue);
                 block.SlimBlock.DoDamage((thermalFatigue - HeatCapacity), MyStringHash.GetOrCompute("Overheating"), true);
                 if (block.IsFunctional)
                     CurrentHeat = HeatCapacity;
                 else
                 {
-                    ChatBot.WarnPlayer(block, "Disabled due to heat damage.");
+                    ChatBot.WarnPlayer(block, "Disabled due to heat damage.", MessageSeverity.Warning);
                     CurrentHeat = 0;
                 }
             }
             else if (CurrentHeat > HeatCapacity * .8)
             {
                 block.SetDamageEffect(true);
-                ChatBot.WarnPlayer(block, $"Approaching heat threshold.");
+                ChatBot.WarnPlayer(block, $"Approaching heat threshold.", MessageSeverity.Tutorial);
             }
             else
                 block.SetDamageEffect(false);
@@ -230,6 +233,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
             customInfo.Append($"Time until {(LastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
+
+            customInfo.Append($"Heat Generation: {ThermalFatigue * 100:F0}%");
         }
 
         private const float SecondsPer100Ticks = 1.667f;

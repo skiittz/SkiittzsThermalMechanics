@@ -48,6 +48,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             if (configs.ChatBotSettings != null)
                 ChatBot.InitConfigs(configs.ChatBotSettings.Settings.ToDictionary(x => x.Name, x => x.Value));
             ChatBot.LoadDisabledPlayers();
+            ChatBot.LoadWarningOnlyPlayers();
         }
         
         public static void Save()
