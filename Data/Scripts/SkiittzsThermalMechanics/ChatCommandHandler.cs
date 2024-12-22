@@ -26,11 +26,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         private void OnMessageEntered(string messageText, ref bool sendToOthers)
         {
-            if (messageText.StartsWith($"/{ChatBot.ChatBotName}", StringComparison.OrdinalIgnoreCase))
+	        var chatBotName = ChatBot.ChatBotNameFor(Utilities.TryGetCurrentPlayerId());
+            if (messageText.StartsWith($"/{chatBotName}", StringComparison.OrdinalIgnoreCase))
             {
                 sendToOthers = false;
-                var command = messageText.Replace($"/{ChatBot.ChatBotName} ", "");
-                ChatBot.HandleCommand(command);
+                var items = messageText.Replace($"/{chatBotName} ", "").Split(' ');
+
+				var command = items[0];
+				var args = items.Skip(1);
+                ChatBot.HandleCommand(command, args.Any() ? args.ToArray() : null); 
             }
         }
     }
