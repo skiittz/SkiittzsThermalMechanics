@@ -117,8 +117,12 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\DefaultConfigs.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSinkLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2GeneratorLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatRadiatorLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HydrogenThrusterLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Data.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\UiElements.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ReactorLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptExample.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptHookCreator.cs" />
@@ -139,5 +143,6 @@
     <Content Include="metadata.mod" />
     <Content Include="thumb.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
