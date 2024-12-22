@@ -27,6 +27,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         [XmlIgnore] public float PassiveCooling { get; set; }
         public float VentingHeat;
         public float WeatherMult = 1;
+        public long OriginalGridId { get; set; }
 
     public static void SaveData(long entityId, HeatSinkData data)
         {
@@ -46,7 +47,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public static HeatSinkData LoadData(IMyBeacon block)
         {
             var file = $"{block.EntityId}.xml";
-            var data = new HeatSinkData();
+            var data = new HeatSinkData{OriginalGridId = block.CubeGrid.EntityId};
             try
             {
                 if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(HeatSinkData)))
@@ -78,8 +79,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         }
     }
 
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink", "LargeHeatSinkUgly", "SmallHeatSinkUgly" })]
-    public class HeatSinkLogic : MyGameLogicComponent
+	[MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon),false, new []{ "LargeHeatSink", "SmallHeatSink", "LargeHeatSinkUgly", "SmallHeatSinkUgly" })]
+	public class HeatSinkLogic : MyGameLogicComponent
     {
         private IMyBeacon block;
         public HeatSinkData HeatSinkData;
@@ -158,7 +159,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void UpdateAfterSimulation100()
         {
             if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer()) return;
-            
+            CheckForSeparation();
+
             HeatSinkData.VentingHeat *= 0.999f;
 
             HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
@@ -169,6 +171,43 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Warning);
             else if (HeatSinkData.HeatRatio >= 0.5)
                 ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?", MessageSeverity.Tutorial);
+        }
+
+
+        private void CheckForSeparation()
+        {
+	        if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer() ||
+                block?.CubeGrid?.EntityId == HeatSinkData.OriginalGridId) return;
+	        
+			IMyEntity entity;
+	        if (MyAPIGateway.Entities.TryGetEntityById(HeatSinkData.OriginalGridId, out entity))
+	        {
+				// Ensure the entity is a grid
+				var originalGrid = entity as IMyCubeGrid;
+		        if (originalGrid != null)
+		        {
+					ChatBot.WarnPlayer(originalGrid,
+				        "Heat sink has been disconnected from grid, generators are receiving feedback heat!",
+				        MessageSeverity.Warning);
+
+			        var powerProducersOnOriginalGrid = new List<IMyPowerProducer>();
+			        var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(originalGrid);
+			        gts.GetBlocksOfType(powerProducersOnOriginalGrid, x => x.IsWorking);
+
+			        foreach (var powerProducer in powerProducersOnOriginalGrid)
+			        {
+				        var heatData = powerProducer.GameLogic.GetAs<ReactorLogic>()?.heatData
+				                       ?? powerProducer.GameLogic.GetAs<BatteryLogic>()?.heatData
+				                       ?? powerProducer.GameLogic.GetAs<H2EngineLogic>()?.heatData;
+				        if (heatData != null)
+				        {
+					        HeatSinkData.CurrentHeat -= heatData.FeedHeatBack(HeatSinkData.CurrentHeat, true);
+				        }
+			        }
+		        }
+	        }
+
+	        HeatSinkData.OriginalGridId = block.CubeGrid.EntityId;
         }
 
         private void OnBlockDestroyed(object target, MyDamageInformation info)

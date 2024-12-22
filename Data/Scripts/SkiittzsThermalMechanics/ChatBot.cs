@@ -52,7 +52,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 	        }
 
 	        _messageAttemptCounter++;
-	        if (_messageAttemptCounter == MessageDelay)
+	        if (_messageAttemptCounter >= MessageDelay)
 		        _messageAttemptCounter = 0;
 
 		}

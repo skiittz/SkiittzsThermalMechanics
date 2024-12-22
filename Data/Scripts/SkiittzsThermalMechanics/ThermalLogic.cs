@@ -165,9 +165,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             return Utilities.GetHeatSinkLogic(block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
         }
 
-        public float FeedHeatBack(float incomingHeat)
+        public float FeedHeatBack(float incomingHeat, bool allowOverheat = false)
         {
-            var acceptedHeat = Math.Min(incomingHeat, AvailableHeatCapacity);
+	        if (incomingHeat < 0)
+		        return 0;
+
+            var acceptedHeat = Math.Min(incomingHeat, (AvailableHeatCapacity * (allowOverheat ? 1.5f : 1)));
             CurrentHeat += acceptedHeat;
             return acceptedHeat;
         }
