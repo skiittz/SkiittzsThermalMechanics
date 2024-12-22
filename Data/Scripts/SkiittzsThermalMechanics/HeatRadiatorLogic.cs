@@ -244,6 +244,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 				        radiatorData.CanSeeSky = false;
 		        }
 	        }
+
+            if(!radiatorData.CanSeeSky)
+                ChatBot.WarnPlayer(block, "This radiator will not function.  The radiating face must have line of sight to empty space.", MessageSeverity.Tutorial);
         }
 
         private void CreateMinColorPicker()
