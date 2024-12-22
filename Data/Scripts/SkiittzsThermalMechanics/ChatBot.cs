@@ -235,7 +235,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 : 0;
             ChatBotName = settings.ContainsKey("ChatBotName")
                 ? settings["ChatBotName"]
-                : "AssemblerDaddy_OreGasm69";
+                : "HotDaddy";
             foreach (var command in settings.Where(x => x.Key.StartsWith("ChatBotCommand_")))
             {
                 commandMappings[command.Value] = command.Key.Replace("ChatBotCommand_", "");
