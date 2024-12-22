@@ -54,7 +54,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
 	        if (_messageAttemptCounter == 0)
 	        {
-		        MyAPIGateway.Utilities.ShowMessage(ChatBotName, message);
+		        MyAPIGateway.Utilities.ShowMessage(ChatBotNameFor(playerId), message);
 	        }
 
 	        _messageAttemptCounter++;
@@ -283,8 +283,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {
-            MessageDelay = settings.ContainsKey("MessageDelay")
-                ? int.Parse(settings["MessageDelay"])
+            MessageDelay = settings.ContainsKey("ChatFrequencyLimiter")
+                ? int.Parse(settings["ChatFrequencyLimiter"])
                 : 0;
             ChatBotName = settings.ContainsKey("ChatBotName")
                 ? settings["ChatBotName"]

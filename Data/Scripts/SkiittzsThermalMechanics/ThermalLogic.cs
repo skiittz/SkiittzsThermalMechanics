@@ -231,7 +231,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             var remainingSeconds = RemainingSeconds();
 
             var debugInfo = new StringBuilder();
-            debugInfo.Append($"DEBUG INFO - {block.CustomName}:\n");
             debugInfo.Append($"Current Heat: {CurrentHeat}\n");
             debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
             debugInfo.Append($"Last Heat Delta: {LastHeatDelta}\n");
@@ -240,7 +239,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
             customInfo.Append($"Time until {(LastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
 
-            customInfo.Append($"Heat Generation: {ThermalFatigue * 100:F0}%");
+            customInfo.Append($"Heat Generation: {ThermalFatigue * 100:F0}%\n");
         }
 
         private const float SecondsPer100Ticks = 1.667f;

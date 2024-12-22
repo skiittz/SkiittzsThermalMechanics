@@ -31,7 +31,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public float HeatRatio => CurrentDissipation / MaxDissipation;
         public Color MinColor { get; set; }
         public Color MaxColor { get; set; }
-
+        [XmlIgnore]
+        public bool CanSeeSky { get; set; }
+        [XmlIgnore]
+        public Vector3D ForwardDirection { get; set; }
         public static void SaveData(long entityId, RadiatorData data)
         {
             try
@@ -114,6 +117,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             radiatorData = RadiatorData.LoadData(block);
 
+			radiatorData.ForwardDirection = (block.BlockDefinition.SubtypeId).Contains("Ugly") ? block.WorldMatrix.Forward : block.WorldMatrix.Up;
             NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
         }
@@ -121,9 +125,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
         {
             var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
-            customInfo.Append($"DEBUG: SubTypeId:{logic.block.BlockDefinition.SubtypeId}\n");
-            customInfo.Append(
-                $"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)");
+            customInfo.Append($"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)\n");
+            if (!logic.radiatorData.CanSeeSky)
+	            customInfo.Append("Radiator must be external to function!\n");
         }
 
         void RadiatorLogic_OnClose(IMyEntity obj)
@@ -135,8 +139,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= RadiatorLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= RadiatorLogic_OnClose;
                     RadiatorData.SaveData(obj.EntityId, (obj).GameLogic.GetAs<HeatRadiatorLogic>().radiatorData);
-                }
-            }
+				}
+			}
             catch (Exception ex)
             {
 
@@ -161,7 +165,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void UpdateAfterSimulation100()
         {
             if (block == null || radiatorData == null || !block.IsOwnedByAPlayer()) return;
-            if (!block.IsFunctional)
+            CheckIsExterior();
+
+            if (!block.IsFunctional || !radiatorData.CanSeeSky)
             {
                 radiatorData.CurrentDissipation = 0;
                 return;
@@ -208,6 +214,36 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
             Animate();
             block.RefreshCustomInfo();
+        }
+
+        private void CheckIsExterior()
+        {
+	        if (block == null) return;
+	        Vector3D startPosition = block.GetPosition();
+	        Vector3D forwardRelativeToBlock = Vector3D.TransformNormal(radiatorData.ForwardDirection, block.WorldMatrix);
+			Vector3D endPosition = startPosition + forwardRelativeToBlock * 100;
+
+	        var hitList = new List<IHitInfo>();
+	        MyAPIGateway.Physics.CastRay(startPosition, endPosition, hitList);
+
+	        radiatorData.CanSeeSky = true;
+	        foreach (var result in hitList)
+	        {
+		        
+				var grid = result.HitEntity as IMyCubeGrid ?? (result.HitEntity as IMyCubeBlock)?.CubeGrid;
+		        if (grid != null)
+		        {
+			        //check to see if the block/grid hit belongs to the same construct.  otherwise ignore.
+			        if (grid.EntityId == block.CubeGrid.EntityId)
+				        radiatorData.CanSeeSky = false;
+		        }
+		        else
+		        {
+					//not a grid or block hit, must be voxel.  which means if we are a station, its a problem.  otherwise ignore.
+					if (block.CubeGrid.IsStatic)
+				        radiatorData.CanSeeSky = false;
+		        }
+	        }
         }
 
         private void CreateMinColorPicker()
@@ -290,9 +326,36 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             block.SetEmissiveParts("Emissive", InterpolateColor(radiatorData.MinColor, radiatorData.MaxColor, radiatorData.HeatRatio), radiatorData.HeatRatio);
             SetBladeRotation();
+            if (radiatorData.HeatRatio > 0.7)
+            {
+                EmitSteam();
+            }else
+            {
+                StopSteam();
+            }
         }
 
-        private void SetBladeRotation()
+        private MyParticleEffect particleEffect;
+
+        public void EmitSteam()
+        {
+	        if (block == null || block.Closed)
+		        return;
+
+			var worldMatrix = block.WorldMatrix;
+	        var frontPosition = block.GetPosition() + worldMatrix.Forward * (block.CubeGrid.GridSize*2);
+			if (MyParticlesManager.TryCreateParticleEffect("ExhaustSmokeWhiteSmall", ref worldMatrix, ref frontPosition, (uint)block.EntityId, out particleEffect))
+			{
+				particleEffect.UserScale = 0.4f; 
+			}
+		}
+
+        public void StopSteam()
+        {
+			particleEffect?.Stop();
+        }
+
+		private void SetBladeRotation()
         {
             var entity = (MyEntity)block;
             if (!entity.Subparts.Any())

@@ -167,8 +167,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             block.Radius = Math.Min(500000, HeatSinkData.VentingHeat*HeatSinkData.WeatherMult);
             (block as IMyTerminalBlock).RefreshCustomInfo();
 
-            if(HeatSinkData.HeatRatio >= 0.8)
-                ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Warning);
+            if(HeatSinkData.HeatRatio >= 1)
+	            ChatBot.WarnPlayer(block, "Heat sink is at capacity!  Generators are overheating!", MessageSeverity.Warning);
+			else if (HeatSinkData.HeatRatio >= 0.8)
+                ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Tutorial);
             else if (HeatSinkData.HeatRatio >= 0.5)
                 ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?", MessageSeverity.Tutorial);
         }
