@@ -110,7 +110,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BatteryLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\UiElements.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatCommandHandler.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration.cs" />

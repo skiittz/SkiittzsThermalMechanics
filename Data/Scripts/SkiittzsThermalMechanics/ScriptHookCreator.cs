@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery;
 using VRage.Game.Components;
 using VRage.Game;
 using VRage.Game.ModAPI;
