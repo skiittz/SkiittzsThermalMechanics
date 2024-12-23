@@ -101,14 +101,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		{
 			block.SetEmissiveParts("Emissive", InterpolateColor(radiatorData.MinColor, radiatorData.MaxColor, radiatorData.HeatRatio), radiatorData.HeatRatio);
 			SetBladeRotation();
-			if (radiatorData.HeatRatio > 0.7)
-			{
-				EmitSteam();
-			}
-			else
-			{
-				StopSteam();
-			}
+			//if (radiatorData.HeatRatio > 0.7)
+			//{
+			//	EmitSteam();
+			//}
+			//else
+			//{
+			//	StopSteam();
+			//}
 		}
 
 		private MyParticleEffect particleEffect;
@@ -118,9 +118,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			if (block == null || block.Closed)
 				return;
 
+			if (particleEffect != null)
+				StopSteam();
+
 			var worldMatrix = block.WorldMatrix;
-			var frontPosition = block.GetPosition() + worldMatrix.Forward * (block.CubeGrid.GridSize * 2);
-			if (MyParticlesManager.TryCreateParticleEffect("ExhaustSmokeWhiteSmall", ref worldMatrix, ref frontPosition, (uint)block.EntityId, out particleEffect))
+			var frontPosition = block.GetPosition() + radiatorData.ForwardDirection * (block.CubeGrid.GridSize * 8);
+			if (MyParticlesManager.TryCreateParticleEffect("ExhaustSmokeWhiteSmall", ref worldMatrix,
+				    ref frontPosition, (uint)block.EntityId, out particleEffect))
 			{
 				particleEffect.UserScale = 0.4f;
 			}

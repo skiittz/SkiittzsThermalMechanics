@@ -1,18 +1,9 @@
-﻿using Sandbox.ModAPI.Interfaces.Terminal;
-using Sandbox.ModAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Generator;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor;
-using VRage.Game.Components;
-using VRage.Game;
-using VRage.Game.ModAPI;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
