@@ -7,3 +7,7 @@ To cool your heat sink, build one or more radiators. These will ramp up over tim
 Radiators must be exposed to open space on the face that you would expect heat to dissipate from, if they detect another block on front of them, they will not work.
 
 Protect your heat sinks.  if they are destroyed or are otherwise ejected, all that stored heat will be fed back into your generators.  This can be catastrophic.  Heat sinks can be fully enclosed.
+
+makeshift radiators are exactly what they sound like.  they are cheap to build and do not require access to more rare materials like gold, but are much less efficient.  these are good for small scale ships that do not need tons of power, until you can afford better equipment. 
+
+there is a generator spam penalty.  the more power producers you have on the grid, the more heat each one will produce.  this is to encourage larger, more powerful plants over tons and tons of little ones.  I'm looking at you, battery spammers.
