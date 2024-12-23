@@ -125,7 +125,9 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Data.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Simulation.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\UiElements.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ReactorLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\UiElements.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptExample.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptHookCreator.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\SkiittzThermalMechanicsSession.cs" />

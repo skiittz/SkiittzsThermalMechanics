@@ -9,6 +9,7 @@ using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces;
 using Sandbox.ModAPI.Interfaces.Terminal;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor;
 using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
