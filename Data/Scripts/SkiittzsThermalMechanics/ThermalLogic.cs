@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using Sandbox.ModAPI;
-using SpaceEngineers.Game.ModAPI;
 using VRage.Utils;
-using VRageMath;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
@@ -41,10 +39,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 
         public void AppendCustomThermalInfo(IMyThrust block, StringBuilder customInfo)
         {
-            var debugInfo = new StringBuilder();
-            debugInfo.Append($"DEBUG INFO - {block.CustomName}:\n");
-            debugInfo.Append($"Current Heat: {CurrentHeat}\n");
-
             customInfo.Append($"Current Heat Level: {CurrentHeat}\n");
         }
 
@@ -229,12 +223,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public void AppendCustomThermalInfo(IMyPowerProducer block, StringBuilder customInfo)
         {
             var remainingSeconds = RemainingSeconds();
-
-            var debugInfo = new StringBuilder();
-            debugInfo.Append($"Current Heat: {CurrentHeat}\n");
-            debugInfo.Append($"Heat Capacity: {HeatCapacity}\n");
-            debugInfo.Append($"Last Heat Delta: {LastHeatDelta}\n");
-            debugInfo.Append($"Remaining Seconds: {remainingSeconds}");
 
             customInfo.Append($"Heat Level: {(CurrentHeat / HeatCapacity) * 100}%\n");
             customInfo.Append($"Time until {(LastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
