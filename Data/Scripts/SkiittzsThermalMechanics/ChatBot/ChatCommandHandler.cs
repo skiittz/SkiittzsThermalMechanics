@@ -1,13 +1,11 @@
-﻿using Sandbox.ModAPI;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VRage.Game.Components;
+using Sandbox.ModAPI;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using VRage.Game;
+using VRage.Game.Components;
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 {
     [MySessionComponentDescriptor(MyUpdateOrder.NoUpdate)]
     public class ChatCommandHandler : MySessionComponentBase

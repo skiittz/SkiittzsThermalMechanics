@@ -1,4 +1,6 @@
-﻿namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Generator
+﻿using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Generator
 {
 	public partial class H2EngineLogic
 	{

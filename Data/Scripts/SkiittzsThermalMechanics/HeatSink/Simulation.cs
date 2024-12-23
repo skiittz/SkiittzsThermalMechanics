@@ -5,6 +5,8 @@ using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 
@@ -40,11 +42,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			(block as IMyTerminalBlock).RefreshCustomInfo();
 
 			if (HeatSinkData.HeatRatio >= 1)
-				ChatBot.WarnPlayer(block, "Heat sink is at capacity!  Generators are overheating!", MessageSeverity.Warning);
+				ChatBot.ChatBot.WarnPlayer(block, "Heat sink is at capacity!  Generators are overheating!", MessageSeverity.Warning);
 			else if (HeatSinkData.HeatRatio >= 0.8)
-				ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Tutorial);
+				ChatBot.ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Tutorial);
 			else if (HeatSinkData.HeatRatio >= 0.5)
-				ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?", MessageSeverity.Tutorial);
+				ChatBot.ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?", MessageSeverity.Tutorial);
 		}
 
 		private void CheckForSeparation()
@@ -59,7 +61,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				var originalGrid = entity as IMyCubeGrid;
 				if (originalGrid != null)
 				{
-					ChatBot.WarnPlayer(originalGrid,
+					ChatBot.ChatBot.WarnPlayer(originalGrid,
 						"Heat sink has been disconnected from grid, generators are receiving feedback heat!",
 						MessageSeverity.Warning);
 

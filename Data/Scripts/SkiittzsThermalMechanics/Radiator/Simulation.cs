@@ -1,6 +1,8 @@
 ﻿using Sandbox.ModAPI;
 using System.Collections.Generic;
 using System;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using VRage.Game.ModAPI;
 using VRage.Game;
 using VRageMath;
@@ -25,13 +27,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			{
 				MyObjectBuilder_WeatherEffect currentWeatherEffect;
 				var position = block.PositionComp.GetPosition();
-				if (!MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) || !Configuration.WeatherSettings.ContainsKey(currentWeatherEffect.Weather))
+				if (!MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) || !Configuration.Configuration.WeatherSettings.ContainsKey(currentWeatherEffect.Weather))
 				{
 					weatherMult = 1;
 					return;
 				}
 
-				weatherMult = 1 / Configuration.WeatherSettings[currentWeatherEffect.Weather];
+				weatherMult = 1 / Configuration.Configuration.WeatherSettings[currentWeatherEffect.Weather];
 			}
 
 			if (!block.Enabled)
@@ -93,7 +95,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			}
 
 			if (!radiatorData.CanSeeSky)
-				ChatBot.WarnPlayer(block, "This radiator will not function.  The radiating face must have line of sight to empty space.", MessageSeverity.Tutorial);
+				ChatBot.ChatBot.WarnPlayer(block, "This radiator will not function.  The radiating face must have line of sight to empty space.", MessageSeverity.Tutorial);
 		}
 	}
 }

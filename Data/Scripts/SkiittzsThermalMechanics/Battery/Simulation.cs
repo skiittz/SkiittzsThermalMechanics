@@ -1,4 +1,6 @@
-﻿namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
+﻿using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 {
 	public partial class BatteryLogic
 	{
