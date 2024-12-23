@@ -117,8 +117,10 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatCommandHandler.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\DefaultConfigs.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\UiElements.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSinkLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2GeneratorLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HydrogenThrusterLogic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Configuration.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Initializer.cs" />

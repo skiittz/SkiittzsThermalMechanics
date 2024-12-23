@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Generator;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor;
 using VRage.Game.Components;
 using VRage.Game;
