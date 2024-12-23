@@ -12,6 +12,7 @@ using VRage.Scripting;
 using IMyCubeBlock = VRage.Game.ModAPI.IMyCubeBlock;
 using IMyCubeGrid = VRage.Game.ModAPI.IMyCubeGrid;
 using Sandbox.ModAPI.Interfaces.Terminal;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
 {
