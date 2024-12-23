@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sandbox.ModAPI;
-using VRageMath;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configuration
 {
     public static partial class Configuration
     {
@@ -46,10 +46,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             IsLoaded = true;
 
             if (configs.ChatBotSettings != null)
-                ChatBot.InitConfigs(configs.ChatBotSettings.Settings.ToDictionary(x => x.Name, x => x.Value));
-            ChatBot.LoadDisabledPlayers();
-            ChatBot.LoadWarningOnlyPlayers();
-            ChatBot.LoadPlayerChatBotNameOverrides();
+                ChatBot.ChatBot.InitConfigs(configs.ChatBotSettings.Settings.ToDictionary(x => x.Name, x => x.Value));
+            ChatBot.ChatBot.LoadDisabledPlayers();
+            ChatBot.ChatBot.LoadWarningOnlyPlayers();
+            ChatBot.ChatBot.LoadPlayerChatBotNameOverrides();
         }
         
         public static void Save()
@@ -101,9 +101,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         {
             return new ModSettings
             {
-                BlockTypeSettings = Configuration.DefaultBlockSettings().ToList(),
+                BlockTypeSettings = Enumerable.ToList<BlockType>(Configuration.DefaultBlockSettings()),
                 ChatBotSettings = Configuration.DefaultChatBotSettings(),
-                WeatherSettings = Configuration.DefaultWeatherSettings().ToList()
+                WeatherSettings = Enumerable.ToList<WeatherSetting>(Configuration.DefaultWeatherSettings())
             };
         }
     }

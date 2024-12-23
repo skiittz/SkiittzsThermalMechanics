@@ -1,8 +1,7 @@
-﻿using Sandbox.ModAPI;
-using VRage.Game;
+﻿using VRage.Game;
 using VRage.Game.Components;
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 {
     [MySessionComponentDescriptor(MyUpdateOrder.NoUpdate)]
     public class SkiittzThermalMechanicsSession : MySessionComponentBase
@@ -10,7 +9,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         public override void Init(MyObjectBuilder_SessionComponent sessionComponent)
         {
             base.Init(sessionComponent);
-            Configuration.Load();
+            Configuration.Configuration.Load();
         }
     }
 }

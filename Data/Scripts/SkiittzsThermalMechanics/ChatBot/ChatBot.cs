@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Text;
 using Sandbox.ModAPI;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using VRage.Game.ModAPI;
-using VRage.Scripting;
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 {
     public static class ChatBot
     {
@@ -212,8 +212,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
                 case "Reload":
                     if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
                     {
-                        Configuration.Load();
-                        var definitions = Configuration.BlockSettings.Select(x => x.Key);
+	                    Configuration.Configuration.Load();
+                        var definitions = Configuration.Configuration.BlockSettings.Select(x => x.Key);
                         MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"configs reloaded for block types: {string.Join(",",definitions)}");
                     }
                     else

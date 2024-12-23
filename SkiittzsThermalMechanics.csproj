@@ -110,21 +110,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\BatteryLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatCommandHandler.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\DefaultConfigs.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSinkLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2GeneratorLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatRadiatorLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HydrogenThrusterLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ReactorLogic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot\ChatBot.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot\ChatCommandHandler.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\DefaultConfigs.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\HeatData.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Logic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Thruster\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Thruster\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Thruster\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\Data.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Data.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\Initializer.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\Simulation.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\UiElements.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptExample.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptHookCreator.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\SkiittzThermalMechanicsSession.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ThermalLogic.cs" />
-    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Utilities.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\SkiittzThermalMechanicsSession.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -139,5 +158,6 @@
     <Content Include="metadata.mod" />
     <Content Include="thumb.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

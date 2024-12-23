@@ -1,19 +1,13 @@
 ﻿using System;
-using Sandbox.Game.Entities;
-using Sandbox.ModAPI;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using VRage;
-using VRage.Game.ModAPI;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Scripting;
+using Sandbox.ModAPI;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink;
 using IMyCubeBlock = VRage.Game.ModAPI.IMyCubeBlock;
 using IMyCubeGrid = VRage.Game.ModAPI.IMyCubeGrid;
-using Sandbox.ModAPI.Interfaces.Terminal;
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 {
     public static class Utilities
     {
@@ -28,7 +22,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
             beacons = beacons.OrderByDescending(x => x.Radius).ToList();
 
             if(!beacons.Any())
-                ChatBot.WarnPlayer(grid, "It seems you have no heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
+	            ChatBot.ChatBot.WarnPlayer(grid, "It seems you have no heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
 
             if (beacons.Count > 1)
                 for (int i = 1; i < beacons.Count; i++)

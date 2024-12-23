@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
+namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configuration
 {
     public static partial class Configuration
     {
-        
         public static IEnumerable<BlockType> DefaultBlockSettings()
         {
             #region Basic Radiators
