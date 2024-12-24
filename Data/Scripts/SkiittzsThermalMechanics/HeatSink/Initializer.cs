@@ -1,6 +1,7 @@
 ﻿using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using System;
+using System.Net.Configuration;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
@@ -8,7 +9,7 @@ using VRage.ObjectBuilders;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink
 {
-	[MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon), false, new[] { "LargeHeatSink", "SmallHeatSink", "LargeHeatSinkUgly", "SmallHeatSinkUgly" })]
+	[MyEntityComponentDescriptor(typeof(MyObjectBuilder_Beacon), false)]
 	public partial class HeatSinkLogic : MyGameLogicComponent
 	{
 		private IMyBeacon block;
@@ -20,7 +21,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			if (block == null)
 				return;
 
-			HeatSinkData = HeatSinkData.LoadData(block);
+			bool configFound = false;
+			HeatSinkData = HeatSinkData.LoadData(block, out configFound);
+			if (!configFound) return;
 
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += HeatSinkLogic_AppendingCustomInfo;

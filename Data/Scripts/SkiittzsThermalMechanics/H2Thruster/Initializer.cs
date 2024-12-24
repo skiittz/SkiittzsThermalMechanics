@@ -9,13 +9,7 @@ using VRage.ObjectBuilders;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thruster
 {
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Thrust), false
-    ,new []{ "LargeBlockLargeHydrogenThrust", "LargeBlockSmallHydrogenThrust", 
-        "SmallBlockLargeHydrogenThrust", "SmallBlockSmallHydrogenThrust",
-        "LargeBlockLargeHydrogenThrustIndustrial", "LargeBlockSmallHydrogenThrustIndustrial",
-        "SmallBlockLargeHydrogenThrustIndustrial", "SmallBlockSmallHydrogenThrustIndustrial"
-    }
-    )]
+    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Thrust), false)]
     public partial class HydrogenThrusterLogic : MyGameLogicComponent
     {
         private ThrusterHeatData heatData;
@@ -26,9 +20,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
             if (block == null)
                 return;
 
-            heatData = ThrusterHeatData.LoadData(block);
+            bool configFound = false;
+			heatData = ThrusterHeatData.LoadData(block, out configFound);
+            if (!configFound) return;
 
-            NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ThrusterLogic_AppendingCustomInfo;
         }
 

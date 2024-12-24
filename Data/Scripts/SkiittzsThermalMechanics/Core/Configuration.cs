@@ -2,9 +2,15 @@
 {
 	public partial class ThrusterHeatData
 	{
-		public static void LoadConfigFileValues(ref ThrusterHeatData data, string subTypeId)
+		public static void LoadConfigFileValues(ref ThrusterHeatData data, string subTypeId, out bool configFound)
 		{
-			if (!Configuration.Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+			if (!Configuration.Configuration.BlockSettings.ContainsKey(subTypeId))
+			{
+				configFound = false;
+				return;
+			}
+
+			configFound = true;
 			float mwHeatPerNewtonThrust;
 			float passiveCooling;
 			if (Configuration.Configuration.TryGetValue(subTypeId, "MwHeatPerNewtonThrust", out mwHeatPerNewtonThrust))
@@ -15,9 +21,15 @@
 	}
 	public partial class PowerPlantHeatData
 	{
-		public static void LoadConfigFileValues(ref PowerPlantHeatData data, string subTypeId)
+		public static void LoadConfigFileValues(ref PowerPlantHeatData data, string subTypeId, out bool configFound)
 		{
-			if (!Configuration.Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+			if (!Configuration.Configuration.BlockSettings.ContainsKey(subTypeId))
+			{
+				configFound = false;
+				return;
+			};
+
+			configFound = true;
 			float heatCapacity;
 			float passiveCooling;
 			if (Configuration.Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))

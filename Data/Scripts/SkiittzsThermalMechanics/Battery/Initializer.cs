@@ -20,7 +20,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 			if (block == null)
 				return;
 
-			heatData = PowerPlantHeatData.LoadData(block);
+			bool configFound = false;
+			heatData = PowerPlantHeatData.LoadData(block, out configFound);
+			if (!configFound) return;
+
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += BatteryLogic_AppendingCustomInfo;
 		}

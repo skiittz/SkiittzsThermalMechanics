@@ -3,9 +3,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 {
 	public partial class HeatSinkData
 	{
-		public static void LoadConfigFileValues(ref HeatSinkData data, string subTypeId)
+		public static void LoadConfigFileValues(ref HeatSinkData data, string subTypeId, out bool configFound)
 		{
-			if (!Configuration.Configuration.BlockSettings.ContainsKey(subTypeId)) return;
+			if (!Configuration.Configuration.BlockSettings.ContainsKey(subTypeId))
+			{
+				configFound = false;
+				return;
+			}
+
+			configFound = true;
 			float heatCapacity;
 			float passiveCooling;
 			if (Configuration.Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))

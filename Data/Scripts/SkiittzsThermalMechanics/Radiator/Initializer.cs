@@ -8,11 +8,7 @@ using VRage.ObjectBuilders;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiator
 {
-	[MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false, new[]
-	{
-		"LargeHeatRadiatorBlock", "SmallHeatRadiatorBlock", "LargeHeatRadiatorBlockUgly", "SmallHeatRadiatorBlockUgly",
-		"BasicLargeHeatRadiatorBlock", "BasicSmallHeatRadiatorBlock", "BasicLargeHeatRadiatorBlockUgly", "BasicSmallHeatRadiatorBlockUgly"
-	})]
+	[MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false)]
 	public partial class HeatRadiatorLogic : MyGameLogicComponent
 	{
 		private float weatherMult = 1.0f;
@@ -26,9 +22,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			if (block == null)
 				return;
 
-			radiatorData = RadiatorData.LoadData(block);
+			bool configFound = false;
+			radiatorData = RadiatorData.LoadData(block, out configFound);
+			if (!configFound) return;
 
-			radiatorData.ForwardDirection = (block.BlockDefinition.SubtypeId).Contains("Ugly") ? block.WorldMatrix.Forward : block.WorldMatrix.Up;
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
 		}

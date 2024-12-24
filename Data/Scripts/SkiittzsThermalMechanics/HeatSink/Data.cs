@@ -31,7 +31,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			}
 		}
 
-		public static HeatSinkData LoadData(IMyBeacon block)
+		public static HeatSinkData LoadData(IMyBeacon block, out bool configFound)
 		{
 			var file = $"{block.EntityId}.xml";
 			var data = new HeatSinkData { OriginalGridId = block.CubeGrid.EntityId };
@@ -50,7 +50,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
 			}
 
-			LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId);
+			LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId, out configFound);
 			return data;
 		}
 	}

@@ -29,7 +29,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 				MyLog.Default.WriteLine($"Failed to save data: {e.Message}");
 			}
 		}
-		public static ThrusterHeatData LoadData(IMyThrust block)
+		public static ThrusterHeatData LoadData(IMyThrust block, out bool configFound)
 		{
 			var file = $"{block.EntityId}.xml";
 			var data = new ThrusterHeatData();
@@ -48,7 +48,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 				MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
 			}
 
-			LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId);
+			LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId, out configFound);
 			return data;
 		}
 	}
@@ -78,7 +78,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 				MyLog.Default.WriteLine($"Failed to save data: {e.Message}");
 			}
 		}
-		public static PowerPlantHeatData LoadData(IMyPowerProducer block)
+		public static PowerPlantHeatData LoadData(IMyPowerProducer block, out bool configFound)
 		{
 			var file = $"{block.EntityId}.xml";
 			var heatData = new PowerPlantHeatData();
@@ -97,7 +97,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 				MyLog.Default.WriteLine($"Failed to load data: {e.Message}");
 			}
 
-			LoadConfigFileValues(ref heatData, block.BlockDefinition.SubtypeId);
+			LoadConfigFileValues(ref heatData, block.BlockDefinition.SubtypeId, out configFound);
 			return heatData;
 		}
 	}

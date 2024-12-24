@@ -36,7 +36,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			}
 		}
 
-		public static RadiatorData LoadData(IMyUpgradeModule block)
+		public static RadiatorData LoadData(IMyUpgradeModule block, out bool configFound)
 		{
 			var file = $"{block.EntityId}.xml";
 			RadiatorData data = null;
@@ -62,7 +62,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 					MaxColor = Color.Red
 				};
 
-			LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId);
+			LoadConfigFileValues(ref data, block.BlockDefinition.SubtypeId, out configFound);
 			return data;
 		}
 	}

@@ -15,7 +15,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "0.1" },
-                    new Setting { Name = "StepSize", Value = "0.0005" }
+                    new Setting { Name = "StepSize", Value = "0.0005" },
+                    new Setting { Name = "ForwardFace", Value = "Up"}
                 }
             };
 
@@ -25,8 +26,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "1" },
-                    new Setting { Name = "StepSize", Value = "0.005" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.005" },
+                    new Setting { Name = "ForwardFace", Value = "Up"}
+				}
             };
             #endregion
 
@@ -38,8 +40,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "0.1" },
-                    new Setting { Name = "StepSize", Value = "0.0005" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.0005" },
+                    new Setting { Name = "ForwardFace", Value = "Forward"}
+				}
             };
 
             yield return new BlockType
@@ -48,8 +51,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "1" },
-                    new Setting { Name = "StepSize", Value = "0.005" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.005" },
+                    new Setting { Name = "ForwardFace", Value = "Forward"}
+				}
             };
 
             #endregion
@@ -64,8 +68,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "5" },
-                    new Setting { Name = "StepSize", Value = "0.025" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.025" },
+                    new Setting { Name = "ForwardFace", Value = "Up"}
+				}
             };
 
             yield return new BlockType
@@ -74,8 +79,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "50" },
-                    new Setting { Name = "StepSize", Value = "0.25" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.25" },
+                    new Setting { Name = "ForwardFace", Value = "Up"}
+				}
             };
             #endregion
 
@@ -87,8 +93,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "5" },
-                    new Setting { Name = "StepSize", Value = "0.025" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.025" },
+                    new Setting { Name = "ForwardFace", Value = "Forward"}
+				}
             };
 
             yield return new BlockType
@@ -97,8 +104,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MaxDissipation", Value = "50" },
-                    new Setting { Name = "StepSize", Value = "0.25" }
-                }
+                    new Setting { Name = "StepSize", Value = "0.25" },
+                    new Setting { Name = "ForwardFace", Value = "Forward"}
+				}
             };
 
             #endregion
