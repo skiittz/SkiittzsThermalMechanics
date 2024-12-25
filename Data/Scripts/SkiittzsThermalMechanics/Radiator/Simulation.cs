@@ -11,6 +11,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 {
 	public partial class HeatRadiatorLogic
 	{
+		public override void UpdateAfterSimulation()
+		{
+			Animate();
+		}
 		public override void UpdateAfterSimulation100()
 		{
 			if (block == null || radiatorData == null || !block.IsOwnedByAPlayer()) return;
