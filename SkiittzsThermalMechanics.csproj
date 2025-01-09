@@ -115,6 +115,7 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Battery\UiElements.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot\ChatBot.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ChatBot\ChatCommandHandler.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\ConfigUpgrader.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\Configuration.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\DefaultConfigs.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Configuration.cs" />

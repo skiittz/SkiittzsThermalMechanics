@@ -63,6 +63,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		public int OverHeatCycles { get; set; }
 		public float ThermalFatigue => 1 + (OverHeatCycles / 100);
 		public float AvailableHeatCapacity => HeatCapacity - CurrentHeat;
+		[XmlIgnore] public float HeatGenerationMultiplier { get; set; }
 
 		public static void SaveData(long entityId, PowerPlantHeatData data)
 		{

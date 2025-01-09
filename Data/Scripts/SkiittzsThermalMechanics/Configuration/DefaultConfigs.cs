@@ -120,8 +120,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockBatteryBlock",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "HeatCapacity", Value = "4800" },
-                    new Setting { Name = "PassiveCooling", Value = "0.4" }
+                    new Setting { Name = "HeatCapacity", Value = "4800", Description = "How much heat capacity before overheating begins"},
+                    new Setting { Name = "PassiveCooling", Value = "0.4", Description = "How much heat can be passively dissipated without a sink or radiator"},
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0", Description = "Multiplier that scales heat production."}
                 }
             };
 
@@ -131,8 +132,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "1600" },
-                    new Setting { Name = "PassiveCooling", Value = "0.13" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.13" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -141,8 +143,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "80" },
-                    new Setting { Name = "PassiveCooling", Value = "0.01" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.01" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
             #endregion
 
@@ -154,8 +157,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "4800" },
-                    new Setting { Name = "PassiveCooling", Value = "0.4" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.4" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -164,8 +168,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "1600" },
-                    new Setting { Name = "PassiveCooling", Value = "0.13" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.13" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             #endregion
@@ -180,8 +185,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "50" },
-                    new Setting { Name = "PassiveCooling", Value = "0.0008" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.0008" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -190,8 +196,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "1475" },
-                    new Setting { Name = "PassiveCooling", Value = "0.02458" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.02458" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -200,8 +207,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "1500" },
-                    new Setting { Name = "PassiveCooling", Value = "0.025" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.025" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             }; 
             
             yield return new BlockType
@@ -210,8 +218,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "30000" },
-                    new Setting { Name = "PassiveCooling", Value = "0.5" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.5" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
             #endregion
             #region Warfare 2
@@ -222,8 +231,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "50" },
-                    new Setting { Name = "PassiveCooling", Value = "0.0008" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.0008" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -232,8 +242,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "1475" },
-                    new Setting { Name = "PassiveCooling", Value = "0.02458" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.02458" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -242,8 +253,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "1500" },
-                    new Setting { Name = "PassiveCooling", Value = "0.025" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.025" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -252,8 +264,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "30000" },
-                    new Setting { Name = "PassiveCooling", Value = "0.5" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.5" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
             #endregion
             #endregion
@@ -266,8 +279,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "2500" },
-                    new Setting { Name = "PassiveCooling", Value = "1" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "1" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             yield return new BlockType
@@ -276,8 +290,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "250" },
-                    new Setting { Name = "PassiveCooling", Value = "0.1" }
-                }
+                    new Setting { Name = "PassiveCooling", Value = "0.1" },
+                    new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
+				}
             };
 
             #endregion
@@ -428,7 +443,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "ChatBotName", Value = "HotDaddy" },
-                    new Setting { Name = "ChatFrequencyLimiter", Value = "20" },
+                    new Setting { Name = "ChatFrequencyLimiter", Value = "20", Description = "Number of cycles that must pass before another message is allowed"},
                     new Setting { Name = "ChatBotCommand_StopMessages", Value = "stfu" },
                     new Setting { Name = "ChatBotCommand_Help", Value = "help" },
                     new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" },
@@ -449,7 +464,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                     new Setting
                     {
                         Name = "TempScale",
-                        Value = "0.25"
+                        Value = "0.25",
+                        Description = "Multipler applied to heat dissipation based on whether.  <1 = cold temps, increased dissipation and signal, >1 = hot temps, decreased dissipation and signal"
                     }
                 }
             };
