@@ -22,7 +22,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             beacons = beacons.OrderByDescending(x => x.Radius).ToList();
 
             if(!beacons.Any())
-	            ChatBot.ChatBot.WarnPlayer(grid, "It seems you have no heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
+	            ChatBot.ChatBot.WarnPlayer(grid, "It seems you have no active heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
 
             if (beacons.Count > 1)
                 for (int i = 1; i < beacons.Count; i++)

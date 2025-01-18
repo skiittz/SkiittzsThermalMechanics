@@ -443,7 +443,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "ChatBotName", Value = "HotDaddy" },
-                    new Setting { Name = "ChatFrequencyLimiter", Value = "20", Description = "Number of cycles that must pass before another message is allowed"},
+                    new Setting { Name = "ChatFrequencyLimiter", Value = "360", Description = "Number of cycles that must pass before another message is allowed"},
                     new Setting { Name = "ChatBotCommand_StopMessages", Value = "stfu" },
                     new Setting { Name = "ChatBotCommand_Help", Value = "help" },
                     new Setting { Name = "ChatBotCommand_ReEnable", Value = "on" },
