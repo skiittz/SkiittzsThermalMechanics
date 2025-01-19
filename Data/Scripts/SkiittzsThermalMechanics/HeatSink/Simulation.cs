@@ -26,7 +26,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			{
 				var remainingHeat = incomingHeat - HeatSinkData.AvailableCapacity;
 				HeatSinkData.CurrentHeat = HeatSinkData.HeatCapacity;
-				return incomingHeat - remainingHeat;
+				return remainingHeat;
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer()) return;
 			CheckForSeparation();
 
-			HeatSinkData.VentingHeat *= 0.999f;
+			HeatSinkData.VentingHeat *= 0.99f;
 
 			HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
 			block.Radius = Math.Min(500000, HeatSinkData.VentingHeat * HeatSinkData.WeatherMult);
@@ -131,7 +131,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		public float RemoveHeat(float heat, float weatherMult)
 		{
-			var dissipatedHeat = Math.Min(heat, HeatSinkData.CurrentHeat) * weatherMult;
+			var dissipatedHeat = (Math.Min(heat, HeatSinkData.CurrentHeat) * weatherMult).LowerBoundedBy(0);
 			HeatSinkData.CurrentHeat -= dissipatedHeat;
 			HeatSinkData.VentingHeat += dissipatedHeat;
 

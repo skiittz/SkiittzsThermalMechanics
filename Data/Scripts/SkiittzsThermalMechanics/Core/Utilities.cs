@@ -73,5 +73,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
         {
             return MyAPIGateway.Session?.Player?.IdentityId ?? 0;
         }
+
+        public static string DebugString(string message)
+        {
+            return Configuration.Configuration.DebugMode ? message : string.Empty;
+        }
     }
 }

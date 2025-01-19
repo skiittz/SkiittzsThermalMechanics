@@ -74,7 +74,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			if (block == null) return;
 			Vector3D startPosition = block.GetPosition();
 			Vector3D forwardRelativeToBlock = Vector3D.TransformNormal(radiatorData.ForwardDirection, block.WorldMatrix);
-			Vector3D endPosition = startPosition + forwardRelativeToBlock * 100;
+			Vector3D endPosition = startPosition + forwardRelativeToBlock * (block.CubeGrid.GridSizeEnum == MyCubeSize.Small ? 10: 100);
 
 			var hitList = new List<IHitInfo>();
 			MyAPIGateway.Physics.CastRay(startPosition, endPosition, hitList);

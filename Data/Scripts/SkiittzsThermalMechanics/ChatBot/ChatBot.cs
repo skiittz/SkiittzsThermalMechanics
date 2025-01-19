@@ -228,11 +228,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 case "Rename":
                     RenameChatBot(Utilities.TryGetCurrentPlayerId(), args?[0]?.ToString());
 	                break;
+                case "ToggleDebug":
+	                if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
+						Configuration.Configuration.ToggleDebugMode();
+	                break;
 				default:
                     PrintUnknownCommand();
                     break;
             }
         }
+
 
         public static void PrintUnknownCommand()
         {
@@ -279,7 +284,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
             {"reload","Reload"},
             {"iamnotanewb", "StopTutorial"},
             {"spankemedaddy_iamnewb","StartTutorial"},
-            {"rename","Rename"}
+            {"rename","Rename"},
+            {"debug","ToggleDebug"}
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {

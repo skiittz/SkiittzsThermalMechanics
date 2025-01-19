@@ -12,6 +12,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         private static ModSettings configs;
         public static Dictionary<string, Dictionary<string, string>> BlockSettings;
         public static Dictionary<string, float> WeatherSettings;
+        private static bool debugMode = false;
+        public static bool DebugMode => debugMode;
+        public static void ToggleDebugMode()
+        {
+			debugMode = !debugMode;
+		}
+
         public static void Load()
         {
             if (IsLoaded) return;
@@ -104,7 +111,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public List<WeatherSetting> WeatherSettings { get; set; }
         
         public float ConfigVersion { get; set; }
-        public static float CurrentVersion = 1.0f;
+        public static float CurrentVersion = 1.1f;
 
         public static ModSettings Default()
         {
