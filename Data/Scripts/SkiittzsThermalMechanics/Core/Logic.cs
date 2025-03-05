@@ -19,7 +19,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 		private float CalculateCooling(IMyThrust block, float availableHeatToSink)
 		{
-			return Utilities.GetHeatSinkLogic(block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+			return Utilities.GetHeatSinkLogic(block?.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
 		}
 
 		private float CalculateHeating(IMyThrust block)
@@ -33,7 +33,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 	{
 		private float CalculateCooling(IMyPowerProducer block, float availableHeatToSink)
 		{
-			return Utilities.GetHeatSinkLogic(block.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
+			return Utilities.GetHeatSinkLogic(block?.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
 		}
 
 		public float FeedHeatBack(float incomingHeat, bool allowOverheat = false)

@@ -16,7 +16,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
         public static HeatSinkLogic GetHeatSinkLogic(IMyCubeGrid grid)
         {
-            var beacons = new List<IMyBeacon>();
+            if(grid == null)
+				return null;
+
+			var beacons = new List<IMyBeacon>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(grid);
             gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.CubeGrid.EntityId == grid.EntityId);
             beacons = beacons.OrderByDescending(x => x.Radius).ToList();

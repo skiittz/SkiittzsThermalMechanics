@@ -46,7 +46,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			}
 			else
 			{
-				var beacon = Utilities.GetHeatSinkLogic(block.CubeGrid);
+				var beacon = Utilities.GetHeatSinkLogic(block?.CubeGrid);
 				if (beacon == null)
 					return;
 
