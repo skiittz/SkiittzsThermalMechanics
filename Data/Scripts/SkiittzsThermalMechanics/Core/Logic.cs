@@ -10,6 +10,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 	{
 		public void ApplyHeating(IMyThrust block)
 		{
+			if (block == null || !block.IsOwnedByAPlayer()) return;
+
 			LastHeatDelta = CalculateHeating(block);
 			CurrentHeat += LastHeatDelta;
 			CurrentHeat -= CalculateCooling(block, CurrentHeat);
@@ -19,11 +21,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 		private float CalculateCooling(IMyThrust block, float availableHeatToSink)
 		{
+			if (block == null || !block.IsOwnedByAPlayer()) return 0;
+
 			return Utilities.GetHeatSinkLogic(block?.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
 		}
 
 		private float CalculateHeating(IMyThrust block)
 		{
+			if (block == null || !block.IsOwnedByAPlayer()) return 0;
+
 			if (!block.IsWorking || !block.IsOwnedByAPlayer())
 				return 0;
 			return (block.CurrentThrust * MwHeatPerNewtonThrust) - PassiveCooling;
@@ -33,6 +39,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 	{
 		private float CalculateCooling(IMyPowerProducer block, float availableHeatToSink)
 		{
+			if (block == null || !block.IsOwnedByAPlayer()) return 0;
+
 			return Utilities.GetHeatSinkLogic(block?.CubeGrid)?.ActiveCooling(availableHeatToSink) ?? 0;
 		}
 
@@ -48,6 +56,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 		private float CalculateHeating(IMyPowerProducer block)
 		{
+			if (block == null || !block.IsOwnedByAPlayer()) return 0;
+
 			if (!block.IsWorking || !block.IsOwnedByAPlayer())
 				return 0;
 
