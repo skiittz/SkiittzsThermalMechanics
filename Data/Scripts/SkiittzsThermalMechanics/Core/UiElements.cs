@@ -32,7 +32,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
         }
         private static string TimeUntilOverheatDisplay(float remainingSeconds)
         {
-            var timeSpan = TimeSpan.FromSeconds(remainingSeconds);
+	        double convertedSeconds;
+            TimeSpan timeSpan;
+
+            if (double.TryParse(remainingSeconds.ToString(), out convertedSeconds))
+	            timeSpan = TimeSpan.FromSeconds(convertedSeconds);
+            else timeSpan = TimeSpan.FromSeconds(0);
+
             return timeSpan.ToString("hh\\:mm\\:ss");
         }
     }
