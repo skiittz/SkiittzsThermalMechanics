@@ -50,6 +50,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				if (beacon == null)
 					return;
 
+				if (beacon.HeatSinkData.CurrentHeat > 0)
+					radiatorData.CurrentDissipation += radiatorData.StepSize;
+
 				if (radiatorData.CurrentDissipation < 0)
 					radiatorData.CurrentDissipation = 0;
 				if (radiatorData.CurrentDissipation > radiatorData.MaxDissipation)
