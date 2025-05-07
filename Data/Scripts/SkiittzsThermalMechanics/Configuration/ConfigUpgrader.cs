@@ -43,6 +43,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 				}
 			}
 
+			foreach (var setting in newConfig.GeneralSettings)
+			{
+				var oldValues = original.GeneralSettings.SingleOrDefault(x => x.Name == setting.Name);
+				if (oldValues != null)
+				{
+					setting.Value = oldValues.Value;
+				}
+			}
+
 			return newConfig;
 		}
 	}

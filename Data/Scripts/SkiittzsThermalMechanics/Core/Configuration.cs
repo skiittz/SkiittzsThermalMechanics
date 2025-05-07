@@ -13,9 +13,9 @@
 			configFound = true;
 			float mwHeatPerNewtonThrust;
 			float passiveCooling;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "MwHeatPerNewtonThrust", out mwHeatPerNewtonThrust))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "MwHeatPerNewtonThrust", out mwHeatPerNewtonThrust))
 				data.MwHeatPerNewtonThrust = mwHeatPerNewtonThrust;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "PassiveCooling", out passiveCooling))
 				data.PassiveCooling = passiveCooling;
 		}
 	}
@@ -33,11 +33,11 @@
 			float heatCapacity;
 			float passiveCooling;
 			float heatGenerationMultiplier;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "HeatCapacity", out heatCapacity))
 				data.HeatCapacity = heatCapacity;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "PassiveCooling", out passiveCooling))
 				data.PassiveCooling = passiveCooling;
-			if(Configuration.Configuration.TryGetValue(subTypeId, "HeatGenerationMultiplier", out heatGenerationMultiplier))
+			if(Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "HeatGenerationMultiplier", out heatGenerationMultiplier))
 				data.HeatGenerationMultiplier = heatGenerationMultiplier;
 			else
 				data.HeatGenerationMultiplier = 1.0f;

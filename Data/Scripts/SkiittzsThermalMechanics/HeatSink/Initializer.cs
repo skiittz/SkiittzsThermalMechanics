@@ -2,6 +2,7 @@
 using Sandbox.ModAPI;
 using System;
 using System.Net.Configuration;
+using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
@@ -20,6 +21,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			block = (IMyBeacon)Entity;
 			if (block == null)
 				return;
+
+			HeatSinkData.IsSmallGrid = block.CubeGrid.GridSizeEnum == MyCubeSize.Small;
+			bool shuntToParent = false;
+			Configuration.Configuration.TryGetGeneralSettingValue("SmallGridShuntsToLarge", out shuntToParent);
+			HeatSinkData.ShuntToParent = shuntToParent;
 
 			bool configFound = false;
 			HeatSinkData = HeatSinkData.LoadData(block, out configFound);

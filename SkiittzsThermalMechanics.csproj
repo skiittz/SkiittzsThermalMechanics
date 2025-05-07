@@ -119,6 +119,7 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\Configuration.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Configuration\DefaultConfigs.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Configuration.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\DebuggingTools\IContainDebugMessages.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\HeatData.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Logic.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Initializer.cs" />

@@ -1,12 +1,14 @@
 ﻿using Sandbox.ModAPI;
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core.DebuggingTools;
 using VRage.Utils;
 using VRageMath;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiator
 {
-	public partial class RadiatorData
+	public partial class RadiatorData : IContainDebugMessages
 	{
 		[XmlIgnore]
 		public float MaxDissipation { get; set; }
@@ -20,6 +22,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		public bool CanSeeSky { get; set; }
 		[XmlIgnore]
 		public Vector3D ForwardDirection { get; set; }
+		[XmlIgnore]
+		public List<string> DebugMessages { get; set; }
 
 		public static void SaveData(long entityId, RadiatorData data)
 		{

@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+using VRage.Game;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 
@@ -34,6 +35,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		{
 			if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer()) return;
 			CheckForSeparation();
+
+			if (HeatSinkData.IsSmallGrid && HeatSinkData.ShuntToParent)
+			{
+				List<IMyShipConnector> connectors = new List<IMyShipConnector>();
+				MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)
+					.GetBlocksOfType(connectors, x => 
+						x.IsWorking && 
+						x.CubeGrid == block.CubeGrid && 
+						x.IsConnected && 
+						x.OtherConnector.CubeGrid.GridSizeEnum == MyCubeSize.Large);
+
+				foreach (var connector in connectors)
+				{
+					var parentHeatSink = Utilities.GetHeatSinkLogic(connector.OtherConnector.CubeGrid);
+					if (parentHeatSink != null)
+					{
+						var sunkHeat = parentHeatSink.ActiveCooling(HeatSinkData.CurrentHeat);
+						HeatSinkData.CurrentHeat -= sunkHeat;
+					}
+				}
+			}
 
 			HeatSinkData.VentingHeat *= 0.99f;
 

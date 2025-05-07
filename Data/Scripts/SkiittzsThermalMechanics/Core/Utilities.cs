@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core.DebuggingTools;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink;
 using IMyCubeBlock = VRage.Game.ModAPI.IMyCubeBlock;
 using IMyCubeGrid = VRage.Game.ModAPI.IMyCubeGrid;
@@ -77,9 +79,25 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             return MyAPIGateway.Session?.Player?.IdentityId ?? 0;
         }
 
-        public static string DebugString(string message)
+        public static StringBuilder DebugLog(this StringBuilder sb, string message)
         {
-            return Configuration.Configuration.DebugMode ? message : string.Empty;
+	        if (!Configuration.Configuration.DebugMode)
+		        return sb;
+
+            sb.Append($"[{message}]\n");
+			return sb;
+		}
+
+        public static StringBuilder DisplayDebugMessages(this IContainDebugMessages obj, StringBuilder sb)
+        {
+			if (!Configuration.Configuration.DebugMode)
+				return sb;
+
+			foreach (var message in obj.DebugMessages)
+		        sb.Append($"[{message}]");
+
+            obj.DebugMessages.Clear();
+			return sb;
         }
     }
 }

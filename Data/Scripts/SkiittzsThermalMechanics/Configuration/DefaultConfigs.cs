@@ -731,5 +731,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 }
             };
         }
+
+        public static IEnumerable<Setting> DefaultGeneralSettings()
+        {
+	        yield return new Setting
+	        {
+		        Name = "SmallGridShuntsToLarge",
+		        Description =
+			        "true/false - when true, small grids docked to a large grid will shunt their accumulated heat into the large grid.",
+		        Value = "true"
+	        };
+        }
     }
 }

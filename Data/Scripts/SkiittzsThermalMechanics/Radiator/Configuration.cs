@@ -16,11 +16,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			float maxDissipationConfig;
 			float stepSizeConfig;
 			string forwardFace;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "MaxDissipation", out maxDissipationConfig))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "MaxDissipation", out maxDissipationConfig))
 				data.MaxDissipation = maxDissipationConfig;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "StepSize", out stepSizeConfig))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "StepSize", out stepSizeConfig))
 				data.StepSize = stepSizeConfig;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "ForwardFace", out forwardFace))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "ForwardFace", out forwardFace))
 			{
 				switch (forwardFace)
 				{

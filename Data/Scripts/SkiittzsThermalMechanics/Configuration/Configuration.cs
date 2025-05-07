@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.CodeDom;
+using System.Collections.Generic;
 using System.Linq;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
@@ -73,7 +74,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             writer.Close();
         }
 
-        public static bool TryGetValue(string type, string configName, out string value)
+        public static bool TryGetBlockSettingValue(string type, string configName, out string value)
         {
             value = string.Empty;
             if (!BlockSettings.ContainsKey(type))
@@ -85,7 +86,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             return true;
         }
 
-        public static bool TryGetValue(string type, string configName, out float value)
+        public static bool TryGetBlockSettingValue(string type, string configName, out float value)
         {
             value = 0f;
             if (!BlockSettings.ContainsKey(type))
@@ -94,13 +95,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 return false;
 
             string strVal;
-            if (!TryGetValue(type, configName, out strVal))
+            if (!TryGetBlockSettingValue(type, configName, out strVal))
                 return false;
 
             if(float.TryParse(strVal, out value))
                 return true;
 
             return false;
+        }
+
+        public static bool TryGetGeneralSettingValue(string name, out bool value)
+        {
+	        value = false;
+	        var setting = configs.GeneralSettings.SingleOrDefault(x => x.Name == name);
+	        return setting != null && bool.TryParse(setting.Value, out value);
         }
     }
 
@@ -109,9 +117,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public List<BlockType> BlockTypeSettings { get; set; }
         public ChatBotSettings ChatBotSettings { get; set; }
         public List<WeatherSetting> WeatherSettings { get; set; }
-        
+        public List<Setting> GeneralSettings { get; set; }
+
         public float ConfigVersion { get; set; }
-        public static float CurrentVersion = 1.1f;
+        public static float CurrentVersion = 1.2f;
 
         public static ModSettings Default()
         {
@@ -120,7 +129,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 ConfigVersion = CurrentVersion,
                 BlockTypeSettings = Enumerable.ToList<BlockType>(Configuration.DefaultBlockSettings()),
                 ChatBotSettings = Configuration.DefaultChatBotSettings(),
-                WeatherSettings = Enumerable.ToList<WeatherSetting>(Configuration.DefaultWeatherSettings())
+                WeatherSettings = Enumerable.ToList<WeatherSetting>(Configuration.DefaultWeatherSettings()),
+                GeneralSettings = Enumerable.ToList<Setting>(Configuration.DefaultGeneralSettings())
             };
         }
     }

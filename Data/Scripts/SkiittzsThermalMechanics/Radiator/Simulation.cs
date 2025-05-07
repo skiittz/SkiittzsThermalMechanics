@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core.DebuggingTools;
 using VRage.Game.ModAPI;
 using VRage.Game;
 using VRageMath;
@@ -39,6 +40,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 
 				weatherMult = 1 / Configuration.Configuration.WeatherSettings[currentWeatherEffect.Weather];
 			}
+
+			radiatorData.DebugMessages.Add($"Ticks since weather check: {ticksSinceWeatherCheck}");
+			radiatorData.DebugMessages.Add($"Weather Mult: {weatherMult}");
 
 			if (!block.Enabled)
 			{

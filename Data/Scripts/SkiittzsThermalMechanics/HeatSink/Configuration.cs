@@ -14,9 +14,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			configFound = true;
 			float heatCapacity;
 			float passiveCooling;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "HeatCapacity", out heatCapacity))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "HeatCapacity", out heatCapacity))
 				data.HeatCapacity = heatCapacity;
-			if (Configuration.Configuration.TryGetValue(subTypeId, "PassiveCooling", out passiveCooling))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "PassiveCooling", out passiveCooling))
 				data.PassiveCooling = passiveCooling;
 		}
 	}

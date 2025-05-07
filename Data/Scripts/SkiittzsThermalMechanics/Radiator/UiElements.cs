@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using VRage.Game.Entity;
 using VRage.Game;
 using VRage.Utils;
@@ -16,7 +17,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
 		{
 			var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
-			customInfo.Append($"Dissipating Heat: {logic.radiatorData.CurrentDissipation.ToString("F1")}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)\n");
+			var currentDissipation = logic.radiatorData.CurrentDissipation.ToString("F1");
+			customInfo.Append($"Dissipating Heat: {currentDissipation}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)\n");
+			customInfo.DebugLog($"Current Dissipation: {radiatorData.CurrentDissipation}");
 			if (!logic.radiatorData.CanSeeSky)
 				customInfo.Append("Radiator must be external to function!\n");
 		}
