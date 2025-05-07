@@ -22,8 +22,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		public bool CanSeeSky { get; set; }
 		[XmlIgnore]
 		public Vector3D ForwardDirection { get; set; }
-		[XmlIgnore]
-		public List<string> DebugMessages { get; set; }
+
+		[XmlIgnore] public List<string> DebugMessages { get; set; } = new List<string>();
 
 		public static void SaveData(long entityId, RadiatorData data)
 		{
