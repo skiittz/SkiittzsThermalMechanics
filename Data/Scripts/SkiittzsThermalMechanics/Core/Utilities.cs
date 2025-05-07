@@ -93,8 +93,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			if (!Configuration.Configuration.DebugMode)
 				return sb;
 
+			sb.Append("\n[Debug Events]:\n");
 			foreach (var message in obj.DebugMessages)
-		        sb.Append($"[{message}]");
+		        sb.Append($"---[{message}]");
 
             obj.DebugMessages.Clear();
 			return sb;

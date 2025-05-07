@@ -22,6 +22,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			customInfo.DebugLog($"Current Dissipation: {radiatorData.CurrentDissipation}");
 			if (!logic.radiatorData.CanSeeSky)
 				customInfo.Append("Radiator must be external to function!\n");
+			
+			logic.radiatorData.DisplayDebugMessages(customInfo);
 		}
 
 		private void CreateMinColorPicker()
