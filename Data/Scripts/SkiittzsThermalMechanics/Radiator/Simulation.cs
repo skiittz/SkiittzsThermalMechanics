@@ -59,7 +59,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				if (radiatorData.CurrentDissipation > radiatorData.MaxDissipation)
 					radiatorData.CurrentDissipation = radiatorData.MaxDissipation;
 
-				var dissipatedHeat = beacon.RemoveHeat(Math.Min(radiatorData.CurrentDissipation, radiatorData.StepSize), weatherMult);
+				var dissipatedHeat = beacon.RemoveHeat(radiatorData.CurrentDissipation.LowerBoundedBy(0), weatherMult);
 				if (dissipatedHeat < radiatorData.CurrentDissipation)
 					radiatorData.CurrentDissipation -= radiatorData.StepSize;
 				if (dissipatedHeat == radiatorData.CurrentDissipation)
