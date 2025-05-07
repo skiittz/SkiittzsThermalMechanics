@@ -14,6 +14,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			customInfo.DebugLog($"Current Heat: {logic.HeatSinkData.CurrentHeat}");
 			customInfo.DebugLog($"Weather Mult: {logic.HeatSinkData.WeatherMult}");
 			customInfo.Append($"Current IR Detectable Distance: {logic.block.Radius:N0} meters \n");
+			customInfo.DebugLog($"ShuntEnabled: {logic.HeatSinkData.ShuntToParent}");
 		}
 	}
 }
