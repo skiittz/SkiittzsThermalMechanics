@@ -22,14 +22,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			if (block == null)
 				return;
 
+			bool configFound = false;
+			HeatSinkData = HeatSinkData.LoadData(block, out configFound);
+			if (!configFound) return;
+
 			HeatSinkData.IsSmallGrid = block.CubeGrid.GridSizeEnum == MyCubeSize.Small;
 			bool shuntToParent = false;
 			Configuration.Configuration.TryGetGeneralSettingValue("SmallGridShuntsToLarge", out shuntToParent);
 			HeatSinkData.ShuntToParent = shuntToParent;
-
-			bool configFound = false;
-			HeatSinkData = HeatSinkData.LoadData(block, out configFound);
-			if (!configFound) return;
 
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += HeatSinkLogic_AppendingCustomInfo;
