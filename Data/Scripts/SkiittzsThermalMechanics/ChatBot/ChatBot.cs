@@ -205,10 +205,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                     break;
                 case "StopMessages":
                     DisableMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
+                    MyAPIGateway.Utilities.ShowMessage(ChatBotName, "All messages stopped");
                     break;
                 case "ReEnable":
                     EnableMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
-                    break;
+                    MyAPIGateway.Utilities.ShowMessage(ChatBotName, "All messages re-enabled");
+					break;
                 case "Reload":
                     if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
                     {
@@ -221,17 +223,25 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                     break;
                 case "StopTutorial":
 	                DisableTutorialMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
-	                break;
+	                MyAPIGateway.Utilities.ShowMessage(ChatBotName, "Tutorial messages stopped");
+					break;
                 case "StartTutorial":
 	                EnableTutorialMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
-	                break;
+	                MyAPIGateway.Utilities.ShowMessage(ChatBotName, "Tutorial messages re-enabled");
+					break;
                 case "Rename":
                     RenameChatBot(Utilities.TryGetCurrentPlayerId(), args?[0]?.ToString());
 	                break;
                 case "ToggleDebug":
 	                if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
-						Configuration.Configuration.ToggleDebugMode();
-	                break;
+	                {
+		                Configuration.Configuration.ToggleDebugMode();
+		                MyAPIGateway.Utilities.ShowMessage(ChatBotName,
+			                $"Debug mode is now {(Configuration.Configuration.DebugMode ? "enabled" : "disabled")}");
+	                }
+	                else
+						MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This command can only be run by an admin");
+					break;
 				default:
                     PrintUnknownCommand();
                     break;
