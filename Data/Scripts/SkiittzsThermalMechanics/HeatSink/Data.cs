@@ -17,6 +17,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		public long OriginalGridId { get; set; }
 		public bool IsSmallGrid { get; set; }
 		public bool ShuntToParent { get; set; }
+		public float SignalRadius { get; set; }
 
 		public static void SaveData(long entityId, HeatSinkData data)
 		{

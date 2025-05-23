@@ -60,7 +60,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			HeatSinkData.VentingHeat *= 0.99f;
 
 			HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
-			block.Radius = Math.Min(500000, HeatSinkData.VentingHeat * HeatSinkData.WeatherMult);
+			HeatSinkData.SignalRadius = Math.Min(500000, HeatSinkData.VentingHeat * HeatSinkData.WeatherMult);
+			block.Radius = HeatSinkData.SignalRadius;
 			(block as IMyTerminalBlock).RefreshCustomInfo();
 
 			if (HeatSinkData.HeatRatio >= 1)
