@@ -57,7 +57,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				}
 			}
 
-			HeatSinkData.VentingHeat *= 0.99f;
+			HeatSinkData.VentingHeat *= 0.992f;
 
 			HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
 			HeatSinkData.SignalRadius = Math.Min(500000, HeatSinkData.VentingHeat * HeatSinkData.WeatherMult);
