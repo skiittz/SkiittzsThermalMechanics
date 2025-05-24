@@ -306,7 +306,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "500000" },
-                    new Setting { Name = "PassiveCooling", Value = "0.01" }
+                    new Setting { Name = "PassiveCooling", Value = "0.01" },
+                    new Setting { Name = "SignalDecay", Value = "0.9992", Description = "each tick, signal radius = (current radius * signal decay) + newly vented heat (must be less than 1 or signals will NEVER reduce)"}
                 }
             };
 
@@ -316,9 +317,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "HeatCapacity", Value = "50000" },
-                    new Setting { Name = "PassiveCooling", Value = "0.01" }
-                }
-            };
+                    new Setting { Name = "PassiveCooling", Value = "0.01" },
+                    new Setting { Name = "SignalDecay", Value = "0.9992", Description = "each tick, signal radius = (current radius * signal decay) + newly vented heat (must be less than 1 or signals will NEVER reduce)"}
+				}
+			};
             #endregion
 
             #region NonDlc

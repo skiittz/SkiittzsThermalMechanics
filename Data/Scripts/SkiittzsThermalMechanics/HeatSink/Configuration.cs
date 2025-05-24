@@ -14,10 +14,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			configFound = true;
 			float heatCapacity;
 			float passiveCooling;
+			float signalDecay;
 			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "HeatCapacity", out heatCapacity))
 				data.HeatCapacity = heatCapacity;
 			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "PassiveCooling", out passiveCooling))
 				data.PassiveCooling = passiveCooling;
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "SignalRadius", out signalDecay))
+				data.SignalDecay = signalDecay;
 		}
 	}
 }

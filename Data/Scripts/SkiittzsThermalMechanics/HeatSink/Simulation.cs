@@ -57,7 +57,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				}
 			}
 
-			HeatSinkData.VentingHeat *= 0.992f;
+			HeatSinkData.VentingHeat *= HeatSinkData.SignalDecay;
 
 			HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
 
