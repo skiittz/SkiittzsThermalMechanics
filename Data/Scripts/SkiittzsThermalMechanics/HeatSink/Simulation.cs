@@ -60,7 +60,29 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			HeatSinkData.VentingHeat *= 0.992f;
 
 			HeatSinkData.CurrentHeat = (HeatSinkData.CurrentHeat - Math.Min(HeatSinkData.PassiveCooling, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
-			HeatSinkData.SignalRadius = Math.Min(500000, HeatSinkData.VentingHeat * HeatSinkData.WeatherMult);
+
+			ticksSinceWeatherCheck = ticksSinceWeatherCheck >= 1000 ? 0 : ticksSinceWeatherCheck + 100;
+			if (ticksSinceWeatherCheck == 0)
+			{
+				MyObjectBuilder_WeatherEffect currentWeatherEffect;
+				var position = block.PositionComp.GetPosition();
+				float naturalGravity;
+				MyAPIGateway.Physics.CalculateNaturalGravityAt(position, out naturalGravity);
+				if (naturalGravity < 0.0001)
+				{
+					signalMult = 1 / Configuration.Configuration.SignalModifiers["Space"];
+				}
+				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.DissipationModifiers.ContainsKey(currentWeatherEffect.Weather))
+				{
+					signalMult = 1 / Configuration.Configuration.SignalModifiers[currentWeatherEffect.Weather];
+				}
+				else
+				{
+					signalMult = 1 / Configuration.Configuration.SignalModifiers["Default"];
+				}
+			}
+
+			HeatSinkData.SignalRadius = Math.Min(500000, HeatSinkData.VentingHeat * signalMult);
 			block.Radius = HeatSinkData.SignalRadius;
 			(block as IMyTerminalBlock).RefreshCustomInfo();
 
@@ -152,9 +174,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		}
 
-		public float RemoveHeat(float heat, float weatherMult)
+		public float RemoveHeat(float heat)
 		{
-			var dissipatedHeat = (Math.Min(heat, HeatSinkData.CurrentHeat) * weatherMult).LowerBoundedBy(0);
+			var dissipatedHeat = (Math.Min(heat, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
 			HeatSinkData.CurrentHeat -= dissipatedHeat;
 			HeatSinkData.VentingHeat += dissipatedHeat;
 

@@ -15,6 +15,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 	{
 		private IMyBeacon block;
 		public HeatSinkData HeatSinkData;
+		private float signalMult = 1.0f;
+		private int ticksSinceWeatherCheck = 0;
 
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
 		{

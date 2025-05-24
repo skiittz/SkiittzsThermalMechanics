@@ -36,20 +36,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				MyAPIGateway.Physics.CalculateNaturalGravityAt(position, out naturalGravity);
 				if (naturalGravity < 0.0001)
 				{
-					weatherMult = 1 / Configuration.Configuration.WeatherSettings["Space"];
+					dissipationMult = 1 / Configuration.Configuration.DissipationModifiers["Space"];
 				}
-				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.WeatherSettings.ContainsKey(currentWeatherEffect.Weather))
+				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.DissipationModifiers.ContainsKey(currentWeatherEffect.Weather))
 				{
-					weatherMult = 1 / Configuration.Configuration.WeatherSettings[currentWeatherEffect.Weather];
+					dissipationMult = 1 / Configuration.Configuration.DissipationModifiers[currentWeatherEffect.Weather];
 				}
 				else
 				{
-					weatherMult = 1 / Configuration.Configuration.WeatherSettings["Default"];
+					dissipationMult = 1 / Configuration.Configuration.DissipationModifiers["Default"];
 				}
 			}
 
 			radiatorData.DebugMessages.Add($"Ticks since weather check: {ticksSinceWeatherCheck}");
-			radiatorData.DebugMessages.Add($"Weather Mult: {weatherMult}");
+			radiatorData.DebugMessages.Add($"Weather Mult: {dissipationMult}");
 
 			if (!block.Enabled)
 			{
@@ -66,7 +66,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				if (radiatorData.CurrentDissipation > radiatorData.MaxDissipation)
 					radiatorData.CurrentDissipation = radiatorData.MaxDissipation;
 
-				var dissipatedHeat = beacon.RemoveHeat(radiatorData.CurrentDissipation.LowerBoundedBy(0), weatherMult);
+				var dissipatedHeat = beacon.RemoveHeat(radiatorData.CurrentDissipation.LowerBoundedBy(0)*dissipationMult);
 				if (dissipatedHeat < radiatorData.CurrentDissipation)
 					radiatorData.CurrentDissipation -= radiatorData.StepSize;
 				if (dissipatedHeat == radiatorData.CurrentDissipation)

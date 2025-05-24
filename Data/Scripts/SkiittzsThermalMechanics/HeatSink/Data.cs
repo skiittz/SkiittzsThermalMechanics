@@ -13,7 +13,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		public float HeatRatio => (CurrentHeat / HeatCapacity);
 		[XmlIgnore] public float PassiveCooling { get; set; }
 		public float VentingHeat;
-		public float WeatherMult = 1;
 		public long OriginalGridId { get; set; }
 		public bool IsSmallGrid { get; set; }
 		public bool ShuntToParent { get; set; }
