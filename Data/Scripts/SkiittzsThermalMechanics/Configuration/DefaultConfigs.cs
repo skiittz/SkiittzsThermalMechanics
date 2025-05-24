@@ -355,7 +355,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockLargeHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.0025" }
                 }
             };
@@ -365,7 +365,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockSmallHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
@@ -375,7 +375,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockLargeHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
@@ -385,7 +385,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockSmallHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.000025" }
                 }
             };
@@ -397,7 +397,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockLargeHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.0025" }
                 }
             };
@@ -407,7 +407,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockSmallHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
@@ -417,7 +417,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockLargeHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
@@ -427,7 +427,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockSmallHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.001" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.01" },
                     new Setting { Name = "PassiveCooling", Value = "0.000025" }
                 }
             };
