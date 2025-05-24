@@ -730,7 +730,34 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                     }
                 }
             };
-        }
+
+			yield return new WeatherSetting
+			{
+				WeatherType = "Space",
+				Settings = new List<Setting>
+				{
+					new Setting
+					{
+						Name = "TempScale",
+						Value = ".01",
+                        Description = "This is the temperature scale.  It is a multiplier applied to heat dissipation based on weather.  <1 = cold temps, increased dissipation and stronger signal, >1 = hot temps, decreased dissipation and weaker signal"
+					}
+				}
+			};
+
+			yield return new WeatherSetting
+			{
+				WeatherType = "Default",
+				Settings = new List<Setting>
+				{
+					new Setting
+					{
+						Name = "TempScale",
+						Value = "1"
+					}
+				}
+			};
+		}
 
         public static IEnumerable<Setting> DefaultGeneralSettings()
         {

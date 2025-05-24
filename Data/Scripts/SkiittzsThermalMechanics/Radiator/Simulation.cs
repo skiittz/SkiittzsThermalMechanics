@@ -32,13 +32,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			{
 				MyObjectBuilder_WeatherEffect currentWeatherEffect;
 				var position = block.PositionComp.GetPosition();
-				if (!MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) || !Configuration.Configuration.WeatherSettings.ContainsKey(currentWeatherEffect.Weather))
+				float naturalGravity;
+				MyAPIGateway.Physics.CalculateNaturalGravityAt(position, out naturalGravity);
+				if (naturalGravity < 0.0001)
 				{
-					weatherMult = 1;
-					return;
+					weatherMult = 1 / Configuration.Configuration.WeatherSettings["Space"];
 				}
-
-				weatherMult = 1 / Configuration.Configuration.WeatherSettings[currentWeatherEffect.Weather];
+				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.WeatherSettings.ContainsKey(currentWeatherEffect.Weather))
+				{
+					weatherMult = 1 / Configuration.Configuration.WeatherSettings[currentWeatherEffect.Weather];
+				}
+				else
+				{
+					weatherMult = 1 / Configuration.Configuration.WeatherSettings["Default"];
+				}
 			}
 
 			radiatorData.DebugMessages.Add($"Ticks since weather check: {ticksSinceWeatherCheck}");
