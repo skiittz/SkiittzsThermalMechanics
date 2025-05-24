@@ -12,8 +12,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public static bool IsLoaded = false;
         private static ModSettings configs;
         public static Dictionary<string, Dictionary<string, string>> BlockSettings;
-        public static Dictionary<string, float> WeatherSettings;
-        private static bool debugMode = false;
+        public static Dictionary<string, float> DissipationModifiers;
+        public static Dictionary<string, float> SignalModifiers;
+		private static bool debugMode = false;
         public static bool DebugMode => debugMode;
         public static void ToggleDebugMode()
         {
@@ -53,11 +54,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             }
 
             BlockSettings = configs.BlockTypeSettings.ToDictionary(x => x.SubTypeId, x => x.Settings.ToDictionary(y => y.Name, y => y.Value));
-            WeatherSettings =
+            DissipationModifiers =
                 configs.WeatherSettings
-                    .Select(x => new {x.WeatherType, x.Settings.Single(y => y.Name == "TempScale").Value})
+                    .Select(x => new {x.WeatherType, x.Settings.Single(y => y.Name == "DissipationScale").Value})
                     .ToDictionary(x => x.WeatherType, x => float.Parse(x.Value));
-            IsLoaded = true;
+			SignalModifiers =
+				configs.WeatherSettings
+					.Select(x => new { x.WeatherType, x.Settings.Single(y => y.Name == "SignalScale").Value })
+					.ToDictionary(x => x.WeatherType, x => float.Parse(x.Value));
+
+			IsLoaded = true;
 
             if (configs.ChatBotSettings != null)
                 ChatBot.ChatBot.InitConfigs(configs.ChatBotSettings.Settings.ToDictionary(x => x.Name, x => x.Value));
@@ -120,7 +126,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public List<Setting> GeneralSettings { get; set; }
 
         public float ConfigVersion { get; set; }
-        public static float CurrentVersion = 1.4f;
+        public static float CurrentVersion = 1.5f;
 
         public static ModSettings Default()
         {

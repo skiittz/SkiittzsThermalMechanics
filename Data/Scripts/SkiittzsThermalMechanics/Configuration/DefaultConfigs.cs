@@ -464,11 +464,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.25",
-                        Description = "Multipler applied to heat dissipation based on whether.  <1 = cold temps, increased dissipation and signal, >1 = hot temps, decreased dissipation and signal"
-                    }
-                }
+	                    Name = "DissipationScale",
+	                    Value = "4",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+					new Setting
+					{
+						Name = "SignalScale",
+						Value = "4",
+						Description = "Multiplier applied to signal range"
+					}
+				}
             };
 
             yield return new WeatherSetting
@@ -478,10 +484,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.25"
+	                    Name = "DissipationScale",
+	                    Value = "4",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "4",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -491,10 +504,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.1"
+	                    Name = "DissipationScale",
+	                    Value = "10",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "10",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -504,10 +524,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.8"
+	                    Name = "DissipationScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -517,10 +544,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.7"
+	                    Name = "DissipationScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -530,10 +564,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.8"
+	                    Name = "DissipationScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -543,10 +584,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.7"
+	                    Name = "DissipationScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -556,10 +604,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "2.0"
+	                    Name = "DissipationScale",
+	                    Value = "0.5",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -569,10 +624,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "2.0"
+	                    Name = "DissipationScale",
+	                    Value = "0.5",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -582,10 +644,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.9"
+	                    Name = "DissipationScale",
+	                    Value = "1.11",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -595,10 +664,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.8"
+	                    Name = "DissipationScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.15",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -608,10 +684,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.8"
+	                    Name = "DissipationScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.15",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -621,10 +704,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.7"
+	                    Name = "DissipationScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -634,10 +724,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "2.0"
+	                    Name = "DissipationScale",
+	                    Value = "0.75",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "0.75",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -647,10 +744,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "2.0"
+	                    Name = "DissipationScale",
+	                    Value = "0.5",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "0.5",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -660,10 +764,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "2.0"
+	                    Name = "DissipationScale",
+	                    Value = "0.5",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -673,10 +784,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.8"
+	                    Name = "DissipationScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -686,10 +804,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.7"
+	                    Name = "DissipationScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -699,10 +824,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.8"
+	                    Name = "DissipationScale",
+	                    Value = "1.25",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -712,10 +844,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "0.7"
+	                    Name = "DissipationScale",
+	                    Value = "1.43",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "1.0",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
             yield return new WeatherSetting
@@ -725,10 +864,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 {
                     new Setting
                     {
-                        Name = "TempScale",
-                        Value = "1.35"
+	                    Name = "DissipationScale",
+	                    Value = "0.75",
+	                    Description = "Multiplier applied to heat dissipation"
+                    },
+                    new Setting
+                    {
+	                    Name = "SignalScale",
+	                    Value = "0.75",
+	                    Description = "Multiplier applied to signal range"
                     }
-                }
+				}
             };
 
 			yield return new WeatherSetting
@@ -738,9 +884,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 				{
 					new Setting
 					{
-						Name = "TempScale",
-						Value = ".01",
-                        Description = "This is the temperature scale.  It is a multiplier applied to heat dissipation based on weather.  <1 = cold temps, increased dissipation and stronger signal, >1 = hot temps, decreased dissipation and weaker signal"
+						Name = "DissipationScale",
+						Value = "0.1",
+						Description = "Multiplier applied to heat dissipation"
+					},
+					new Setting
+					{
+						Name = "SignalScale",
+						Value = "10",
+						Description = "Multiplier applied to signal range"
 					}
 				}
 			};
@@ -752,8 +904,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 				{
 					new Setting
 					{
-						Name = "TempScale",
-						Value = "1"
+						Name = "DissipationScale",
+						Value = "1",
+						Description = "Multiplier applied to heat dissipation"
+					},
+					new Setting
+					{
+						Name = "SignalScale",
+						Value = "1",
+						Description = "Multiplier applied to signal range"
 					}
 				}
 			};

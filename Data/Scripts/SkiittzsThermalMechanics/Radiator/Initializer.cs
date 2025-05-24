@@ -11,7 +11,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 	[MyEntityComponentDescriptor(typeof(MyObjectBuilder_UpgradeModule), false)]
 	public partial class HeatRadiatorLogic : MyGameLogicComponent
 	{
-		private float weatherMult = 1.0f;
+		private float dissipationMult = 1.0f;
 		private int ticksSinceWeatherCheck = 0;
 		private RadiatorData radiatorData;
 		private IMyUpgradeModule block;
