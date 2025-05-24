@@ -356,7 +356,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.25" }
+                    new Setting { Name = "PassiveCooling", Value = "0.0025" }
                 }
             };
 
@@ -366,7 +366,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.025" }
+                    new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
 
@@ -376,7 +376,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.025" }
+                    new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
 
@@ -386,7 +386,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.0025" }
+                    new Setting { Name = "PassiveCooling", Value = "0.000025" }
                 }
             };
             #endregion
@@ -398,7 +398,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.25" }
+                    new Setting { Name = "PassiveCooling", Value = "0.0025" }
                 }
             };
 
@@ -408,7 +408,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.025" }
+                    new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
 
@@ -418,7 +418,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.025" }
+                    new Setting { Name = "PassiveCooling", Value = "0.00025" }
                 }
             };
 
@@ -428,7 +428,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 Settings = new List<Setting>
                 {
                     new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.000001" },
-                    new Setting { Name = "PassiveCooling", Value = "0.0025" }
+                    new Setting { Name = "PassiveCooling", Value = "0.000025" }
                 }
             };
             #endregion
