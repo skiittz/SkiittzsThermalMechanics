@@ -36,15 +36,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				MyAPIGateway.Physics.CalculateNaturalGravityAt(position, out naturalGravity);
 				if (naturalGravity < 0.0001)
 				{
-					dissipationMult = 1 / Configuration.Configuration.DissipationModifiers["Space"];
+					dissipationMult = Configuration.Configuration.DissipationModifiers["Space"];
 				}
 				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.DissipationModifiers.ContainsKey(currentWeatherEffect.Weather))
 				{
-					dissipationMult = 1 / Configuration.Configuration.DissipationModifiers[currentWeatherEffect.Weather];
+					dissipationMult = Configuration.Configuration.DissipationModifiers[currentWeatherEffect.Weather];
 				}
 				else
 				{
-					dissipationMult = 1 / Configuration.Configuration.DissipationModifiers["Default"];
+					dissipationMult = Configuration.Configuration.DissipationModifiers["Default"];
 				}
 			}
 
@@ -67,13 +67,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 					radiatorData.CurrentDissipation = radiatorData.MaxDissipation;
 
 				var dissipatedHeat = beacon.RemoveHeat(radiatorData.CurrentDissipation.LowerBoundedBy(0)*dissipationMult);
-				if (dissipatedHeat < radiatorData.CurrentDissipation)
-					radiatorData.CurrentDissipation -= radiatorData.StepSize;
-				if (dissipatedHeat == radiatorData.CurrentDissipation)
-					if (radiatorData.CurrentDissipation + radiatorData.StepSize < radiatorData.MaxDissipation)
-						radiatorData.CurrentDissipation += radiatorData.StepSize;
-					else
-						radiatorData.CurrentDissipation = radiatorData.MaxDissipation;
+				if(dissipatedHeat == 0)
+					radiatorData.CurrentDissipation = (radiatorData.CurrentDissipation - radiatorData.StepSize).LowerBoundedBy(0);
+				else
+					radiatorData.CurrentDissipation = (radiatorData.CurrentDissipation + radiatorData.StepSize).UpperBoundedBy(radiatorData.MaxDissipation);
 			}
 
 			Animate();

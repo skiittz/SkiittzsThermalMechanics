@@ -70,15 +70,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				MyAPIGateway.Physics.CalculateNaturalGravityAt(position, out naturalGravity);
 				if (naturalGravity < 0.0001)
 				{
-					signalMult = 1 / Configuration.Configuration.SignalModifiers["Space"];
+					signalMult = Configuration.Configuration.SignalModifiers["Space"];
 				}
 				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.DissipationModifiers.ContainsKey(currentWeatherEffect.Weather))
 				{
-					signalMult = 1 / Configuration.Configuration.SignalModifiers[currentWeatherEffect.Weather];
+					signalMult = Configuration.Configuration.SignalModifiers[currentWeatherEffect.Weather];
 				}
 				else
 				{
-					signalMult = 1 / Configuration.Configuration.SignalModifiers["Default"];
+					signalMult = Configuration.Configuration.SignalModifiers["Default"];
 				}
 			}
 

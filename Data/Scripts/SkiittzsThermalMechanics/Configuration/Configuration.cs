@@ -60,7 +60,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                     .ToDictionary(x => x.WeatherType, x => float.Parse(x.Value));
 			SignalModifiers =
 				configs.WeatherSettings
-					.Select(x => new { x.WeatherType, x.Settings.Single(y => y.Name == "Signal Scale").Value })
+					.Select(x => new { x.WeatherType, x.Settings.Single(y => y.Name == "SignalScale").Value })
 					.ToDictionary(x => x.WeatherType, x => float.Parse(x.Value));
 
 			IsLoaded = true;
@@ -126,7 +126,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public List<Setting> GeneralSettings { get; set; }
 
         public float ConfigVersion { get; set; }
-        public static float CurrentVersion = 1.4f;
+        public static float CurrentVersion = 1.5f;
 
         public static ModSettings Default()
         {
