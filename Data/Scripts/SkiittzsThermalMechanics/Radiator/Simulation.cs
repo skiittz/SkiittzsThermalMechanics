@@ -68,7 +68,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 
 				var attemptToDissipate = radiatorData.CurrentDissipation.LowerBoundedBy(radiatorData.StepSize) * dissipationMult;
 				var dissipatedHeat = beacon.RemoveHeat(attemptToDissipate);
-				if(dissipatedHeat < attemptToDissipate)
+				radiatorData.DebugMessages.Add($"Attempted to dissipate: {attemptToDissipate}");
+				radiatorData.DebugMessages.Add($"Dissipated heat: {dissipatedHeat}");
+				if (dissipatedHeat < attemptToDissipate)
 					radiatorData.CurrentDissipation = (radiatorData.CurrentDissipation - radiatorData.StepSize).LowerBoundedBy(0);
 				else
 					radiatorData.CurrentDissipation = (radiatorData.CurrentDissipation + radiatorData.StepSize).UpperBoundedBy(radiatorData.MaxDissipation);

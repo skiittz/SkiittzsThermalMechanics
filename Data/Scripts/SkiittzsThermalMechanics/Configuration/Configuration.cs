@@ -92,7 +92,18 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             return true;
         }
 
-        public static bool TryGetBlockSettingValue(string type, string configName, out float value)
+        public static bool TryGetBlockSettingValue(string type, string configName, out bool value)
+        {
+	        value = false;
+	        if (!BlockSettings.ContainsKey(type))
+		        return false;
+	        if (!BlockSettings[type].ContainsKey(configName))
+		        return false;
+
+	        return bool.TryParse(BlockSettings[type][configName], out value);
+        }
+
+		public static bool TryGetBlockSettingValue(string type, string configName, out float value)
         {
             value = 0f;
             if (!BlockSettings.ContainsKey(type))

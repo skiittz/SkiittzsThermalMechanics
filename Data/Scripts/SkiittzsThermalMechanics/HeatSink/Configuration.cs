@@ -15,12 +15,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			float heatCapacity;
 			float passiveCooling;
 			float signalDecay;
+			bool shuntToParent;
 			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "HeatCapacity", out heatCapacity))
 				data.HeatCapacity = heatCapacity;
 			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "PassiveCooling", out passiveCooling))
 				data.PassiveCooling = passiveCooling;
-			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "SignalRadius", out signalDecay))
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "SignalDecay", out signalDecay))
 				data.SignalDecay = signalDecay;
+			if (Configuration.Configuration.TryGetBlockSettingValue(subTypeId, "SmallGridShuntsToLarge", out shuntToParent))
+				data.ShuntToParent = shuntToParent;
 		}
 	}
 }
