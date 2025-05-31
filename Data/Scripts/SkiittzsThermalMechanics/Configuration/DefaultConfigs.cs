@@ -173,13 +173,37 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 				}
             };
 
-            #endregion
-            #endregion
+			#endregion
 
-            #region Reactors
-            #region Vanilla
+			#region Prototech
+			yield return new BlockType
+			{
+				SubTypeId = "LargeBlockPrototechBattery",
+				Settings = new List<Setting>
+				{
+					new Setting { Name = "HeatCapacity", Value = "4800" },
+					new Setting { Name = "PassiveCooling", Value = "0.4" },
+					new Setting { Name = "HeatGenerationMultiplier", Value = "0.8" }
+				}
+			};
 
-            yield return new BlockType
+			yield return new BlockType
+			{
+				SubTypeId = "SmallBlockPrototechBattery",
+				Settings = new List<Setting>
+				{
+					new Setting { Name = "HeatCapacity", Value = "1600" },
+					new Setting { Name = "PassiveCooling", Value = "0.13" },
+					new Setting { Name = "HeatGenerationMultiplier", Value = "0.8" }
+				}
+			};
+			#endregion
+			#endregion
+
+			#region Reactors
+			#region Vanilla
+
+			yield return new BlockType
             {
                 SubTypeId = "SmallBlockSmallGenerator",
                 Settings = new List<Setting>
@@ -273,7 +297,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 
             #region H2 Engines
 
-            yield return new BlockType
+            #region Vanilla
+			yield return new BlockType
             {
                 SubTypeId = "LargeHydrogenEngine",
                 Settings = new List<Setting>
@@ -294,13 +319,25 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                     new Setting { Name = "HeatGenerationMultiplier", Value = "1.0" }
 				}
             };
+			#endregion
+			#region Prototech
+			yield return new BlockType
+			{
+				SubTypeId = "LargePrototechReactor",
+				Settings = new List<Setting>
+				{
+					new Setting { Name = "HeatCapacity", Value = "30000" },
+					new Setting { Name = "PassiveCooling", Value = "0.5" },
+					new Setting { Name = "HeatGenerationMultiplier", Value = "0.8" }
+				}
+			};
+			#endregion
+			#endregion
 
-            #endregion
+			#region Heatsinks
 
-            #region Heatsinks
-
-            #region DLC
-            yield return new BlockType
+			#region DLC
+			yield return new BlockType
             {
                 SubTypeId = "LargeHeatSink",
                 Settings = new List<Setting>
@@ -433,12 +470,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                     new Setting { Name = "PassiveCooling", Value = "0.000025" }
                 }
             };
-            #endregion
+			#endregion
+			#endregion
+		}
 
-            #endregion
-        }
 
-        public static ChatBotSettings DefaultChatBotSettings()
+		public static ChatBotSettings DefaultChatBotSettings()
         {
             return new ChatBotSettings
             {
