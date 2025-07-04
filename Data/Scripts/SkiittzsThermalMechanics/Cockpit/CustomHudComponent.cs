@@ -57,6 +57,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Cockpit
 
 		private void DisplayHeatHUD()
 		{
+			if (Configuration.Configuration.PlayerHudIsDisabled(Utilities.TryGetCurrentPlayerId()))
+				return;
+
 			var hudText = BuildHeatHUDText();
 			MyAPIGateway.Utilities.ShowNotification(hudText);
 		}

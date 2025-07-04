@@ -9,14 +9,18 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
     public static partial class Configuration
     {
         private const string fileName = "Settings.xml";
-        public static bool IsLoaded = false;
+        private const string playerDisabledHudFileName = "PlayerDisabledHud.xml";
+
+		public static bool IsLoaded = false;
         private static ModSettings configs;
         public static Dictionary<string, Dictionary<string, string>> BlockSettings;
         public static Dictionary<string, float> DissipationModifiers;
         public static Dictionary<string, float> SignalModifiers;
 		private static bool debugMode = false;
         public static bool DebugMode => debugMode;
-        public static void ToggleDebugMode()
+        private static List<long> _disabledHudPlayerIds;
+
+		public static void ToggleDebugMode()
         {
 			debugMode = !debugMode;
 		}
@@ -70,6 +74,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             ChatBot.ChatBot.LoadDisabledPlayers();
             ChatBot.ChatBot.LoadWarningOnlyPlayers();
             ChatBot.ChatBot.LoadPlayerChatBotNameOverrides();
+            LoadDisabledHudPlayers();
         }
         
         public static void Save()
@@ -78,9 +83,57 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             writer.Write(MyAPIGateway.Utilities.SerializeToXML(configs));
             writer.Flush();
             writer.Close();
+
+            SavePlayersDisableHud();
         }
 
-        public static bool TryGetBlockSettingValue(string type, string configName, out string value)
+        
+        public static void SavePlayersDisableHud()
+        {
+	        var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession));
+	        var content = _disabledHudPlayerIds;
+	        writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
+	        writer.Flush();
+	        writer.Close();
+        }
+
+        public static void LoadDisabledHudPlayers()
+        {
+	        if (MyAPIGateway.Utilities.FileExistsInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession)))
+	        {
+		        var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession));
+		        var content = reader.ReadToEnd();
+		        reader.Close();
+		        _disabledHudPlayerIds = MyAPIGateway.Utilities.SerializeFromXML<List<long>>(content);
+	        }
+	        else
+		        _disabledHudPlayerIds = new List<long>();
+        }
+
+        public static void DisableHudForPlayer(long playerId)
+        {
+	        _disabledHudPlayerIds.Add(playerId);
+        }
+
+        public static void EnabledHudForPlayer(long playerId)
+        {
+	        _disabledHudPlayerIds.Remove(playerId);
+        }
+
+        public static void ToggleHudForPlayer(long playerId)
+        {
+	        if (PlayerHudIsDisabled(playerId))
+		        EnabledHudForPlayer(playerId);
+	        else
+		        DisableHudForPlayer(playerId);
+        }
+
+        public static bool PlayerHudIsDisabled(long playerId)
+        {
+	        return _disabledHudPlayerIds != null && _disabledHudPlayerIds.Contains(playerId);
+        }
+
+		public static bool TryGetBlockSettingValue(string type, string configName, out string value)
         {
             value = string.Empty;
             if (!BlockSettings.ContainsKey(type))
@@ -126,29 +179,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 	        value = false;
 	        var setting = configs.GeneralSettings.SingleOrDefault(x => x.Name == name);
 	        return setting != null && bool.TryParse(setting.Value, out value);
-        }
-    }
-
-    public class ModSettings
-    {
-        public List<BlockType> BlockTypeSettings { get; set; }
-        public ChatBotSettings ChatBotSettings { get; set; }
-        public List<WeatherSetting> WeatherSettings { get; set; }
-        public List<Setting> GeneralSettings { get; set; }
-
-        public float ConfigVersion { get; set; }
-        public static float CurrentVersion = 1.7f;
-
-        public static ModSettings Default()
-        {
-            return new ModSettings
-            {
-                ConfigVersion = CurrentVersion,
-                BlockTypeSettings = Enumerable.ToList<BlockType>(Configuration.DefaultBlockSettings()),
-                ChatBotSettings = Configuration.DefaultChatBotSettings(),
-                WeatherSettings = Enumerable.ToList<WeatherSetting>(Configuration.DefaultWeatherSettings()),
-                GeneralSettings = Enumerable.ToList<Setting>(Configuration.DefaultGeneralSettings())
-            };
         }
     }
 

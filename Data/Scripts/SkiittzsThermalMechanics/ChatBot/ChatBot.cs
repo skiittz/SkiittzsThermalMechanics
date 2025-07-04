@@ -13,7 +13,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
         public static int MessageDelay {get; set; }
         private static int _messageAttemptCounter = 0;
         private static List<long> _disabledPlayerIds;
-        private static List<long> _warningOnlyPlayerIds;
+		private static List<long> _warningOnlyPlayerIds;
 		private static List<long> _introducedPlayersThisSession = new List<long>();
 		private static Dictionary<long, string> _playerAsstNameOverrides = new Dictionary<long, string>();
 
@@ -66,6 +66,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 		private const string disabledPlayersFileName = "ChatBotDisabledPlayerIds.xml";
 		private const string warningOnlyPlayersFileName = "ChatBotWarningOnlyPlayerIds.xml";
 		private const string playerChatBotNameOverridesFileName = "PlayerChatBotNameOverrides.xml";
+
+
 		private static void SaveDisabledPlayers()
         {
 			var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(disabledPlayersFileName, typeof(SkiittzThermalMechanicsSession));
@@ -141,6 +143,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                     _playerAsstNameOverrides.Add(item.PlayerId, item.Name);
 		        }
 	        }
+        }
+
+        public static void ToggleHudForPlayer(long playerId)
+        {
+            Configuration.Configuration.ToggleHudForPlayer(playerId);
         }
 
 		public static void DisableMessagesForPlayer(long playerId)
@@ -232,6 +239,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 case "Rename":
                     RenameChatBot(Utilities.TryGetCurrentPlayerId(), args?[0]?.ToString());
 	                break;
+                case "ToggleHud":
+                    ToggleHudForPlayer(Utilities.TryGetCurrentPlayerId());
+                    break;
                 case "ToggleDebug":
 	                if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
 	                {
@@ -280,6 +290,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                     case "Rename":
 	                    message.AppendLine($"{prefix}:Change the assistant's name");
 	                    break;
+                    case "ToggleHud":
+	                    message.AppendLine($"{prefix}:Toggle heat HUD");
+	                    break;
 				}
 			}
             MyAPIGateway.Utilities.ShowMessage(ChatBotName, message.ToString());
@@ -295,7 +308,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
             {"iamnotanewb", "StopTutorial"},
             {"spankemedaddy_iamnewb","StartTutorial"},
             {"rename","Rename"},
-            {"debug","ToggleDebug"}
+            {"debug","ToggleDebug"},
+            {"togglehud","ToggleHud"}
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {

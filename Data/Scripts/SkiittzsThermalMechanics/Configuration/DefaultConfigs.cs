@@ -489,7 +489,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                     new Setting { Name = "ChatBotCommand_Reload", Value = "reload"},
                     new Setting {Name = "ChatBotCommand_StopTutorial", Value = "iamnotanewb"},
                     new Setting {Name = "ChatBotCommand_StartTutorial", Value = "spankmedaddy_iamnewb"},
-                    new Setting {Name = "ChatBotCommand_ToggleDebug", Value="debug"}
+                    new Setting {Name = "ChatBotCommand_ToggleDebug", Value="debug"},
+                    new Setting {Name = "ChatBotCommand_ToggleHud", Value = "togglehud"}
 				}
 			};
         }
