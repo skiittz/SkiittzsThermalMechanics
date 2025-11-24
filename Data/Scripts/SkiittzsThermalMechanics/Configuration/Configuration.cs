@@ -90,7 +90,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         
         public static void SavePlayersDisableHud()
         {
-	        var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession));
+            if(_disabledHudPlayerIds == null)
+                _disabledHudPlayerIds = new List<long>();
+
+            var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession));
 	        var content = _disabledHudPlayerIds;
 	        writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
 	        writer.Flush();
