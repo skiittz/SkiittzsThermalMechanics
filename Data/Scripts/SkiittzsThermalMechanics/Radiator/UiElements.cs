@@ -167,7 +167,7 @@ private void SetBladeRotation()
 		// Use this stored base for all subsequent rotations so we apply an absolute rotation,
 		// not a rotation compounded each update.
 		MatrixD baseLocalD;
-        if (!_subpartBaseLocalMatrices.TryGetValue(subpartId, out baseLocalD))
+		if (!_subpartBaseLocalMatrices.TryGetValue(subpartId, out baseLocalD))
 		{
 			baseLocalD = subpartEntity.PositionComp.LocalMatrixRef;
 			_subpartBaseLocalMatrices[subpartId] = baseLocalD;
@@ -179,8 +179,17 @@ private void SetBladeRotation()
 		// Remove translation to isolate orientation
 		baseLocalD.Translation = Vector3D.Zero;
 
-		// Create rotation around local Z axis (adjust axis if needed)
-		MatrixD rotationD = MatrixD.CreateRotationZ(rotationAngle);
+		// Determine rotation axis from the subpart's local orientation to handle mirrored parts correctly.
+		// Use the forward vector of the stored base orientation as the local rotation axis.
+		Vector3D axis = baseLocalD.Forward;
+		// Fallback to global Z if axis is degenerate
+		if (axis.LengthSquared() < 1e-8)
+			axis = Vector3D.UnitZ;
+		else
+			axis.Normalize();
+
+		// Flip the sign of the applied angle to correct overall direction
+		MatrixD rotationD = MatrixD.CreateFromAxisAngle(axis, -rotationAngle);
 
 		// Apply the rotation to the stored base orientation (not the current possibly-rotated orientation)
 		MatrixD resultLocalD = rotationD * baseLocalD;
