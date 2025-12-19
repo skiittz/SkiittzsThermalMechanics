@@ -140,40 +140,61 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			particleEffect?.Stop();
 		}
 
-		private void SetBladeRotation()
+		private readonly Dictionary<long, MatrixD> _subpartBaseLocalMatrices = new Dictionary<long, MatrixD>();
+
+private void SetBladeRotation()
+{
+	var entity = (MyEntity)block;
+	if (!entity.Subparts.Any())
+		return;
+
+	// Define the rotation limits
+	var minRotation = MathHelper.ToRadians(-45); // Fully closed position
+	var maxRotation = MathHelper.ToRadians(45); // Fully open position (90 degrees in radians)
+
+	// Calculate the rotation angle based on the percentage
+	var rotationAngle = MathHelper.Lerp(minRotation, maxRotation, radiatorData.HeatRatio);
+
+	foreach (var subpart in entity.Subparts)
+	{
+		var subpartEntity = subpart.Value as MyEntitySubpart;
+		if (subpartEntity == null)
+			continue;
+
+		long subpartId = subpartEntity.EntityId;
+
+		// Capture and store the base local matrix for this subpart the first time we see it.
+		// Use this stored base for all subsequent rotations so we apply an absolute rotation,
+		// not a rotation compounded each update.
+		MatrixD baseLocalD;
+        if (!_subpartBaseLocalMatrices.TryGetValue(subpartId, out baseLocalD))
 		{
-			var entity = (MyEntity)block;
-			if (!entity.Subparts.Any())
-				return;
-			// Define the rotation limits
-			var minRotation = MathHelper.ToRadians(-45); // Fully closed position
-			var maxRotation = MathHelper.ToRadians(45); // Fully open position (90 degrees in radians)
-
-			// Calculate the rotation angle based on the percentage
-			var rotationAngle = MathHelper.Lerp(minRotation, maxRotation, radiatorData.HeatRatio);
-
-			foreach (var subpart in entity.Subparts)
-			{
-				var subpartEntity = subpart.Value as MyEntitySubpart;
-				if (subpartEntity != null)
-				{
-					// Get current local matrix of the subpart
-					MatrixD currentMatrix = subpartEntity.PositionComp.LocalMatrixRef;
-
-					// Extract current position
-					Vector3D currentPosition = currentMatrix.Translation;
-
-					// Create rotation matrix for the calculated angle
-					MatrixD rotationMatrix = MatrixD.CreateRotationZ(rotationAngle);
-
-					// Combine the new rotation with the original position
-					Matrix newMatrix = MatrixD.CreateWorld(currentPosition, rotationMatrix.Forward, rotationMatrix.Up);
-
-					// Set the new local matrix to the subpart
-					subpartEntity.PositionComp.SetLocalMatrix(ref newMatrix);
-				}
-			}
+			baseLocalD = subpartEntity.PositionComp.LocalMatrixRef;
+			_subpartBaseLocalMatrices[subpartId] = baseLocalD;
 		}
+
+		// Preserve the local translation (pivot / offset) from the stored base
+		Vector3D preservedTranslation = baseLocalD.Translation;
+
+		// Remove translation to isolate orientation
+		baseLocalD.Translation = Vector3D.Zero;
+
+		// Create rotation around local Z axis (adjust axis if needed)
+		MatrixD rotationD = MatrixD.CreateRotationZ(rotationAngle);
+
+		// Apply the rotation to the stored base orientation (not the current possibly-rotated orientation)
+		MatrixD resultLocalD = rotationD * baseLocalD;
+
+		// Restore local translation so subpart remains attached
+		resultLocalD.Translation = preservedTranslation;
+
+		// Convert to single-precision Matrix expected by SetLocalMatrix
+		Matrix resultLocal = (Matrix)resultLocalD;
+
+		// Apply the new local matrix to the subpart
+		subpartEntity.PositionComp.SetLocalMatrix(ref resultLocal);
+	}
+}
 
 		public static Color InterpolateColor(Color color1, Color color2, double t)
 		{
