@@ -1,0 +1,209 @@
+================================================================================
+           SKIITTZ'S THERMAL MECHANICS - Player Guide
+================================================================================
+
+OVERVIEW
+--------
+This mod adds a heat management system to Space Engineers. Your power-producing
+blocks (reactors, batteries, and hydrogen engines) and hydrogen thrusters now
+generate heat while operating. If heat builds up too much, blocks will take
+damage and can be destroyed. You'll need to build heat sinks and radiators to
+keep your grid cool.
+
+
+THE HEAT CYCLE - HOW IT WORKS
+-----------------------------
+1. Power blocks and H2 thrusters generate heat based on their current output.
+2. Each block has a small amount of passive cooling built in, but it is not
+   enough on its own under load.
+3. Excess heat flows into your grid's Heat Sink (a special beacon block).
+4. Radiators pull heat out of the heat sink and vent it into the environment.
+5. If heat is not removed fast enough, blocks overheat and take damage.
+
+
+KEY BLOCKS
+----------
+
+  HEAT SOURCES (blocks that produce heat):
+  
+    Reactors        - Generate heat proportional to their power output (MW).
+    Batteries       - Generate heat when discharging.
+    Hydrogen Engines- Generate heat proportional to their power output.
+    Hydrogen Thrusters - Generate heat based on current thrust output.
+
+  HEAT MANAGEMENT (blocks that handle heat):
+
+    Heat Sink       - A special beacon block that acts as a central heat
+                      reservoir for your entire grid. All heat from generators
+                      and thrusters flows into the heat sink. You only need ONE
+                      active heat sink per grid (extras are automatically
+                      disabled). 
+
+    Radiators       - Blocks that pull heat out of the heat sink and
+                      vent it away. They ramp up and down gradually. You can
+                      (and should) have multiple radiators. They come in Basic
+                      and Advanced tiers, and in both DLC and non-DLC variants.
+
+      IMPORTANT: Radiators MUST have a clear line of sight to the sky to
+      function. If they are buried inside your ship or blocked by armor, they
+      will not dissipate any heat. Build them on the exterior of your grid.
+
+
+OVERHEATING
+-----------
+When a power block's heat reaches 100% of its capacity:
+  - It takes damage every tick it stays overheated.
+  - Each overheat cycle increases "Thermal Fatigue," a permanent penalty that
+    makes the block generate even more heat in the future.
+  - If damaged enough, the block will become non-functional and shut down.
+  - You will receive in-game chat warnings as heat builds up.
+
+Thermal Fatigue is permanent and cannot be repaired. Take care of your blocks!
+
+
+HEAT SINK DESTRUCTION & SEPARATION
+-----------------------------------
+If your heat sink is destroyed or separated from the grid (e.g., by grinding
+or battle damage), all stored heat is fed back into the power blocks on the
+original grid. This can cause a cascading overheat event, so protect your heat
+sink!
+
+If destroyed, the heat sink will try to transfer its stored heat to any
+remaining heat sinks on the grid before feeding it back to generators.
+
+
+SMALL GRID TO LARGE GRID HEAT SHUNTING
+--------------------------------------
+Small grid heat sinks can shunt their stored heat to a connected large grid
+heat sink through connectors. If your small grid ship is docked to a large
+grid station via connectors, the small grid's heat will automatically transfer
+to the large grid's heat sink for dissipation.
+
+
+IR SIGNAL (DETECTION RANGE)
+----------------------------
+As your radiators vent heat, the heat sink's beacon range increases,
+representing an infrared signature. The more heat you vent, the easier it is
+for other players to detect your grid on their HUD. The signal decays over
+time when heat output decreases. In PvP scenarios, managing your heat output
+can help you stay hidden.
+
+
+WEATHER EFFECTS
+---------------
+Weather on planets affects how well your radiators work AND your IR signal:
+
+  Weather              Dissipation   Signal Range
+  ---------------------------------------------------
+  Space                  Normal        Normal
+  Rain (Light)           +11%          Normal
+  Rain (Heavy)           +25%          +15%
+  Thunderstorm (Light)   +25%          Normal
+  Thunderstorm (Heavy)   +43%          Normal
+  Snow (Light)           +25%          Normal
+  Snow (Heavy)           +43%          Normal
+  Fog (Light)            -25%          -25%
+  Fog (Heavy)            -50%          -50%
+  Sandstorm (Light)      -25%          -25%
+  Sandstorm (Heavy)      -50%          -50%
+  Electric Storm         -50%          Normal
+
+Rain and storms help cool your ship; fog and sandstorms make cooling harder.
+
+
+COCKPIT HUD
+------------
+When you sit in a cockpit, a HUD notification displays your grid's current
+heat sink capacity percentage and detection range. This gives you at-a-glance
+thermal status without needing to check individual blocks.
+
+You can toggle this HUD on or off with a chat command (see below).
+
+
+READING BLOCK INFO
+------------------
+Click on any heat-producing block or heat management block in the terminal to
+see thermal stats in the block's custom info panel:
+
+  Power Blocks show:
+    - Heat Level (percentage of capacity)
+    - Time until overheat or fully cooled (hh:mm:ss countdown)
+    - Thermal Fatigue (permanent heat penalty from past overheats)
+
+  Heat Sinks show:
+    - Heat Level (percentage of capacity)
+    - Current IR Detectable Distance (meters)
+
+  Radiators show:
+    - Current dissipation rate (MW and percentage of max)
+    - Warning if the radiator is not exterior-facing
+
+
+GENERATOR SPAM PENALTY
+-----------------------
+Using a large number of power generators on one grid incurs a heat penalty.
+It is more efficient to use fewer, more powerful generators than to spam many
+small ones.
+
+
+CHAT BOT ASSISTANT
+------------------
+The mod includes a chat bot assistant that warns you about thermal issues.
+It sends messages when:
+  - You have no heat sink on a grid
+  - Your heat sink is reaching capacity (50%, 80%, 100%)
+  - A block is taking overheat damage
+  - A block has been disabled by heat damage
+  - A heat sink has been separated from the grid
+
+You can control the assistant with chat commands. The default name is shown
+when the assistant first introduces itself. Commands are typed as:
+  /<assistant_name> <command>
+
+Available commands:
+  help              - Show available commands
+  stfu              - Turn off ALL messages
+  speak             - Turn messages back on
+  iamnotanewb       - Turn off tutorial/tip messages (warnings still show)
+  spankemedaddy_iamnewb - Turn tutorial messages back on
+  rename <newname>  - Rename the assistant (it will respond to the new name)
+  togglehud         - Toggle the cockpit heat HUD on/off
+  reload            - (Admin only) Reload configuration from file
+  toggledebug       - (Admin only) Toggle debug info display
+
+
+RADIATOR COLOR CUSTOMIZATION
+------------------------------
+Radiators have two color pickers in their terminal panel:
+  - Idle Color: The color the radiator displays when not dissipating heat.
+  - Active Color: The color displayed at peak operation.
+The radiator smoothly transitions between these colors based on its current
+workload, giving you a visual indicator of thermal activity.
+
+
+CONFIGURATION (Server Admins)
+------------------------------
+All settings are stored in a Settings.xml file in the world save folder.
+Server admins can customize:
+  - Heat capacity and passive cooling for every supported block type
+  - Radiator max dissipation and ramp-up speed
+  - Heat sink capacity and signal decay rate
+  - Weather effect multipliers for dissipation and signal range
+  - Chat bot behavior (name, message delay)
+
+After editing the config file, use the "/<assistant_name> reload" chat command
+to apply changes without restarting the server.
+
+
+TIPS FOR NEW PLAYERS
+---------------------
+1. Always build at least one heat sink on every grid that has power blocks.
+2. Place radiators on the outside of your ship where they can see the sky.
+3. More radiators = better cooling. Scale them with your power output.
+4. Watch the cockpit HUD or check block info to monitor heat levels.
+5. In combat, protect your heat sink - losing it can destroy your generators.
+6. Use fewer large generators instead of many small ones to avoid spam penalty.
+7. On planets, take advantage of rain and storms for bonus cooling.
+8. In PvP, be mindful of your IR signature - high heat output makes you
+   visible from farther away.
+================================================================================

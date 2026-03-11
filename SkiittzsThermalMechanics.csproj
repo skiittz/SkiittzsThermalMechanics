@@ -190,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="metadata.mod" />
+    <Content Include="ModGuide.txt" />
     <Content Include="thumb.png" />
   </ItemGroup>
   <ItemGroup>
