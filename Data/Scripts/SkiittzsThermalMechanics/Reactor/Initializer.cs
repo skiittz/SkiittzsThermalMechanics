@@ -1,7 +1,6 @@
 ﻿using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
-using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Helpers;
 using System;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;

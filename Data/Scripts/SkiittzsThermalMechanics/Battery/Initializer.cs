@@ -7,7 +7,6 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 using Sandbox.Game.GUI;
-using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Helpers;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 {

@@ -100,5 +100,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             obj.DebugMessages.Clear();
 			return sb;
         }
+
+        public static string DefaultId(this IMyPowerProducer block, string type)
+        {
+            return $"{(block.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Small ? "Small" : "Large")}GridUnknown{type}";
+        }
     }
 }

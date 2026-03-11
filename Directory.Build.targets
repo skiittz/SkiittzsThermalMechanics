@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'SkiittzsThermalMechanics.Tests'">
+    <Compile Remove="SkiittzsThermalMechanics.Tests\**" />
+    <None Remove="SkiittzsThermalMechanics.Tests\**" />
+  </ItemGroup>
+</Project>
