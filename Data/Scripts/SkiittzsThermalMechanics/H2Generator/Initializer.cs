@@ -1,7 +1,8 @@
 ﻿using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
-using System;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Helpers;
+using System;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
@@ -22,7 +23,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Gener
 				return;
 
 			bool configFound = false;
-			heatData = PowerPlantHeatData.LoadData(block, out configFound);
+			heatData = PowerPlantHeatData.LoadData(block, out configFound, block.DefaultId("H2Engine"));
 			if (!configFound) return;
 
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;

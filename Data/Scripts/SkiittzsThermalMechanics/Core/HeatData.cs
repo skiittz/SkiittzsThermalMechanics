@@ -79,7 +79,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 				MyLog.Default.WriteLine($"Failed to save data: {e.Message}");
 			}
 		}
-		public static PowerPlantHeatData LoadData(IMyPowerProducer block, out bool configFound)
+		public static PowerPlantHeatData LoadData(IMyPowerProducer block, out bool configFound, string defaultId = "")
 		{
 			var file = $"{block.EntityId}.xml";
 			var heatData = new PowerPlantHeatData();
@@ -99,7 +99,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			}
 
 			LoadConfigFileValues(ref heatData, block.BlockDefinition.SubtypeId, out configFound);
-			return heatData;
+			if(!configFound && !string.IsNullOrEmpty(defaultId))
+			{
+				LoadConfigFileValues(ref heatData, defaultId, out configFound);
+            }
+            return heatData;
 		}
 	}
 }

@@ -6,6 +6,8 @@ using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
+using Sandbox.Game.GUI;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Helpers;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 {
@@ -21,7 +23,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 				return;
 
 			bool configFound = false;
-			heatData = PowerPlantHeatData.LoadData(block, out configFound);
+			heatData = PowerPlantHeatData.LoadData(block, out configFound, block.DefaultId("Battery"));
 			if (!configFound) return;
 
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;

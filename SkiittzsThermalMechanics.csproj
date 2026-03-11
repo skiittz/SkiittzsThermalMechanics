@@ -157,6 +157,7 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\Initializer.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\Simulation.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\HeatSink\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Helpers\DefaultIdGenerator.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Configuration.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Initializer.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Radiator\Data.cs" />
