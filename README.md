@@ -1,8 +1,3 @@
-Try this mod out on my server!
-174.175.47.104:27016
-(unseenskiittz.duckdns.org:27016)
-_______________________________
-
 HIGHLY CONFIGURABLE!
 A settings.xml file will be created in your save location/Storage/SkiittzThermalMechanics folder. There are all sorts of data points in there that you can tweak to your heart's desire.
 _______________________________
