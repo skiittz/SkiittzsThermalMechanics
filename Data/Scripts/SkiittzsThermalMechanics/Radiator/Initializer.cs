@@ -13,7 +13,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 	{
 		private float dissipationMult = 1.0f;
 		private int ticksSinceWeatherCheck = 0;
-		private RadiatorData radiatorData;
+		public RadiatorData radiatorData;
 		private IMyUpgradeModule block;
 
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
