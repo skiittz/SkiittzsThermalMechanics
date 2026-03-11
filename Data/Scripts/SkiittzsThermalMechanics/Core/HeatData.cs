@@ -64,7 +64,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		public float ThermalFatigue => 1 + (OverHeatCycles / 100);
 		public float AvailableHeatCapacity => HeatCapacity - CurrentHeat;
 		[XmlIgnore] public float HeatGenerationMultiplier { get; set; }
-
+		[XmlIgnore] public bool IsUnknownSubType { get; set; }
 		public static void SaveData(long entityId, PowerPlantHeatData data)
 		{
 			try
@@ -101,6 +101,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			LoadConfigFileValues(ref heatData, block.BlockDefinition.SubtypeId, out configFound);
 			if(!configFound && !string.IsNullOrEmpty(defaultId))
 			{
+				heatData.IsUnknownSubType = true;
 				LoadConfigFileValues(ref heatData, defaultId, out configFound);
             }
             return heatData;

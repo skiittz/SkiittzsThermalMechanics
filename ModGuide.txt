@@ -199,7 +199,7 @@ TIPS FOR NEW PLAYERS
 ---------------------
 1. Always build at least one heat sink on every grid that has power blocks.
 2. Place radiators on the outside of your ship where they can see the sky.
-3. More radiators = better cooling. Scale them with your power output.
+3. More radiators = better cooling. Scale them with your power output. However, creating power generates a lot of heat.  It is generally better to manage your power output than to spam radiators to keep up with it.
 4. Watch the cockpit HUD or check block info to monitor heat levels.
 5. In combat, protect your heat sink - losing it can destroy your generators.
 6. Use fewer large generators instead of many small ones to avoid spam penalty.

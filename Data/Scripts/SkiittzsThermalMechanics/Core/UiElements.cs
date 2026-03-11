@@ -23,6 +23,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             customInfo.Append($"Time until {(LastHeatDelta <= 0 ? "cooled" : "overheat")}: {TimeUntilOverheatDisplay(Math.Abs(remainingSeconds))}\n");
 
             customInfo.Append($"Heat Generation: {ThermalFatigue * 100:F0}%\n");
+
+            if(IsUnknownSubType)
+                customInfo.Append($"Unknown Power Plant subtype: {block.BlockDefinition.SubtypeId}. Default values applied.\n");
         }
         private float RemainingSeconds()
         {

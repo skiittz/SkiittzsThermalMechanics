@@ -1,4 +1,7 @@
+using System.Text;
+using FakeItEasy;
 using NUnit.Framework;
+using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 
 namespace SkiittzsThermalMechanics.Tests
@@ -116,6 +119,25 @@ namespace SkiittzsThermalMechanics.Tests
 
         #endregion
 
+        #region IsUnknownSubType Tests
+
+        [Test]
+        public void IsUnknownSubType_DefaultsToFalse()
+        {
+            var data = CreateHeatData();
+            Assert.IsFalse(data.IsUnknownSubType);
+        }
+
+        [Test]
+        public void IsUnknownSubType_CanBeSetToTrue()
+        {
+            var data = CreateHeatData();
+            data.IsUnknownSubType = true;
+            Assert.IsTrue(data.IsUnknownSubType);
+        }
+
+        #endregion
+
         #region FeedHeatBack Tests
 
         [Test]
@@ -197,6 +219,61 @@ namespace SkiittzsThermalMechanics.Tests
             data.FeedHeatBack(200f);
             data.FeedHeatBack(300f);
             Assert.AreEqual(500f, data.CurrentHeat, 0.0001f);
+        }
+
+        #endregion
+
+        #region AppendCustomThermalInfo Tests
+
+        [Test]
+        public void AppendCustomThermalInfo_KnownSubType_DoesNotAppendUnknownMessage()
+        {
+            var data = CreateHeatData(currentHeat: 500f, heatCapacity: 1000f);
+            data.IsUnknownSubType = false;
+            var block = A.Fake<IMyPowerProducer>();
+            var sb = new StringBuilder();
+
+            data.AppendCustomThermalInfo(block, sb);
+
+            Assert.IsFalse(sb.ToString().Contains("Unknown Power Plant subtype"));
+        }
+
+        [Test]
+        public void AppendCustomThermalInfo_UnknownSubType_AppendsUnknownMessage()
+        {
+            var data = CreateHeatData(currentHeat: 500f, heatCapacity: 1000f);
+            data.IsUnknownSubType = true;
+            var block = A.Fake<IMyPowerProducer>();
+            var sb = new StringBuilder();
+
+            data.AppendCustomThermalInfo(block, sb);
+
+            Assert.IsTrue(sb.ToString().Contains("Unknown Power Plant subtype"));
+            Assert.IsTrue(sb.ToString().Contains("Default values applied"));
+        }
+
+        [Test]
+        public void AppendCustomThermalInfo_AlwaysAppendsHeatLevel()
+        {
+            var data = CreateHeatData(currentHeat: 500f, heatCapacity: 1000f);
+            var block = A.Fake<IMyPowerProducer>();
+            var sb = new StringBuilder();
+
+            data.AppendCustomThermalInfo(block, sb);
+
+            Assert.IsTrue(sb.ToString().Contains("Heat Level:"));
+        }
+
+        [Test]
+        public void AppendCustomThermalInfo_AlwaysAppendsHeatGeneration()
+        {
+            var data = CreateHeatData(currentHeat: 500f, heatCapacity: 1000f);
+            var block = A.Fake<IMyPowerProducer>();
+            var sb = new StringBuilder();
+
+            data.AppendCustomThermalInfo(block, sb);
+
+            Assert.IsTrue(sb.ToString().Contains("Heat Generation:"));
         }
 
         #endregion
