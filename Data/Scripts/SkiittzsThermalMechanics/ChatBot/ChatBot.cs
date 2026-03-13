@@ -221,7 +221,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 case "Reload":
                     if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
                     {
-	                    Configuration.Configuration.Load();
+	                    Configuration.Configuration.Load(forceReload: true);
                         var definitions = Configuration.Configuration.BlockSettings.Select(x => x.Key);
                         MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"configs reloaded for block types: {string.Join(",",definitions)}");
                     }

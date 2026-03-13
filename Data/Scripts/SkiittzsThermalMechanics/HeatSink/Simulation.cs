@@ -18,16 +18,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		public float ActiveCooling(float heatValue)
 		{
 			var incomingHeat = heatValue.LowerBoundedBy(0);
-			if (HeatSinkData.AvailableCapacity > incomingHeat)
+			if (HeatSinkData.AvailableCapacity >= incomingHeat)
 			{
 				HeatSinkData.CurrentHeat += incomingHeat;
 				return incomingHeat;
 			}
 			else
 			{
-				var remainingHeat = incomingHeat - HeatSinkData.AvailableCapacity;
+				var acceptedHeat = HeatSinkData.AvailableCapacity.LowerBoundedBy(0);
 				HeatSinkData.CurrentHeat = HeatSinkData.HeatCapacity;
-				return remainingHeat;
+				return acceptedHeat;
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				{
 					signalMult = Configuration.Configuration.SignalModifiers["Space"];
 				}
-				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.DissipationModifiers.ContainsKey(currentWeatherEffect.Weather))
+				else if (MyAPIGateway.Session.WeatherEffects.GetWeather(position, out currentWeatherEffect) && Configuration.Configuration.SignalModifiers.ContainsKey(currentWeatherEffect.Weather))
 				{
 					signalMult = Configuration.Configuration.SignalModifiers[currentWeatherEffect.Weather];
 				}
@@ -148,6 +148,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			foreach (var heatSink in beacons.OrderByDescending(x => x.Radius))
 			{
 				var gameLogic = heatSink.GameLogic.GetAs<HeatSinkLogic>();
+				if (gameLogic == null) continue;
 				var sunkHeat = gameLogic.ActiveCooling(currentHeat);
 				gameLogic.HeatSinkData.VentingHeat += ventingHeat;
 				currentHeat -= sunkHeat;
@@ -157,14 +158,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
 			foreach (var powerProducer in powerProducers)
 			{
-				PowerPlantHeatData heatData;
-				if (powerProducer.BlockDefinition.SubtypeName.Contains("Battery"))
-					heatData = powerProducer.GameLogic.GetAs<BatteryLogic>().heatData;
-				else if (powerProducer.BlockDefinition.SubtypeName.Contains("Reactor"))
-					heatData = powerProducer.GameLogic.GetAs<ReactorLogic>().heatData;
-				else if (powerProducer.BlockDefinition.SubtypeName.Contains("Engine"))
-					heatData = powerProducer.GameLogic.GetAs<H2EngineLogic>().heatData;
-				else
+				PowerPlantHeatData heatData = null;
+                var batteryLogic = powerProducer.GameLogic.GetAs<BatteryLogic>();
+				var reactorLogic = powerProducer.GameLogic.GetAs<ReactorLogic>();
+				var h2Logic = powerProducer.GameLogic.GetAs<H2EngineLogic>();
+
+				if (batteryLogic != null)
+					heatData = batteryLogic.heatData;
+				else if (reactorLogic != null)
+					heatData = reactorLogic.heatData;
+				else if (h2Logic != null)
+					heatData = h2Logic.heatData;
+
+				if (heatData == null)
 					continue;
 
 				var ventingHeatPortion = ventingHeat / powerProducers.Count;

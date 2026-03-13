@@ -25,9 +25,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 			debugMode = !debugMode;
 		}
 
-        public static void Load()
+        public static void Load(bool forceReload = false)
         {
-            if (IsLoaded) return;
+            if (IsLoaded && !forceReload) return;
             if (MyAPIGateway.Utilities.FileExistsInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession)))
             {
                 var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(fileName,
@@ -129,6 +129,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 		        EnabledHudForPlayer(playerId);
 	        else
 		        DisableHudForPlayer(playerId);
+	        SavePlayersDisableHud();
         }
 
         public static bool PlayerHudIsDisabled(long playerId)
