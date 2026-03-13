@@ -61,11 +61,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			if (!block.IsWorking || !block.IsOwnedByAPlayer())
 				return 0;
 
-			var powerProducers = new List<IMyPowerProducer>();
-			var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
-			gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
-
-			var additionalGeneratorCount = Math.Max(powerProducers.Count - 1, 0);
+			var producerCount = Utilities.GetPowerProducerCount(block.CubeGrid);
+			var additionalGeneratorCount = Math.Max(producerCount - 1, 0);
 			var spamPenalty = 1 + (additionalGeneratorCount / 100f);
 			if (spamPenalty > 1.1)
 				ChatBot.ChatBot.WarnPlayer(block, $"Wow that's a lot of power plants!  Did you know that spamming generators will incur a penalty?  You are currently generating {additionalGeneratorCount}% more  heat than you'd otherwise be.  It's better to use fewer, more powerful power plants.", MessageSeverity.Tutorial);

@@ -6,6 +6,7 @@ using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
+using VRage.Utils;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor
 {
@@ -42,7 +43,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor
 			}
 			catch (Exception ex)
 			{
-
+				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 		}
 
@@ -57,7 +58,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor
 			}
 			catch (Exception ex)
 			{
-
+				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 			ScriptHookCreator.AddReactorHeatRatioControl();
 		}

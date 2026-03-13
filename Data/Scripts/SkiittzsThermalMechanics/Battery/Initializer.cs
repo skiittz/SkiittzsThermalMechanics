@@ -6,7 +6,7 @@ using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
-using Sandbox.Game.GUI;
+using VRage.Utils;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 {
@@ -43,7 +43,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 			}
 			catch (Exception ex)
 			{
-
+				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 			}
 			catch (Exception ex)
 			{
-
+				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 			ScriptHookCreator.AddBatteryHeatRatioControl();
 		}

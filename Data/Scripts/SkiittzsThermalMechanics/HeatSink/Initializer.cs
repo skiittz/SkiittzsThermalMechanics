@@ -1,12 +1,12 @@
 ﻿using Sandbox.Common.ObjectBuilders;
 using Sandbox.ModAPI;
 using System;
-using System.Net.Configuration;
 using VRage.Game;
 using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
+using VRage.Utils;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink
 {
@@ -17,6 +17,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		public HeatSinkData HeatSinkData;
 		private float signalMult = 1.0f;
 		private int ticksSinceWeatherCheck = 0;
+		private static bool _destroyHandlerRegistered = false;
 
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
 		{
@@ -36,7 +37,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += HeatSinkLogic_AppendingCustomInfo;
 
-			MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, OnBlockDestroyed);
+			if (!_destroyHandlerRegistered)
+			{
+				MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, OnBlockDestroyed);
+				_destroyHandlerRegistered = true;
+			}
 		}
 
 		void HeatSinkLogic_OnClose(IMyEntity obj)
@@ -52,7 +57,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			}
 			catch (Exception ex)
 			{
-
+				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 		}
 
@@ -67,7 +72,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			}
 			catch (Exception ex)
 			{
-
+				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 			ScriptHookCreator.AddBeaconHeatRatioControl();
 		}

@@ -6,6 +6,7 @@ using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core.DebuggingTools;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink;
+using VRage.Utils;
 using IMyCubeBlock = VRage.Game.ModAPI.IMyCubeBlock;
 using IMyCubeGrid = VRage.Game.ModAPI.IMyCubeGrid;
 
@@ -16,29 +17,97 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
         public static readonly string CurrentHeatControlId = "CurrentHeat";
         public static readonly string HeatRatioControlId = "HeatRatio";
 
+        // --- Grid caches (Issue 1 & 2) ---
+        private static readonly Dictionary<long, HeatSinkLogic> _heatSinkCache = new Dictionary<long, HeatSinkLogic>();
+        private static readonly Dictionary<long, int> _powerProducerCountCache = new Dictionary<long, int>();
+        private static bool _cacheDirty = true;
+
+        /// <summary>
+        /// Called once per 100-tick cycle from the session component to mark caches as stale.
+        /// </summary>
+        public static void TickGridCaches()
+        {
+            _cacheDirty = true;
+        }
+
+        /// <summary>
+        /// Removes a specific grid from the heat sink cache (e.g. on separation or destruction).
+        /// </summary>
+        public static void InvalidateHeatSinkCache(long gridEntityId)
+        {
+            _heatSinkCache.Remove(gridEntityId);
+        }
+
         public static HeatSinkLogic GetHeatSinkLogic(IMyCubeGrid grid)
         {
-            if(grid == null)
-				return null;
+            if (grid == null)
+                return null;
 
-			var beacons = new List<IMyBeacon>();
+            var gridId = grid.EntityId;
+
+            // If cache is still fresh this cycle, return cached result
+            if (!_cacheDirty)
+            {
+                HeatSinkLogic cached;
+                if (_heatSinkCache.TryGetValue(gridId, out cached))
+                    return cached;
+            }
+            else
+            {
+                // First call after a tick — clear all caches for the new cycle
+                _heatSinkCache.Clear();
+                _powerProducerCountCache.Clear();
+                _cacheDirty = false;
+            }
+
+            // Cache miss — do the full scan
+            var beacons = new List<IMyBeacon>();
             var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(grid);
-            gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.CubeGrid.EntityId == grid.EntityId);
+            gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.CubeGrid.EntityId == gridId);
             beacons = beacons.OrderByDescending(x => x.Radius).ToList();
 
-            if(!beacons.Any())
-	            ChatBot.ChatBot.WarnPlayer(grid, "It seems you have no active heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
+            if (!beacons.Any())
+                ChatBot.ChatBot.WarnPlayer(grid, "It seems you have no active heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
 
             if (beacons.Count > 1)
                 for (int i = 1; i < beacons.Count; i++)
                     beacons[i].Enabled = false;
-            
+
             var beacon = beacons.FirstOrDefault();
             if (beacon == null)
+            {
+                _heatSinkCache[gridId] = null;
                 return null;
+            }
 
             beacon.Enabled = true;
-            return beacon.GameLogic.GetAs<HeatSinkLogic>();
+            var logic = beacon.GameLogic.GetAs<HeatSinkLogic>();
+            _heatSinkCache[gridId] = logic;
+            return logic;
+        }
+
+        /// <summary>
+        /// Returns the cached count of working power producers on a grid (for spam penalty).
+        /// </summary>
+        public static int GetPowerProducerCount(IMyCubeGrid grid)
+        {
+            if (grid == null)
+                return 0;
+
+            var gridId = grid.EntityId;
+
+            int count;
+            if (_powerProducerCountCache.TryGetValue(gridId, out count))
+                return count;
+
+            // Cache miss — scan
+            var powerProducers = new List<IMyPowerProducer>();
+            var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(grid);
+            gts.GetBlocksOfType(powerProducers, x => x.IsWorking);
+
+            count = powerProducers.Count;
+            _powerProducerCountCache[gridId] = count;
+            return count;
         }
 
         public static bool IsOwnedByAPlayer(this IMyCubeBlock block)

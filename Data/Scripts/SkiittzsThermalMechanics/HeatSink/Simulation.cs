@@ -99,6 +99,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer() ||
 				block?.CubeGrid?.EntityId == HeatSinkData.OriginalGridId) return;
 
+			Utilities.InvalidateHeatSinkCache(HeatSinkData.OriginalGridId);
+
 			IMyEntity entity;
 			if (MyAPIGateway.Entities.TryGetEntityById(HeatSinkData.OriginalGridId, out entity))
 			{
@@ -130,21 +132,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			HeatSinkData.OriginalGridId = block.CubeGrid.EntityId;
 		}
 
-		private void OnBlockDestroyed(object target, MyDamageInformation info)
+		private static void OnBlockDestroyed(object target, MyDamageInformation info)
 		{
 			var tgt = target as IMyEntity;
-			if (tgt == null || tgt.EntityId != block.EntityId)
+			if (tgt == null)
 				return;
 
-			if (HeatSinkData == null)
+			var logic = tgt.GameLogic?.GetAs<HeatSinkLogic>();
+			if (logic == null)
 				return;
 
-			var currentHeat = HeatSinkData.CurrentHeat;
-			var ventingHeat = HeatSinkData.VentingHeat;
-			var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid);
+			if (logic.HeatSinkData == null)
+				return;
+
+			Utilities.InvalidateHeatSinkCache(logic.block.CubeGrid.EntityId);
+
+			var currentHeat = logic.HeatSinkData.CurrentHeat;
+			var ventingHeat = logic.HeatSinkData.VentingHeat;
+			var gts = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(logic.block.CubeGrid);
 
 			var beacons = new List<IMyBeacon>();
-			gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.EntityId != block.EntityId);
+			gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.EntityId != logic.block.EntityId);
 			foreach (var heatSink in beacons.OrderByDescending(x => x.Radius))
 			{
 				var gameLogic = heatSink.GameLogic.GetAs<HeatSinkLogic>();
@@ -155,11 +163,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			}
 
 			var powerProducers = new List<IMyPowerProducer>();
-			gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
+			gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(logic.block));
 			foreach (var powerProducer in powerProducers)
 			{
 				PowerPlantHeatData heatData = null;
-                var batteryLogic = powerProducer.GameLogic.GetAs<BatteryLogic>();
+				var batteryLogic = powerProducer.GameLogic.GetAs<BatteryLogic>();
 				var reactorLogic = powerProducer.GameLogic.GetAs<ReactorLogic>();
 				var h2Logic = powerProducer.GameLogic.GetAs<H2EngineLogic>();
 
@@ -177,7 +185,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				var sunkHeat = heatData.FeedHeatBack(currentHeat + ventingHeatPortion);
 				currentHeat -= sunkHeat;
 			}
-
 		}
 
 		public float RemoveHeat(float heat)
