@@ -317,6 +317,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {
+            // Reset command mappings to defaults so removed/renamed aliases are dropped on reload
+            commandMappings = new Dictionary<string, string>
+            {
+                {"stfu","StopMessages"},
+                {"speak","ReEnable"},
+                {"help","Help"},
+                {"reload","Reload"},
+                {"iamnotanewb", "StopTutorial"},
+                {"spankemedaddy_iamnewb","StartTutorial"},
+                {"rename","Rename"},
+                {"debug","ToggleDebug"},
+                {"togglehud","ToggleHud"}
+            };
+
             MessageDelay = settings.ContainsKey("ChatFrequencyLimiter")
                 ? int.Parse(settings["ChatFrequencyLimiter"])
                 : 0;
@@ -328,6 +342,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 commandMappings[command.Value] = command.Key.Replace("ChatBotCommand_", "");
             }
 
+            MyAPIGateway.Session.OnSessionReady -= IntroduceMyself;
             MyAPIGateway.Session.OnSessionReady += IntroduceMyself;
         }
     }

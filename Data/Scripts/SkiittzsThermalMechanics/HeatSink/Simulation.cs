@@ -156,7 +156,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			foreach (var heatSink in beacons.OrderByDescending(x => x.Radius))
 			{
 				var gameLogic = heatSink.GameLogic.GetAs<HeatSinkLogic>();
-				if (gameLogic == null) continue;
+				if (gameLogic == null || gameLogic.HeatSinkData == null) continue;
 				var sunkHeat = gameLogic.ActiveCooling(currentHeat);
 				gameLogic.HeatSinkData.VentingHeat += ventingHeat;
 				currentHeat -= sunkHeat;
