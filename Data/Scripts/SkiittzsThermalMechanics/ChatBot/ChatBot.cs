@@ -24,6 +24,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         public static void WarnPlayer(IMyTerminalBlock block, string message, MessageSeverity messageSeverity)
         {
+            var playerId = Utilities.TryGetCurrentPlayerId();
+            if (!block.CubeGrid.BigOwners.Contains(playerId))
+                return;
+
             if (block == null || !block.IsOwnedByCurrentPlayer())
                 return;
 
