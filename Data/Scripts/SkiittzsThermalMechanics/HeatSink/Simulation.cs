@@ -132,17 +132,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			HeatSinkData.OriginalGridId = block.CubeGrid.EntityId;
 		}
 
-		private static void OnBlockDestroyed(object target, MyDamageInformation info)
+		private static void RedistributeHeat(HeatSinkLogic logic)
 		{
-			var tgt = target as IMyEntity;
-			if (tgt == null)
-				return;
-
-			var logic = tgt.GameLogic?.GetAs<HeatSinkLogic>();
-			if (logic == null)
-				return;
-
-			if (logic.HeatSinkData == null)
+			if (logic?.HeatSinkData == null || logic.block == null)
 				return;
 
 			Utilities.InvalidateHeatSinkCache(logic.block.CubeGrid.EntityId);
@@ -177,6 +169,19 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				var sunkHeat = heatData.FeedHeatBack(currentHeat + ventingHeatPortion);
 				currentHeat -= sunkHeat;
 			}
+		}
+
+		private static void OnBlockDestroyed(object target, MyDamageInformation info)
+		{
+			var tgt = target as IMyEntity;
+			if (tgt == null)
+				return;
+
+			var logic = tgt.GameLogic?.GetAs<HeatSinkLogic>();
+			if (logic == null)
+				return;
+
+			RedistributeHeat(logic);
 		}
 
 		public float RemoveHeat(float heat)

@@ -7,6 +7,7 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 using VRage.Utils;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink
 {
@@ -52,7 +53,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				{
 					(Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= HeatSinkLogic_AppendingCustomInfo;
 					(Container.Entity as IMyCubeBlock).OnClose -= HeatSinkLogic_OnClose;
-					HeatSinkData.SaveData(obj.EntityId, obj.GameLogic.GetAs<HeatSinkLogic>().HeatSinkData);
+
+					var logic = obj.GameLogic.GetAs<HeatSinkLogic>();
+
+					if (!SkiittzThermalMechanicsSession.IsSessionUnloading)
+						RedistributeHeat(logic);
+
+					HeatSinkData.SaveData(obj.EntityId, logic.HeatSinkData);
 				}
 			}
 			catch (Exception ex)

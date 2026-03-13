@@ -7,10 +7,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
     public class SkiittzThermalMechanicsSession : MySessionComponentBase
     {
         private int _tickCounter = 0;
+        public static bool IsSessionUnloading { get; private set; } = false;
 
         public override void Init(MyObjectBuilder_SessionComponent sessionComponent)
         {
             base.Init(sessionComponent);
+            IsSessionUnloading = false;
             Configuration.Configuration.Load();
         }
 
@@ -21,6 +23,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             {
                 Utilities.TickGridCaches();
             }
+        }
+
+        protected override void UnloadData()
+        {
+            IsSessionUnloading = true;
+            base.UnloadData();
         }
     }
 }
