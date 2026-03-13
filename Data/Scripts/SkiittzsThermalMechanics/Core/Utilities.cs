@@ -94,6 +94,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             if (grid == null)
                 return 0;
 
+            // If caches are marked dirty for this tick, clear them before using
+            if (_cacheDirty)
+            {
+                _heatSinkCache.Clear();
+                _powerProducerCountCache.Clear();
+                _cacheDirty = false;
+            }
+
             var gridId = grid.EntityId;
 
             int count;
