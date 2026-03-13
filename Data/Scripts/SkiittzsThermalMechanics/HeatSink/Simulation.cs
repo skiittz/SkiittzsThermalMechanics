@@ -158,17 +158,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			gts.GetBlocksOfType(powerProducers, x => x.IsWorking && x.IsSameConstructAs(block));
 			foreach (var powerProducer in powerProducers)
 			{
-				PowerPlantHeatData heatData = null;
-				var batteryLogic = powerProducer.GameLogic.GetAs<BatteryLogic>();
-				var reactorLogic = powerProducer.GameLogic.GetAs<ReactorLogic>();
-				var h2Logic = powerProducer.GameLogic.GetAs<H2EngineLogic>();
-
-				if (batteryLogic != null)
-					heatData = batteryLogic.heatData;
-				else if (reactorLogic != null)
-					heatData = reactorLogic.heatData;
-				else if (h2Logic != null)
-					heatData = h2Logic.heatData;
+				var heatData = powerProducer.GameLogic.GetAs<ReactorLogic>()?.heatData
+							   ?? powerProducer.GameLogic.GetAs<BatteryLogic>()?.heatData
+							   ?? powerProducer.GameLogic.GetAs<H2EngineLogic>()?.heatData;
 
 				if (heatData == null)
 					continue;
