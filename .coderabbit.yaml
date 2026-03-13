@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  auto_title_placeholder: "@coderabbitai"
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  sequence_diagrams: true
+  changed_files_summary: true
+  labeling_instructions: []
+  path_filters:
+    - "!obj/**"
+    - "!bin/**"
+    - "!Properties/AssemblyInfo.cs"
+    - "!*.user"
+    - "!*.suo"
+  path_instructions:
+    - path: "Data/Scripts/SkiittzsThermalMechanics/**/*.cs"
+      instructions: >
+        This is a Space Engineers mod built with C# targeting .NET Framework 4.8.
+        It uses the Space Engineers Modding API (Sandbox.ModAPI, VRage).
+        Review for correctness, null safety, potential threading issues with
+        the game API, and adherence to Space Engineers modding best practices.
+        Pay attention to proper resource cleanup (readers/writers being closed)
+        and correct use of MyAPIGateway calls.
+    - path: "Data/Scripts/SkiittzsThermalMechanics/Configuration/**"
+      instructions: >
+        Configuration files for the thermal mechanics mod.
+        Ensure configuration loading/saving is robust, handles missing or
+        malformed data gracefully, and that defaults are sensible.
+    - path: "Data/Scripts/SkiittzsThermalMechanics/ChatBot/**"
+      instructions: >
+        ChatBot system for in-game player communication.
+        Verify command handling is correct, player ID lookups are safe,
+        and messages are user-friendly.
+    - path: "SkiittzsThermalMechanics.Tests/**"
+      instructions: >
+        Unit tests for the mod. Ensure tests are meaningful, cover edge cases,
+        and follow good testing practices.
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+      - "DRAFT"
+    drafts: false
+    base_branches:
+      - master
+chat:
+  auto_reply: true

@@ -180,6 +180,7 @@
     <Compile Include="SkiittzsThermalMechanics.Tests\UtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".coderabbit.yaml" />
     <None Include="Data\HeatSinkCubeBlock.sbc" />
     <None Include="Data\BlockCategories.sbc" />
     <None Include="Data\BlueprintClasses.sbc" />
