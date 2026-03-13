@@ -24,7 +24,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         public static void WarnPlayer(IMyTerminalBlock block, string message, MessageSeverity messageSeverity)
         {
-            if (block == null || !block.IsOwnedByCurrentPlayer())
+            if (block == null)
+                return;
+
+            var playerId = Utilities.TryGetCurrentPlayerId();
+            if (!block.CubeGrid.BigOwners.Contains(playerId))
+                return;
+
+            if (!block.IsOwnedByCurrentPlayer())
                 return;
 
             WarnPlayer($"{block.CubeGrid.CustomName}-{block.CustomName}: {message}", messageSeverity);
@@ -221,7 +228,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 case "Reload":
                     if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
                     {
-	                    Configuration.Configuration.Load();
+	                    Configuration.Configuration.Load(forceReload: true);
                         var definitions = Configuration.Configuration.BlockSettings.Select(x => x.Key);
                         MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"configs reloaded for block types: {string.Join(",",definitions)}");
                     }
@@ -313,6 +320,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
         };
         public static void InitConfigs(Dictionary<string, string> settings)
         {
+            // Reset command mappings to defaults so removed/renamed aliases are dropped on reload
+            commandMappings = new Dictionary<string, string>
+            {
+                {"stfu","StopMessages"},
+                {"speak","ReEnable"},
+                {"help","Help"},
+                {"reload","Reload"},
+                {"iamnotanewb", "StopTutorial"},
+                {"spankemedaddy_iamnewb","StartTutorial"},
+                {"rename","Rename"},
+                {"debug","ToggleDebug"},
+                {"togglehud","ToggleHud"}
+            };
+
             MessageDelay = settings.ContainsKey("ChatFrequencyLimiter")
                 ? int.Parse(settings["ChatFrequencyLimiter"])
                 : 0;
@@ -324,6 +345,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 commandMappings[command.Value] = command.Key.Replace("ChatBotCommand_", "");
             }
 
+            MyAPIGateway.Session.OnSessionReady -= IntroduceMyself;
             MyAPIGateway.Session.OnSessionReady += IntroduceMyself;
         }
     }
