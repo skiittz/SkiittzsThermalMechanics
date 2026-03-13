@@ -207,6 +207,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
             
 			switch (commandMappings[command])
             {
+                case "Test"                    :
+                    MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This is a fake commit for testin gpurposes");
+                    break;
                 case "Help":
                     PrintHelp();
                     break;
