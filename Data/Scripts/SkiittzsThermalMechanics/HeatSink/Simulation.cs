@@ -159,7 +159,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			foreach (var powerProducer in powerProducers)
 			{
 				PowerPlantHeatData heatData = null;
-                var batteryLogic = powerProducer.GameLogic.GetAs<BatteryLogic>();
+				var batteryLogic = powerProducer.GameLogic.GetAs<BatteryLogic>();
 				var reactorLogic = powerProducer.GameLogic.GetAs<ReactorLogic>();
 				var h2Logic = powerProducer.GameLogic.GetAs<H2EngineLogic>();
 
