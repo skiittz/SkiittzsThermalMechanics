@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sandbox.ModAPI;
@@ -11,7 +12,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
     {
         public static string ChatBotName { get; set; }
         public static int MessageDelay {get; set; }
-        private static int _messageAttemptCounter = 0;
+        private static DateTime _lastMessageTime = DateTime.MinValue;
         private static List<long> _disabledPlayerIds;
 		private static List<long> _warningOnlyPlayerIds;
 		private static List<long> _introducedPlayersThisSession = new List<long>();
@@ -59,14 +60,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 			if (messageSeverity == MessageSeverity.Tutorial && _warningOnlyPlayerIds.Contains(playerId))
 				return;
 
-	        if (_messageAttemptCounter == 0)
-	        {
-		        MyAPIGateway.Utilities.ShowMessage(ChatBotNameFor(playerId), message);
-	        }
+			// If MessageDelay is zero or negative, always show messages immediately.
+			if (MessageDelay <= 0)
+			{
+				MyAPIGateway.Utilities.ShowMessage(ChatBotNameFor(playerId), message);
+				_lastMessageTime = DateTime.UtcNow;
+				return;
+			}
 
-	        _messageAttemptCounter++;
-	        if (_messageAttemptCounter >= MessageDelay)
-		        _messageAttemptCounter = 0;
+			// Show a message only if enough real time (seconds) has passed since the last shown message.
+			var secondsSinceLast = (DateTime.UtcNow - _lastMessageTime).TotalSeconds;
+			if (_lastMessageTime == DateTime.MinValue || secondsSinceLast >= MessageDelay)
+			{
+				MyAPIGateway.Utilities.ShowMessage(ChatBotNameFor(playerId), message);
+				_lastMessageTime = DateTime.UtcNow;
+			}
 
 		}
 
@@ -86,13 +94,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         private static void SavePlayerChatBotNameOverrides()
         {
-	        var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(playerChatBotNameOverridesFileName, typeof(SkiittzThermalMechanicsSession));
-	        var content = _playerAsstNameOverrides
-		        .Select(x => new ChatBotOverride { PlayerId = x.Key, Name = x.Value})
-		        .ToList();
-	        writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
-	        writer.Flush();
-	        writer.Close();
+			var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(playerChatBotNameOverridesFileName, typeof(SkiittzThermalMechanicsSession));
+			var content = _playerAsstNameOverrides
+				.Select(x => new ChatBotOverride { PlayerId = x.Key, Name = x.Value})
+				.ToList();
+			writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
+			writer.Flush();
+			writer.Close();
         }
 
         public class ChatBotOverride
@@ -103,11 +111,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         private static void SaveWarningOnlyPlayers()
         {
-	        var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession));
-	        var content = _warningOnlyPlayerIds;
-	        writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
-	        writer.Flush();
-	        writer.Close();
+			var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession));
+			var content = _warningOnlyPlayerIds;
+			writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
+			writer.Flush();
+			writer.Close();
         }
 
 		public static void LoadDisabledPlayers()
@@ -125,31 +133,31 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         public static void LoadWarningOnlyPlayers()
         {
-	        if (MyAPIGateway.Utilities.FileExistsInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession)))
-	        {
-		        var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession));
-		        var content = reader.ReadToEnd();
-		        reader.Close();
-		        _warningOnlyPlayerIds = MyAPIGateway.Utilities.SerializeFromXML<List<long>>(content);
-	        }
-	        else
-		        _warningOnlyPlayerIds = new List<long>();
+			if (MyAPIGateway.Utilities.FileExistsInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession)))
+			{
+				var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(warningOnlyPlayersFileName, typeof(SkiittzThermalMechanicsSession));
+				var content = reader.ReadToEnd();
+				reader.Close();
+				_warningOnlyPlayerIds = MyAPIGateway.Utilities.SerializeFromXML<List<long>>(content);
+			}
+			else
+				_warningOnlyPlayerIds = new List<long>();
         }
 
         public static void LoadPlayerChatBotNameOverrides()
         {
-	        _playerAsstNameOverrides = new Dictionary<long, string>();
+			_playerAsstNameOverrides = new Dictionary<long, string>();
 			if (MyAPIGateway.Utilities.FileExistsInWorldStorage(playerChatBotNameOverridesFileName, typeof(SkiittzThermalMechanicsSession)))
-	        {
-		        var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(playerChatBotNameOverridesFileName, typeof(SkiittzThermalMechanicsSession));
-		        var content = reader.ReadToEnd();
-		        reader.Close();
-		        var results = MyAPIGateway.Utilities.SerializeFromXML<List<ChatBotOverride>>(content);
-		        foreach (var item in results)
-		        {
+			{
+				var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(playerChatBotNameOverridesFileName, typeof(SkiittzThermalMechanicsSession));
+				var content = reader.ReadToEnd();
+				reader.Close();
+				var results = MyAPIGateway.Utilities.SerializeFromXML<List<ChatBotOverride>>(content);
+				foreach (var item in results)
+				{
                     _playerAsstNameOverrides.Add(item.PlayerId, item.Name);
-		        }
-	        }
+				}
+			}
         }
 
         public static void ToggleHudForPlayer(long playerId)
@@ -177,8 +185,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         public static void EnableTutorialMessagesForPlayer(long playerId)
         {
-	        _warningOnlyPlayerIds.Remove(playerId);
-	        SaveWarningOnlyPlayers();
+			_warningOnlyPlayerIds.Remove(playerId);
+			SaveWarningOnlyPlayers();
         }
 
         public static void RenameChatBot(long playerId, string newName)
@@ -224,11 +232,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                 case "ReEnable":
                     EnableMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
                     MyAPIGateway.Utilities.ShowMessage(ChatBotName, "All messages re-enabled");
-					break;
+				break;
                 case "Reload":
                     if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
                     {
-	                    Configuration.Configuration.Load(forceReload: true);
+					Configuration.Configuration.Load(forceReload: true);
                         var definitions = Configuration.Configuration.BlockSettings.Select(x => x.Key);
                         MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"configs reloaded for block types: {string.Join(",",definitions)}");
                     }
@@ -236,30 +244,30 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                         MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This command can only be run by an admin");
                     break;
                 case "StopTutorial":
-	                DisableTutorialMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
-	                MyAPIGateway.Utilities.ShowMessage(ChatBotName, "Tutorial messages stopped");
-					break;
+				DisableTutorialMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
+				MyAPIGateway.Utilities.ShowMessage(ChatBotName, "Tutorial messages stopped");
+				break;
                 case "StartTutorial":
-	                EnableTutorialMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
-	                MyAPIGateway.Utilities.ShowMessage(ChatBotName, "Tutorial messages re-enabled");
-					break;
+				EnableTutorialMessagesForPlayer(Utilities.TryGetCurrentPlayerId());
+				MyAPIGateway.Utilities.ShowMessage(ChatBotName, "Tutorial messages re-enabled");
+				break;
                 case "Rename":
                     RenameChatBot(Utilities.TryGetCurrentPlayerId(), args?[0]?.ToString());
-	                break;
+				break;
                 case "ToggleHud":
                     ToggleHudForPlayer(Utilities.TryGetCurrentPlayerId());
                     break;
                 case "ToggleDebug":
-	                if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
-	                {
-		                Configuration.Configuration.ToggleDebugMode();
-		                MyAPIGateway.Utilities.ShowMessage(ChatBotName,
+				if (MyAPIGateway.Session.IsUserAdmin(MyAPIGateway.Session.Player.SteamUserId))
+				{
+					Configuration.Configuration.ToggleDebugMode();
+					MyAPIGateway.Utilities.ShowMessage(ChatBotName,
 			                $"Debug mode is now {(Configuration.Configuration.DebugMode ? "enabled" : "disabled")}");
-	                }
-	                else
-						MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This command can only be run by an admin");
-					break;
-				default:
+				}
+				else
+					MyAPIGateway.Utilities.ShowMessage(ChatBotName, $"This command can only be run by an admin");
+				break;
+			default:
                     PrintUnknownCommand();
                     break;
             }
@@ -295,13 +303,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 	                    message.AppendLine($"{prefix}:Turn on tutorial messages from {ChatBotName}");
 	                    break;
                     case "Rename":
-	                    message.AppendLine($"{prefix}:Change the assistant's name");
-	                    break;
+		                    message.AppendLine($"{prefix}:Change the assistant's name");
+		                    break;
                     case "ToggleHud":
-	                    message.AppendLine($"{prefix}:Toggle heat HUD");
-	                    break;
-				}
+		                    message.AppendLine($"{prefix}:Toggle heat HUD");
+		                    break;
 			}
+		}
             MyAPIGateway.Utilities.ShowMessage(ChatBotName, message.ToString());
 
         }

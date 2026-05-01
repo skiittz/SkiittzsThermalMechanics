@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
@@ -31,7 +32,6 @@ namespace SkiittzsThermalMechanics.Tests
             SetPrivateStaticField("_warningOnlyPlayerIds", new List<long>());
             SetPrivateStaticField("_introducedPlayersThisSession", new List<long>());
             SetPrivateStaticField("_playerAsstNameOverrides", new Dictionary<long, string>());
-            SetPrivateStaticField("_messageAttemptCounter", 0);
         }
 
         #region ChatBotNameFor Tests
@@ -213,10 +213,10 @@ namespace SkiittzsThermalMechanics.Tests
         #region MessageDelay Counter Tests
 
         [Test]
-        public void MessageAttemptCounter_DefaultsToZero()
+        public void LastMessageTime_DefaultsToMinValue()
         {
-            var counter = (int)GetPrivateStaticField("_messageAttemptCounter");
-            Assert.AreEqual(0, counter);
+            var last = (DateTime)GetPrivateStaticField("_lastMessageTime");
+            Assert.AreEqual(DateTime.MinValue, last);
         }
 
         [Test]
