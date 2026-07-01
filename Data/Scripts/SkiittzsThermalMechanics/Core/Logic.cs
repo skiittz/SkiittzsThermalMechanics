@@ -28,9 +28,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 		private float CalculateHeating(IMyThrust block)
 		{
-			if (block == null || !block.IsOwnedByAPlayer()) return 0;
-
-			if (!block.IsWorking || !block.IsOwnedByAPlayer())
+			if (block == null || !block.IsWorking || !block.IsOwnedByAPlayer())
 				return 0;
 			return (block.CurrentThrust * MwHeatPerNewtonThrust) - PassiveCooling;
 		}
