@@ -14,6 +14,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             base.Init(sessionComponent);
             IsSessionUnloading = false;
             Configuration.Configuration.Load();
+
+            HeatSync.Init();
         }
 
         public override void UpdateAfterSimulation()
@@ -28,6 +30,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
         protected override void UnloadData()
         {
             IsSessionUnloading = true;
+            HeatSync.Unload();
             base.UnloadData();
         }
     }

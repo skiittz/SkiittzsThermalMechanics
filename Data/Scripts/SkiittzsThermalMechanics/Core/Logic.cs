@@ -18,6 +18,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			CurrentHeat -= CalculateCooling(block, sinkableHeat);
 			if (CurrentHeat < 0)
 				CurrentHeat = 0;
+
+			// Sync updated heat to clients
+			HeatSync.SendHeatUpdate(block.EntityId, CurrentHeat);
 		}
 
 		private float CalculateCooling(IMyThrust block, float availableHeatToSink)
@@ -78,6 +81,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			CurrentHeat += LastHeatDelta;
 			if (CurrentHeat < 0)
 				CurrentHeat = 0;
+
+			// Sync updated heat to clients
+			HeatSync.SendHeatUpdate(block.EntityId, CurrentHeat);
 
 			if (CurrentHeat >= HeatCapacity)
 			{

@@ -33,6 +33,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		public override void UpdateAfterSimulation100()
 		{
+			if (!MyAPIGateway.Multiplayer.IsServer && !MyAPIGateway.Utilities.IsDedicated) return;
 			if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer()) return;
 			CheckForSeparation();
 

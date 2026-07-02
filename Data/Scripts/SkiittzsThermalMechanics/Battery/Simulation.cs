@@ -1,4 +1,5 @@
-﻿using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+﻿using Sandbox.ModAPI;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 {
@@ -6,6 +7,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Battery
 	{
 		public override void UpdateAfterSimulation100()
 		{
+			if (!MyAPIGateway.Multiplayer.IsServer && !MyAPIGateway.Utilities.IsDedicated) return;
 			if (block == null || heatData == null || !block.IsOwnedByAPlayer())
 				return;
 

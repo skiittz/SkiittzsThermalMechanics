@@ -18,6 +18,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		}
 		public override void UpdateAfterSimulation100()
 		{
+			if (!MyAPIGateway.Multiplayer.IsServer && !MyAPIGateway.Utilities.IsDedicated) return;
 			if (block == null || radiatorData == null || !block.IsOwnedByAPlayer()) return;
 			CheckIsExterior();
 
