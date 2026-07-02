@@ -14,7 +14,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 			LastHeatDelta = CalculateHeating(block);
 			CurrentHeat += LastHeatDelta;
-			CurrentHeat -= CalculateCooling(block, CurrentHeat);
+			var sinkableHeat = CurrentHeat * 0.1f;
+			CurrentHeat -= CalculateCooling(block, sinkableHeat);
 			if (CurrentHeat < 0)
 				CurrentHeat = 0;
 		}

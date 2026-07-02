@@ -46,6 +46,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 
                     if (ModSettings.CurrentVersion > loadedConfigs.ConfigVersion)
                     {
+                        MyLog.Default.WriteLine($"SkiittzsThermalMechanics: Config version {loadedConfigs.ConfigVersion} is outdated. Upgrading to version {ModSettings.CurrentVersion}.");
                         var latestConfig = ModSettings.Default();
                         loadedConfigs = loadedConfigs.UpgradeTo(latestConfig);
                         needsSave = true;
@@ -60,6 +61,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             }
             else
             {
+                MyLog.Default.WriteLine("SkiittzsThermalMechanics: Config file not found, using defaults.");
                 loadedConfigs = ModSettings.Default();
                 needsSave = true;
             }
@@ -78,8 +80,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             catch (Exception e)
             {
                 MyLog.Default.WriteLine($"SkiittzsThermalMechanics: Failed to parse BlockTypeSettings, using defaults. Error: {e.Message}");
-                var defaultConfigs = ModSettings.Default();
-                tempBlockSettings = defaultConfigs.BlockTypeSettings.ToDictionary(
+                var defaultConfigs = ModSettings.Default().BlockTypeSettings;
+                tempBlockSettings = defaultConfigs.ToDictionary(
                     x => x.SubTypeId,
                     x => x.Settings.ToDictionary(y => y.Name, y => y.Value));
             }

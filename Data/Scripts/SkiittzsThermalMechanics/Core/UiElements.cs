@@ -9,6 +9,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
         public void AppendCustomThermalInfo(IMyThrust block, StringBuilder customInfo)
         {
             customInfo.Append($"Current Heat Level: {CurrentHeat}\n");
+            if(Configuration.Configuration.DebugMode)
+            {
+                customInfo.Append($"Last Heat Delta: {LastHeatDelta}\n");
+            }
         }
     }
     public partial class PowerPlantHeatData
