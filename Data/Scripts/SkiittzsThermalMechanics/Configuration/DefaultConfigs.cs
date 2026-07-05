@@ -482,7 +482,47 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             #endregion
 
             #region Thrusters
+            #region CoreSystems
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockLargeHydrogenThrustReskin",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
+                    new Setting { Name = "PassiveCooling", Value = "0.05" }
+                }
+            };
 
+            yield return new BlockType
+            {
+                SubTypeId = "LargeBlockSmallHydrogenThrustReskin",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
+                    new Setting { Name = "PassiveCooling", Value = "0.005" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockLargeHydrogenThrustReskin",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
+                    new Setting { Name = "PassiveCooling", Value = "0.005" }
+                }
+            };
+
+            yield return new BlockType
+            {
+                SubTypeId = "SmallBlockSmallHydrogenThrustReskin",
+                Settings = new List<Setting>
+                {
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
+                    new Setting { Name = "PassiveCooling", Value = "0.0005" }
+                }
+            };
+            #endregion
             #region Vanilla
 
             yield return new BlockType
@@ -490,7 +530,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockLargeHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.05" }
                 }
             };
@@ -500,7 +540,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockSmallHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.005" }
                 }
             };
@@ -510,7 +550,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockLargeHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.005" }
                 }
             };
@@ -520,7 +560,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockSmallHydrogenThrust",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.0005" }
                 }
             };
@@ -532,7 +572,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockLargeHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.05" }
                 }
             };
@@ -542,7 +582,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "LargeBlockSmallHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.005" }
                 }
             };
@@ -552,7 +592,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockLargeHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.005" }
                 }
             };
@@ -562,7 +602,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
                 SubTypeId = "SmallBlockSmallHydrogenThrustIndustrial",
                 Settings = new List<Setting>
                 {
-                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.0005" },
+                    new Setting { Name = "MwHeatPerNewtonThrust", Value = "0.00005" },
                     new Setting { Name = "PassiveCooling", Value = "0.0005" }
                 }
             };
