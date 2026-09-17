@@ -15,17 +15,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
     {
         private ThrusterHeatData heatData;
         private IMyThrust block;
+        private bool hasAuthoritativeState;
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             block = (IMyThrust)Container.Entity;
             if (block == null)
                 return;
 
-            bool configFound = false;
-			heatData = ThrusterHeatData.LoadData(block, out configFound);
+            bool configFound;
+            if (ThermalAuthority.IsServer)
+				heatData = ThrusterHeatData.LoadData(block, out configFound);
+            else
+            {
+                heatData = new ThrusterHeatData();
+                configFound = true;
+            }
             if (!configFound) return;
+            hasAuthoritativeState = ThermalAuthority.IsServer;
 
-			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			if (ThermalAuthority.IsServer)
+				NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME;
             (Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ThrusterLogic_AppendingCustomInfo;
         }
 
@@ -37,9 +47,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
                 {
                     (Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ThrusterLogic_AppendingCustomInfo;
                     (Container.Entity as IMyCubeBlock).OnClose -= ThrusterLogic_OnClose;
-                    var logic = obj.GameLogic.GetAs<HydrogenThrusterLogic>();
-                    if (logic == null || !logic.block.IsOwnedByAPlayer()) return;
-                    ThrusterHeatData.SaveData(obj.EntityId, logic.heatData);
+                    if (ThermalAuthority.IsServer)
+                        SaveAuthoritativeState();
+                    ThermalAuthority.Unregister(obj.EntityId);
                 }
             }
             catch (Exception ex)
@@ -51,12 +61,16 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
         public override void UpdateOnceBeforeFrame()
         {
             if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+            {
+                NeedsUpdate = MyEntityUpdateEnum.NONE;
                 return;
+            }
 
                 AddCurrentHeatControl();
                 try
                 {
                     (Container.Entity as IMyCubeBlock).OnClose += ThrusterLogic_OnClose;
+                    ThermalAuthority.Register(this);
                 }
                 catch (Exception ex)
                 {

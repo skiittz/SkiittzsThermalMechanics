@@ -10,15 +10,22 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
     [MySessionComponentDescriptor(MyUpdateOrder.NoUpdate)]
     public class ChatCommandHandler : MySessionComponentBase
     {
+        private bool _subscribed;
+
         public override void Init(MyObjectBuilder_SessionComponent sessionComponent)
         {
             base.Init(sessionComponent);
+            if (MyAPIGateway.Utilities == null || MyAPIGateway.Utilities.IsDedicated)
+                return;
             MyAPIGateway.Utilities.MessageEntered += OnMessageEntered;
+            _subscribed = true;
         }
 
         protected override void UnloadData()
         {
-            MyAPIGateway.Utilities.MessageEntered -= OnMessageEntered;
+            if (_subscribed && MyAPIGateway.Utilities != null)
+                MyAPIGateway.Utilities.MessageEntered -= OnMessageEntered;
+            _subscribed = false;
             base.UnloadData();
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Networking;
 using VRage.Utils;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configuration
@@ -18,16 +19,36 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public static Dictionary<string, float> DissipationModifiers;
         public static Dictionary<string, float> SignalModifiers;
 		private static bool debugMode = false;
-        public static bool DebugMode => debugMode;
+        public static bool DebugMode => ThermalAuthority.IsServer ? debugMode : ThermalNetwork.ClientDebugMode;
         private static List<long> _disabledHudPlayerIds;
 
 		public static void ToggleDebugMode()
         {
+			if (!ThermalAuthority.IsServer)
+				return;
 			debugMode = !debugMode;
 		}
 
+        public static void InitializeClient()
+        {
+            // Clients receive presentation state from the server. They never read gameplay settings
+            // or persistent thermal data from their own copy of world storage.
+            configs = null;
+            BlockSettings = new Dictionary<string, Dictionary<string, string>>();
+            DissipationModifiers = new Dictionary<string, float>();
+            SignalModifiers = new Dictionary<string, float>();
+            _disabledHudPlayerIds = new List<long>();
+            IsLoaded = true;
+        }
+
         public static void Load(bool forceReload = false)
         {
+            if (!ThermalAuthority.IsServer)
+            {
+                InitializeClient();
+                return;
+            }
+
             if (IsLoaded && !forceReload) return;
 
             ModSettings loadedConfigs;
@@ -176,6 +197,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         
         public static void Save()
         {
+            if (!ThermalAuthority.IsServer || configs == null)
+                return;
+
             var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession));
             writer.Write(MyAPIGateway.Utilities.SerializeToXML(configs));
             writer.Flush();
@@ -187,6 +211,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         
         public static void SavePlayersDisableHud()
         {
+            if (!ThermalAuthority.IsServer)
+                return;
+
             if(_disabledHudPlayerIds == null)
                 _disabledHudPlayerIds = new List<long>();
 
@@ -199,6 +226,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 
         public static void LoadDisabledHudPlayers()
         {
+	        if (!ThermalAuthority.IsServer)
+	        {
+	            _disabledHudPlayerIds = new List<long>();
+	            return;
+	        }
+
 	        if (MyAPIGateway.Utilities.FileExistsInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession)))
 	        {
 		        var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(playerDisabledHudFileName, typeof(SkiittzThermalMechanicsSession));
@@ -212,16 +245,28 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 
         public static void DisableHudForPlayer(long playerId)
         {
-	        _disabledHudPlayerIds.Add(playerId);
+            if (!ThermalAuthority.IsServer)
+                return;
+            if (_disabledHudPlayerIds == null)
+                _disabledHudPlayerIds = new List<long>();
+            if (!_disabledHudPlayerIds.Contains(playerId))
+                _disabledHudPlayerIds.Add(playerId);
         }
 
         public static void EnabledHudForPlayer(long playerId)
         {
-	        _disabledHudPlayerIds.Remove(playerId);
+            if (!ThermalAuthority.IsServer)
+                return;
+            if (_disabledHudPlayerIds == null)
+                return;
+            _disabledHudPlayerIds.Remove(playerId);
         }
 
         public static void ToggleHudForPlayer(long playerId)
         {
+            if (!ThermalAuthority.IsServer)
+                return;
+
 	        if (PlayerHudIsDisabled(playerId))
 		        EnabledHudForPlayer(playerId);
 	        else
@@ -231,13 +276,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 
         public static bool PlayerHudIsDisabled(long playerId)
         {
+            if (!ThermalAuthority.IsServer)
+                return ThermalNetwork.ClientHudDisabled;
 	        return _disabledHudPlayerIds != null && _disabledHudPlayerIds.Contains(playerId);
         }
 
-		public static bool TryGetBlockSettingValue(string type, string configName, out string value)
+        public static bool TryGetBlockSettingValue(string type, string configName, out string value)
         {
             value = string.Empty;
-            if (!BlockSettings.ContainsKey(type))
+            if (BlockSettings == null || !BlockSettings.ContainsKey(type))
                 return false;
             if (!BlockSettings[type].ContainsKey(configName))
                 return false;
@@ -249,7 +296,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public static bool TryGetBlockSettingValue(string type, string configName, out bool value)
         {
 	        value = false;
-	        if (!BlockSettings.ContainsKey(type))
+	        if (BlockSettings == null || !BlockSettings.ContainsKey(type))
 		        return false;
 	        if (!BlockSettings[type].ContainsKey(configName))
 		        return false;
@@ -260,7 +307,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 		public static bool TryGetBlockSettingValue(string type, string configName, out float value)
         {
             value = 0f;
-            if (!BlockSettings.ContainsKey(type))
+            if (BlockSettings == null || !BlockSettings.ContainsKey(type))
                 return false;
             if (!BlockSettings[type].ContainsKey(configName))
                 return false;
@@ -278,8 +325,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
         public static bool TryGetGeneralSettingValue(string name, out bool value)
         {
 	        value = false;
+	        if (configs == null || configs.GeneralSettings == null)
+	            return false;
 	        var setting = configs.GeneralSettings.SingleOrDefault(x => x.Name == name);
 	        return setting != null && bool.TryParse(setting.Value, out value);
+        }
+
+        public static void ResetSession()
+        {
+            IsLoaded = false;
+            configs = null;
+            BlockSettings = null;
+            DissipationModifiers = null;
+            SignalModifiers = null;
+            _disabledHudPlayerIds = null;
+            debugMode = false;
         }
     }
 

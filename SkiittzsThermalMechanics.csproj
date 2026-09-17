@@ -146,6 +146,8 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\DebuggingTools\IContainDebugMessages.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\HeatData.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\Logic.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\ThermalAuthority.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\ThermalStateProviders.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Initializer.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\Simulation.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\H2Generator\UiElements.cs" />
@@ -165,6 +167,8 @@
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\Initializer.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\Simulation.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Reactor\UiElements.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Networking\ThermalNetwork.cs" />
+    <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Networking\ThermalNetworkMessage.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptExample.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\ScriptHookCreator.cs" />
     <Compile Include="Data\Scripts\SkiittzsThermalMechanics\Core\SkiittzThermalMechanicsSession.cs" />

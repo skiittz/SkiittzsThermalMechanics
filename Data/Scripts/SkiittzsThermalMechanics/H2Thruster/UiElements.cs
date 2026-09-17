@@ -12,7 +12,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
 		void ThrusterLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
 		{
 			var logic = arg1.GameLogic.GetAs<HydrogenThrusterLogic>();
-			if (logic == null)
+			if (logic == null || !logic.hasAuthoritativeState)
 				return;
 			logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
 		}
@@ -26,7 +26,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
 
 			var heatPercent =
 				MyAPIGateway.TerminalControls.CreateProperty<float, IMyThrust>(Utilities.CurrentHeatControlId);
-			heatPercent.Getter = x => heatData.CurrentHeat;
+			heatPercent.Getter = x =>
+			{
+				var logic = x.GameLogic.GetAs<HydrogenThrusterLogic>();
+				return logic != null && logic.hasAuthoritativeState ? logic.heatData?.CurrentHeat ?? 0f : 0f;
+			};
 			MyAPIGateway.TerminalControls.AddControl<IMyThrust>(heatPercent);
 		}
 	}

@@ -30,6 +30,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             _cacheDirty = true;
         }
 
+        public static void ResetSessionCaches()
+        {
+            _heatSinkCache.Clear();
+            _powerProducerCountCache.Clear();
+            _cacheDirty = true;
+        }
+
         /// <summary>
         /// Removes a specific grid from the heat sink cache (e.g. on separation or destruction).
         /// </summary>
@@ -66,10 +73,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             gts.GetBlocksOfType(beacons, x => x.IsWorking && x.BlockDefinition.SubtypeName.Contains("HeatSink") && x.CubeGrid.EntityId == gridId);
             beacons = beacons.OrderByDescending(x => x.Radius).ToList();
 
-            if (!beacons.Any())
+            if (ThermalAuthority.IsServer && !beacons.Any())
                 ChatBot.ChatBot.WarnPlayer(grid, "It seems you have no active heatsinks on this grid - Power generators will take damage if they get too hot, I recommend building a heat sink to protect them!", MessageSeverity.Tutorial);
 
-            if (beacons.Count > 1)
+            if (ThermalAuthority.IsServer && beacons.Count > 1)
                 for (int i = 1; i < beacons.Count; i++)
                     beacons[i].Enabled = false;
 
@@ -80,7 +87,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
                 return null;
             }
 
-            beacon.Enabled = true;
+            if (ThermalAuthority.IsServer)
+                beacon.Enabled = true;
             var logic = beacon.GameLogic.GetAs<HeatSinkLogic>();
             _heatSinkCache[gridId] = logic;
             return logic;
@@ -91,7 +99,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
         /// </summary>
         public static int GetPowerProducerCount(IMyCubeGrid grid)
         {
-            if (grid == null)
+            if (!ThermalAuthority.IsServer || grid == null)
                 return 0;
 
             // If caches are marked dirty for this tick, clear them before using
@@ -116,29 +124,6 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             count = powerProducers.Count;
             _powerProducerCountCache[gridId] = count;
             return count;
-        }
-
-        public static bool IsOwnedByAPlayer(this IMyCubeBlock block)
-        {
-            if (block == null || MyAPIGateway.Session == null) return false;
-
-            var ownerId = block.OwnerId;
-            var currentPlayerId = Utilities.TryGetCurrentPlayerId();
-            if (ownerId == currentPlayerId) return true;
-
-            var faction = MyAPIGateway.Session?.Factions?.TryGetPlayerFaction(ownerId);
-            return faction == null || !faction.IsEveryoneNpc();
-        }
-
-        public static bool IsOwnedByCurrentPlayer(this IMyCubeBlock block)
-        {
-            if (block == null || MyAPIGateway.Session == null) return false;
-
-            var ownerId = block.OwnerId;
-            var currentPlayerId = Utilities.TryGetCurrentPlayerId();
-            if (ownerId == currentPlayerId) return true;
-
-            return false;
         }
 
         public static float LowerBoundedBy(this float input, float bound)

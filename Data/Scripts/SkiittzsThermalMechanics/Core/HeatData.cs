@@ -16,7 +16,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 		public static void SaveData(long entityId, ThrusterHeatData data)
 		{
-			if (data == null) return;
+			if (!ThermalAuthority.IsServer || data == null) return;
 			try
 			{
 				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData));
@@ -31,6 +31,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		}
 		public static ThrusterHeatData LoadData(IMyThrust block, out bool configFound)
 		{
+			if (!ThermalAuthority.IsServer)
+			{
+				configFound = true;
+				return new ThrusterHeatData();
+			}
+
 			var file = $"{block.EntityId}.xml";
 			var data = new ThrusterHeatData();
 			try
@@ -67,6 +73,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		[XmlIgnore] public bool IsUnknownSubType { get; set; }
 		public static void SaveData(long entityId, PowerPlantHeatData data)
 		{
+			if (!ThermalAuthority.IsServer || data == null)
+				return;
 			try
 			{
 				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(PowerPlantHeatData));
@@ -81,6 +89,12 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		}
 		public static PowerPlantHeatData LoadData(IMyPowerProducer block, out bool configFound, string defaultId = "")
 		{
+			if (!ThermalAuthority.IsServer)
+			{
+				configFound = true;
+				return new PowerPlantHeatData { HeatCapacity = 1f, HeatGenerationMultiplier = 1f };
+			}
+
 			var file = $"{block.EntityId}.xml";
 			var heatData = new PowerPlantHeatData();
 			try

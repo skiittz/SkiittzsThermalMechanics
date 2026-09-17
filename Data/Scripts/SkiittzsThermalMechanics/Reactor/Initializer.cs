@@ -15,17 +15,27 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor
 	{
 		public PowerPlantHeatData heatData;
 		private IMyPowerProducer block;
+		private bool hasAuthoritativeState;
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
 		{
 			block = (IMyPowerProducer)Entity;
 			if (block == null)
 				return;
 
-			bool configFound = false;
-			heatData = PowerPlantHeatData.LoadData(block, out configFound, block.DefaultId("Reactor"));
+			bool configFound;
+			if (ThermalAuthority.IsServer)
+				heatData = PowerPlantHeatData.LoadData(block, out configFound, block.DefaultId("Reactor"));
+			else
+			{
+				heatData = new PowerPlantHeatData { HeatCapacity = 1f, HeatGenerationMultiplier = 1f };
+				configFound = true;
+			}
 			if (!configFound) return;
+			hasAuthoritativeState = ThermalAuthority.IsServer;
 
-			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			if (ThermalAuthority.IsServer)
+				NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += ReactorLogic_AppendingCustomInfo;
 		}
 
@@ -37,8 +47,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor
 				{
 					(Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= ReactorLogic_AppendingCustomInfo;
 					(Container.Entity as IMyCubeBlock).OnClose -= ReactorLogic_OnClose;
-					if (block.IsOwnedByAPlayer())
-						PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<ReactorLogic>().heatData);
+					if (ThermalAuthority.IsServer)
+						SaveAuthoritativeState();
+					ThermalAuthority.Unregister(obj.EntityId);
 				}
 			}
 			catch (Exception ex)
@@ -50,11 +61,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Reactor
 		public override void UpdateOnceBeforeFrame()
 		{
 			if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+			{
+				NeedsUpdate = MyEntityUpdateEnum.NONE;
 				return;
+			}
 
 			try
 			{
 				(Container.Entity as IMyCubeBlock).OnClose += ReactorLogic_OnClose;
+				ThermalAuthority.Register(this);
 			}
 			catch (Exception ex)
 			{

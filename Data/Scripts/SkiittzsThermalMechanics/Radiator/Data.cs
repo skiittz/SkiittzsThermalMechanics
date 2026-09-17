@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core.DebuggingTools;
 using VRage.Utils;
 using VRageMath;
@@ -27,6 +28,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 
 		public static void SaveData(long entityId, RadiatorData data)
 		{
+			if (!ThermalAuthority.IsServer || data == null)
+				return;
 			try
 			{
 				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(RadiatorData));
@@ -42,6 +45,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 
 		public static RadiatorData LoadData(IMyUpgradeModule block, out bool configFound)
 		{
+			if (!ThermalAuthority.IsServer)
+			{
+				configFound = true;
+				return new RadiatorData
+				{
+					MaxDissipation = 1f,
+					MinColor = Color.Black,
+					MaxColor = Color.Red
+				};
+			}
+
 			var file = $"{block.EntityId}.xml";
 			RadiatorData data = null;
 			try

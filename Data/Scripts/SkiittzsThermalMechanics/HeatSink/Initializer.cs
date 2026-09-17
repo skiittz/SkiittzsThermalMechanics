@@ -19,6 +19,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		private float signalMult = 1.0f;
 		private int ticksSinceWeatherCheck = 0;
 		private static bool _destroyHandlerRegistered = false;
+		private bool _heatWasRedistributed;
+		private bool hasAuthoritativeState;
 
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
 		{
@@ -26,19 +28,35 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			if (block == null)
 				return;
 
-			bool configFound = false;
-			HeatSinkData = HeatSinkData.LoadData(block, out configFound);
+			bool configFound;
+			if (ThermalAuthority.IsServer)
+				HeatSinkData = HeatSinkData.LoadData(block, out configFound);
+			else
+			{
+				HeatSinkData = new HeatSinkData
+				{
+					HeatCapacity = 1f,
+					OriginalGridId = block.CubeGrid.EntityId
+				};
+				configFound = true;
+			}
 			if (!configFound) return;
+			hasAuthoritativeState = ThermalAuthority.IsServer;
 
 			HeatSinkData.IsSmallGrid = block.CubeGrid.GridSizeEnum == MyCubeSize.Small;
-			bool shuntToParent = false;
-			Configuration.Configuration.TryGetGeneralSettingValue("SmallGridShuntsToLarge", out shuntToParent);
-			HeatSinkData.ShuntToParent = shuntToParent;
+			if (ThermalAuthority.IsServer)
+			{
+				bool shuntToParent;
+				if (Configuration.Configuration.TryGetGeneralSettingValue("SmallGridShuntsToLarge", out shuntToParent))
+					HeatSinkData.ShuntToParent = shuntToParent;
+			}
 
-			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			if (ThermalAuthority.IsServer)
+				NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += HeatSinkLogic_AppendingCustomInfo;
 
-			if (!_destroyHandlerRegistered)
+			if (ThermalAuthority.IsServer && !_destroyHandlerRegistered)
 			{
 				MyAPIGateway.Session.DamageSystem.RegisterDestroyHandler(0, OnBlockDestroyed);
 				_destroyHandlerRegistered = true;
@@ -54,12 +72,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 					(Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= HeatSinkLogic_AppendingCustomInfo;
 					(Container.Entity as IMyCubeBlock).OnClose -= HeatSinkLogic_OnClose;
 
-					var logic = obj.GameLogic.GetAs<HeatSinkLogic>();
-
-					if (!SkiittzThermalMechanicsSession.IsSessionUnloading)
-						RedistributeHeat(logic);
-
-					HeatSinkData.SaveData(obj.EntityId, logic.HeatSinkData);
+					if (ThermalAuthority.IsServer)
+					{
+						if (!SkiittzThermalMechanicsSession.IsSessionUnloading
+						    && block?.SlimBlock?.IsDestroyed == true)
+							RedistributeHeatOnce();
+						SaveAuthoritativeState();
+					}
+					ThermalAuthority.Unregister(obj.EntityId);
 				}
 			}
 			catch (Exception ex)
@@ -71,17 +91,26 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		public override void UpdateOnceBeforeFrame()
 		{
 			if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+			{
+				NeedsUpdate = MyEntityUpdateEnum.NONE;
 				return;
+			}
 
 			try
 			{
 				(Container.Entity as IMyCubeBlock).OnClose += HeatSinkLogic_OnClose;
+				ThermalAuthority.Register(this);
 			}
 			catch (Exception ex)
 			{
 				MyLog.Default.WriteLine($"SkiittzThermalMechanics: {ex}");
 			}
 			ScriptHookCreator.AddBeaconHeatRatioControl();
+		}
+
+		public static void ResetSessionState()
+		{
+			_destroyHandlerRegistered = false;
 		}
 	}
 }
