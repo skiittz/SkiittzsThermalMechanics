@@ -38,6 +38,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             if (_tickCounter % 100 == 0)
             {
                 Utilities.TickGridCaches();
+                ThermalSpikeBroadcaster.Update();
             }
         }
 
@@ -54,6 +55,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
             if (ThermalAuthority.IsServer)
                 ThermalAuthority.SaveAll();
 
+            ThermalSpikeBroadcaster.Reset();
             HeatSinkLogic.ResetSessionState();
             Utilities.ResetSessionCaches();
             ThermalNetwork.Unload();

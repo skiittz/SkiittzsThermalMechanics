@@ -70,7 +70,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				if (Entity != null)
 				{
 					(Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= HeatSinkLogic_AppendingCustomInfo;
-					(Container.Entity as IMyCubeBlock).OnClose -= HeatSinkLogic_OnClose;
+				(Container.Entity as IMyCubeBlock).OnClose -= HeatSinkLogic_OnClose;
+				ThermalSpikeBroadcaster.Unregister(this);
 
 					if (ThermalAuthority.IsServer)
 					{
@@ -100,6 +101,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			{
 				(Container.Entity as IMyCubeBlock).OnClose += HeatSinkLogic_OnClose;
 				ThermalAuthority.Register(this);
+				if (ThermalAuthority.IsServer)
+					ThermalSpikeBroadcaster.Register(this);
 			}
 			catch (Exception ex)
 			{
