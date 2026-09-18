@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Sandbox.ModAPI;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
@@ -337,7 +338,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
             if (configs == null || configs.GeneralSettings == null)
                 return false;
             var setting = configs.GeneralSettings.SingleOrDefault(x => x.Name == name);
-            return setting != null && float.TryParse(setting.Value, out value)
+            return setting != null && float.TryParse(setting.Value,
+                NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
                 && !float.IsNaN(value) && !float.IsInfinity(value);
         }
 
