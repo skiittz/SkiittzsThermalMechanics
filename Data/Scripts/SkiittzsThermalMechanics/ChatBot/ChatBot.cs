@@ -282,7 +282,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         public static void RenameChatBot(long playerId, string newName)
         {
-            if (!ThermalAuthority.IsServer || string.IsNullOrWhiteSpace(newName))
+            if (!ThermalAuthority.IsServer || !IsValidChatBotName(newName))
                 return;
             _playerAsstNameOverrides[playerId] = newName;
             SavePlayerChatBotNameOverrides();
@@ -303,7 +303,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
                            && int.TryParse(settings["ChatFrequencyLimiter"], out configuredDelay)
                 ? configuredDelay
                 : 0;
-            ChatBotName = settings.ContainsKey("ChatBotName") ? settings["ChatBotName"] : "HotDaddy";
+            string configuredName;
+            ChatBotName = settings.TryGetValue("ChatBotName", out configuredName)
+                          && IsValidChatBotName(configuredName) ? configuredName : "HotDaddy";
 
             foreach (var command in settings.Where(setting => setting.Key.StartsWith("ChatBotCommand_")
                                                                && !string.IsNullOrWhiteSpace(setting.Value)))
@@ -329,21 +331,22 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
         public static void LoadPlayerChatBotNameOverrides()
         {
             _playerAsstNameOverrides = new Dictionary<long, string>();
-            if (!ThermalAuthority.IsServer
-                || !MyAPIGateway.Utilities.FileExistsInWorldStorage(PlayerChatBotNameOverridesFileName,
-                    typeof(SkiittzThermalMechanicsSession)))
+            if (!ThermalAuthority.IsServer)
                 return;
 
             try
             {
-                var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(PlayerChatBotNameOverridesFileName,
-                    typeof(SkiittzThermalMechanicsSession));
-                var content = reader.ReadToEnd();
-                reader.Close();
+                if (!MyAPIGateway.Utilities.FileExistsInWorldStorage(PlayerChatBotNameOverridesFileName,
+                        typeof(SkiittzThermalMechanicsSession)))
+                    return;
+                string content;
+                using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(PlayerChatBotNameOverridesFileName,
+                           typeof(SkiittzThermalMechanicsSession)))
+                    content = reader.ReadToEnd();
                 var results = MyAPIGateway.Utilities.SerializeFromXML<List<ChatBotOverride>>(content)
                               ?? new List<ChatBotOverride>();
                 foreach (var item in results)
-                    if (item != null && !string.IsNullOrWhiteSpace(item.Name))
+                    if (item != null && IsValidChatBotName(item.Name))
                         _playerAsstNameOverrides[item.PlayerId] = item.Name;
             }
             catch (Exception exception)
@@ -459,15 +462,17 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
 
         private static List<long> LoadList(string fileName)
         {
-            if (!ThermalAuthority.IsServer
-                || !MyAPIGateway.Utilities.FileExistsInWorldStorage(fileName, typeof(SkiittzThermalMechanicsSession)))
+            if (!ThermalAuthority.IsServer)
                 return new List<long>();
             try
             {
-                var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(fileName,
-                    typeof(SkiittzThermalMechanicsSession));
-                var content = reader.ReadToEnd();
-                reader.Close();
+                if (!MyAPIGateway.Utilities.FileExistsInWorldStorage(fileName,
+                        typeof(SkiittzThermalMechanicsSession)))
+                    return new List<long>();
+                string content;
+                using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(fileName,
+                           typeof(SkiittzThermalMechanicsSession)))
+                    content = reader.ReadToEnd();
                 return MyAPIGateway.Utilities.SerializeFromXML<List<long>>(content) ?? new List<long>();
             }
             catch (Exception exception)
@@ -491,24 +496,40 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.ChatBot
         {
             if (!ThermalAuthority.IsServer)
                 return;
-            var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName,
-                typeof(SkiittzThermalMechanicsSession));
-            writer.Write(MyAPIGateway.Utilities.SerializeToXML(values ?? new List<long>()));
-            writer.Flush();
-            writer.Close();
+            try
+            {
+                using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName,
+                           typeof(SkiittzThermalMechanicsSession)))
+                {
+                    writer.Write(MyAPIGateway.Utilities.SerializeToXML(values ?? new List<long>()));
+                    writer.Flush();
+                }
+            }
+            catch (Exception exception)
+            {
+                MyLog.Default.WriteLine($"SkiittzsThermalMechanics: Failed to save {fileName}: {exception.Message}");
+            }
         }
 
         private static void SavePlayerChatBotNameOverrides()
         {
             if (!ThermalAuthority.IsServer)
                 return;
-            var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(PlayerChatBotNameOverridesFileName,
-                typeof(SkiittzThermalMechanicsSession));
-            var content = _playerAsstNameOverrides
-                .Select(item => new ChatBotOverride { PlayerId = item.Key, Name = item.Value }).ToList();
-            writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
-            writer.Flush();
-            writer.Close();
+            try
+            {
+                var content = _playerAsstNameOverrides
+                    .Select(item => new ChatBotOverride { PlayerId = item.Key, Name = item.Value }).ToList();
+                using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(PlayerChatBotNameOverridesFileName,
+                           typeof(SkiittzThermalMechanicsSession)))
+                {
+                    writer.Write(MyAPIGateway.Utilities.SerializeToXML(content));
+                    writer.Flush();
+                }
+            }
+            catch (Exception exception)
+            {
+                MyLog.Default.WriteLine($"SkiittzsThermalMechanics: Failed to save chatbot names: {exception.Message}");
+            }
         }
 
         public class ChatBotOverride

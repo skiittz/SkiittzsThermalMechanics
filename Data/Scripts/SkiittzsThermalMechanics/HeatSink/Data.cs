@@ -26,10 +26,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				return;
 			try
 			{
-				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(HeatSinkData));
-				writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
-				writer.Flush();
-				writer.Close();
+				using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(HeatSinkData)))
+				{
+					writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+					writer.Flush();
+				}
 			}
 			catch (Exception e)
 			{
@@ -51,9 +52,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 			{
 				if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(HeatSinkData)))
 				{
-					var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(HeatSinkData));
-					string content = reader.ReadToEnd();
-					reader.Close();
+					string content;
+					using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(HeatSinkData)))
+						content = reader.ReadToEnd();
 					data = MyAPIGateway.Utilities.SerializeFromXML<HeatSinkData>(content);
 				}
 			}

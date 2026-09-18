@@ -19,10 +19,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			if (!ThermalAuthority.IsServer || data == null) return;
 			try
 			{
-				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData));
-				writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
-				writer.Flush();
-				writer.Close();
+				using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData)))
+				{
+					writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+					writer.Flush();
+				}
 			}
 			catch (Exception e)
 			{
@@ -43,9 +44,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			{
 				if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(ThrusterHeatData)))
 				{
-					var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(ThrusterHeatData));
-					string content = reader.ReadToEnd();
-					reader.Close();
+					string content;
+					using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(ThrusterHeatData)))
+						content = reader.ReadToEnd();
 					data = MyAPIGateway.Utilities.SerializeFromXML<ThrusterHeatData>(content);
 				}
 			}
@@ -77,10 +78,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 				return;
 			try
 			{
-				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(PowerPlantHeatData));
-				writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
-				writer.Flush();
-				writer.Close();
+				using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(PowerPlantHeatData)))
+				{
+					writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+					writer.Flush();
+				}
 			}
 			catch (Exception e)
 			{
@@ -101,9 +103,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 			{
 				if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(PowerPlantHeatData)))
 				{
-					var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(PowerPlantHeatData));
-					string content = reader.ReadToEnd();
-					reader.Close();
+					string content;
+					using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(PowerPlantHeatData)))
+						content = reader.ReadToEnd();
 					heatData = MyAPIGateway.Utilities.SerializeFromXML<PowerPlantHeatData>(content);
 				}
 			}

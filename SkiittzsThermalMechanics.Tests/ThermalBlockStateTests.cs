@@ -35,6 +35,46 @@ namespace SkiittzsThermalMechanics.Tests
             Assert.IsFalse(first.HasSameValues(second));
         }
 
+        [TestCase(nameof(ThermalBlockState.Kind))]
+        [TestCase(nameof(ThermalBlockState.HeatCapacity))]
+        [TestCase(nameof(ThermalBlockState.LastHeatDelta))]
+        [TestCase(nameof(ThermalBlockState.OverheatCycles))]
+        [TestCase(nameof(ThermalBlockState.IsUnknownSubtype))]
+        [TestCase(nameof(ThermalBlockState.VentingHeat))]
+        [TestCase(nameof(ThermalBlockState.IsSmallGrid))]
+        [TestCase(nameof(ThermalBlockState.ShuntToParent))]
+        [TestCase(nameof(ThermalBlockState.SignalRadius))]
+        [TestCase(nameof(ThermalBlockState.SignalDecay))]
+        [TestCase(nameof(ThermalBlockState.CurrentDissipation))]
+        [TestCase(nameof(ThermalBlockState.MaxDissipation))]
+        [TestCase(nameof(ThermalBlockState.CanSeeSky))]
+        [TestCase(nameof(ThermalBlockState.MinimumColor))]
+        [TestCase(nameof(ThermalBlockState.MaximumColor))]
+        [TestCase(nameof(ThermalBlockState.EnvironmentalMultiplier))]
+        public void HasSameValues_ChangedField_ReturnsFalse(string fieldName)
+        {
+            var first = CreateState();
+            var second = CreateState();
+            var property = typeof(ThermalBlockState).GetProperty(fieldName);
+            Assert.IsNotNull(property);
+
+            var value = property.GetValue(second);
+            if (property.PropertyType == typeof(bool))
+                property.SetValue(second, !(bool)value);
+            else if (property.PropertyType == typeof(float))
+                property.SetValue(second, (float)value + 1f);
+            else if (property.PropertyType == typeof(int))
+                property.SetValue(second, (int)value + 1);
+            else if (property.PropertyType == typeof(uint))
+                property.SetValue(second, (uint)value + 1u);
+            else if (property.PropertyType == typeof(ThermalBlockKind))
+                property.SetValue(second, ThermalBlockKind.Battery);
+            else
+                Assert.Fail($"Unexpected field type: {property.PropertyType}");
+
+            Assert.IsFalse(first.HasSameValues(second), $"Changed {fieldName} must be compared.");
+        }
+
         [Test]
         public void HasSameValues_DifferentSequence_ReturnsTrue()
         {
