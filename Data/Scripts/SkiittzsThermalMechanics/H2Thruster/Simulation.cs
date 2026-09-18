@@ -6,10 +6,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Thrus
 	{
 		public override void UpdateAfterSimulation100()
 		{
-			if (block == null || heatData == null || !block.IsOwnedByAPlayer())
+			if (!ThermalAuthority.IsServer || block == null || heatData == null || block.CubeGrid?.Physics == null)
 				return;
 
 			heatData.ApplyHeating(block);
+			ThermalAuthority.Sync(this);
 			block.RefreshCustomInfo();
 		}
 	}

@@ -68,7 +68,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Cockpit
 		{
 			var hudBuilder = new StringBuilder();
 			var heatSink = Utilities.GetHeatSinkLogic(currentGrid);
-			if (heatSink?.HeatSinkData == null)
+			if (heatSink?.HeatSinkData == null || !heatSink.HasAuthoritativeState)
 				return string.Empty;
 
 			float percentage = heatSink.HeatSinkData.HeatRatio * 100f;

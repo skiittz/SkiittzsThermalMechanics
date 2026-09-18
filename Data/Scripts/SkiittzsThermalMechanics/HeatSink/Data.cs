@@ -1,6 +1,7 @@
 ﻿using Sandbox.ModAPI;
 using System;
 using System.Xml.Serialization;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 using VRage.Utils;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSink
@@ -21,12 +22,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		public static void SaveData(long entityId, HeatSinkData data)
 		{
+			if (!ThermalAuthority.IsServer || data == null)
+				return;
 			try
 			{
-				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(HeatSinkData));
-				writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
-				writer.Flush();
-				writer.Close();
+				using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(HeatSinkData)))
+				{
+					writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+					writer.Flush();
+				}
 			}
 			catch (Exception e)
 			{
@@ -36,15 +40,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		public static HeatSinkData LoadData(IMyBeacon block, out bool configFound)
 		{
+			if (!ThermalAuthority.IsServer)
+			{
+				configFound = true;
+				return new HeatSinkData { HeatCapacity = 1f, OriginalGridId = block.CubeGrid.EntityId };
+			}
+
 			var file = $"{block.EntityId}.xml";
 			var data = new HeatSinkData { OriginalGridId = block.CubeGrid.EntityId };
 			try
 			{
 				if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(HeatSinkData)))
 				{
-					var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(HeatSinkData));
-					string content = reader.ReadToEnd();
-					reader.Close();
+					string content;
+					using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(HeatSinkData)))
+						content = reader.ReadToEnd();
 					data = MyAPIGateway.Utilities.SerializeFromXML<HeatSinkData>(content);
 				}
 			}

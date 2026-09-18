@@ -8,6 +8,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Gener
 		void H2EngineLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
 		{
 			var logic = arg1.GameLogic.GetAs<H2EngineLogic>();
+			if (logic == null || !logic.hasAuthoritativeState)
+				return;
 			logic.heatData.AppendCustomThermalInfo(logic.block, customInfo);
 		}
 	}

@@ -6,6 +6,7 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 using VRage.Utils;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
 
 namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiator
 {
@@ -16,6 +17,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		private int ticksSinceWeatherCheck = 0;
 		private RadiatorData radiatorData;
 		private IMyUpgradeModule block;
+		private bool hasAuthoritativeState;
 
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
 		{
@@ -23,11 +25,25 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			if (block == null)
 				return;
 
-			bool configFound = false;
-			radiatorData = RadiatorData.LoadData(block, out configFound);
+			bool configFound;
+			if (ThermalAuthority.IsServer)
+				radiatorData = RadiatorData.LoadData(block, out configFound);
+			else
+			{
+				radiatorData = new RadiatorData
+				{
+					MaxDissipation = 1f,
+					MinColor = VRageMath.Color.Black,
+					MaxColor = VRageMath.Color.Red
+				};
+				configFound = true;
+			}
 			if (!configFound) return;
+			hasAuthoritativeState = ThermalAuthority.IsServer;
 
-			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			if (ThermalAuthority.IsServer)
+				NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += RadiatorLogic_AppendingCustomInfo;
 		}
 
@@ -39,7 +55,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				{
 					(Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= RadiatorLogic_AppendingCustomInfo;
 					(Container.Entity as IMyCubeBlock).OnClose -= RadiatorLogic_OnClose;
-					RadiatorData.SaveData(obj.EntityId, (obj).GameLogic.GetAs<HeatRadiatorLogic>().radiatorData);
+					if (ThermalAuthority.IsServer)
+						SaveAuthoritativeState();
+					ThermalAuthority.Unregister(obj.EntityId);
 				}
 			}
 			catch (Exception ex)
@@ -51,11 +69,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		public override void UpdateOnceBeforeFrame()
 		{
 			if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+			{
+				NeedsUpdate = MyEntityUpdateEnum.NONE;
 				return;
+			}
 			CreateControls();
 			try
 			{
 				(Container.Entity as IMyCubeBlock).OnClose += RadiatorLogic_OnClose;
+				ThermalAuthority.Register(this);
 			}
 			catch (Exception ex)
 			{

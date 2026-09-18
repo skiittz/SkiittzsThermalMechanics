@@ -16,13 +16,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 
 		public static void SaveData(long entityId, ThrusterHeatData data)
 		{
-			if (data == null) return;
+			if (!ThermalAuthority.IsServer || data == null) return;
 			try
 			{
-				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData));
-				writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
-				writer.Flush();
-				writer.Close();
+				using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(ThrusterHeatData)))
+				{
+					writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+					writer.Flush();
+				}
 			}
 			catch (Exception e)
 			{
@@ -31,15 +32,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		}
 		public static ThrusterHeatData LoadData(IMyThrust block, out bool configFound)
 		{
+			if (!ThermalAuthority.IsServer)
+			{
+				configFound = true;
+				return new ThrusterHeatData();
+			}
+
 			var file = $"{block.EntityId}.xml";
 			var data = new ThrusterHeatData();
 			try
 			{
 				if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(ThrusterHeatData)))
 				{
-					var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(ThrusterHeatData));
-					string content = reader.ReadToEnd();
-					reader.Close();
+					string content;
+					using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(ThrusterHeatData)))
+						content = reader.ReadToEnd();
 					data = MyAPIGateway.Utilities.SerializeFromXML<ThrusterHeatData>(content);
 				}
 			}
@@ -67,12 +74,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		[XmlIgnore] public bool IsUnknownSubType { get; set; }
 		public static void SaveData(long entityId, PowerPlantHeatData data)
 		{
+			if (!ThermalAuthority.IsServer || data == null)
+				return;
 			try
 			{
-				var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(PowerPlantHeatData));
-				writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
-				writer.Flush();
-				writer.Close();
+				using (var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage($"{entityId}.xml", typeof(PowerPlantHeatData)))
+				{
+					writer.Write(MyAPIGateway.Utilities.SerializeToXML(data));
+					writer.Flush();
+				}
 			}
 			catch (Exception e)
 			{
@@ -81,15 +91,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core
 		}
 		public static PowerPlantHeatData LoadData(IMyPowerProducer block, out bool configFound, string defaultId = "")
 		{
+			if (!ThermalAuthority.IsServer)
+			{
+				configFound = true;
+				return new PowerPlantHeatData { HeatCapacity = 1f, HeatGenerationMultiplier = 1f };
+			}
+
 			var file = $"{block.EntityId}.xml";
 			var heatData = new PowerPlantHeatData();
 			try
 			{
 				if (MyAPIGateway.Utilities.FileExistsInWorldStorage(file, typeof(PowerPlantHeatData)))
 				{
-					var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(PowerPlantHeatData));
-					string content = reader.ReadToEnd();
-					reader.Close();
+					string content;
+					using (var reader = MyAPIGateway.Utilities.ReadFileInWorldStorage(file, typeof(PowerPlantHeatData)))
+						content = reader.ReadToEnd();
 					heatData = MyAPIGateway.Utilities.SerializeFromXML<PowerPlantHeatData>(content);
 				}
 			}

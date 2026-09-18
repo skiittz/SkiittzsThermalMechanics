@@ -53,16 +53,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics
         private static float GetHeatRatio(IMyTerminalBlock block)
         {
             var heatSinkLogic = block.GameLogic.GetAs<HeatSinkLogic>();
-            if (heatSinkLogic != null) return heatSinkLogic.HeatSinkData.HeatRatio;
+            if (heatSinkLogic != null && heatSinkLogic.HasAuthoritativeState)
+                return heatSinkLogic.HeatSinkData.HeatRatio;
 
             var reactorLogic = block.GameLogic.GetAs<ReactorLogic>();
-            if (reactorLogic != null) return reactorLogic.heatData.HeatRatio;
+            if (reactorLogic != null && reactorLogic.HasAuthoritativeState)
+                return reactorLogic.heatData.HeatRatio;
 
             var batteryLogic = block.GameLogic.GetAs<BatteryLogic>();
-            if (batteryLogic != null) return batteryLogic.heatData.HeatRatio;
+            if (batteryLogic != null && batteryLogic.HasAuthoritativeState)
+                return batteryLogic.heatData.HeatRatio;
 
             var h2EngineLogic = block.GameLogic.GetAs<H2EngineLogic>();
-            if (h2EngineLogic != null) return h2EngineLogic.heatData.HeatRatio;
+            if (h2EngineLogic != null && h2EngineLogic.HasAuthoritativeState)
+                return h2EngineLogic.heatData.HeatRatio;
 
             return 0f;
         }

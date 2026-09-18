@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Core;
+using SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Networking;
 using VRage.Game.Entity;
 using VRage.Game;
 using VRage.Utils;
@@ -17,9 +18,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		void RadiatorLogic_AppendingCustomInfo(IMyTerminalBlock arg1, StringBuilder customInfo)
 		{
 			var logic = arg1.GameLogic.GetAs<HeatRadiatorLogic>();
+			if (logic?.radiatorData == null || !logic.hasAuthoritativeState)
+				return;
 			var currentDissipation = logic.radiatorData.CurrentDissipation.ToString("F1");
 			customInfo.Append($"Dissipating Heat: {currentDissipation}MW ({(logic.radiatorData.HeatRatio * 100).ToString("N0")}%)\n");
-			customInfo.DebugLog($"Current Dissipation: {radiatorData.CurrentDissipation}");
+			customInfo.DebugLog($"Current Dissipation: {logic.radiatorData.CurrentDissipation}");
 			if (!logic.radiatorData.CanSeeSky)
 				customInfo.Append("Radiator must be external to function!\n");
 			
@@ -40,14 +43,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			colorControl.Getter = GetMinColor;
 			colorControl.Setter = SetMinColor;
 			colorControl.SupportsMultipleBlocks = true;
-			colorControl.Visible = b => b.GameLogic.GetAs<HeatRadiatorLogic>() != null;
+			colorControl.Visible = b => b.GameLogic.GetAs<HeatRadiatorLogic>()?.hasAuthoritativeState == true;
 			MyAPIGateway.TerminalControls.AddControl<IMyUpgradeModule>(colorControl);
 		}
 
 		private Color GetMinColor(IMyTerminalBlock b)
 		{
 			var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
-			if (logic == null)
+			if (logic == null || !logic.hasAuthoritativeState)
 				return Color.Black;
 
 			return logic.radiatorData.MinColor;
@@ -56,9 +59,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		private void SetMinColor(IMyTerminalBlock b, Color color)
 		{
 			var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
-			if (logic == null)
+			if (logic == null || !logic.hasAuthoritativeState)
 				return;
-			logic.radiatorData.MinColor = color;
+			ThermalNetwork.RequestRadiatorColor(b.EntityId, true, color.PackedValue);
 		}
 
 		private void CreateMaxColorPicker()
@@ -75,14 +78,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			colorControl.Getter = GetMaxColor;
 			colorControl.Setter = SetMaxColor;
 			colorControl.SupportsMultipleBlocks = true;
-			colorControl.Visible = b => b.GameLogic.GetAs<HeatRadiatorLogic>() != null;
+			colorControl.Visible = b => b.GameLogic.GetAs<HeatRadiatorLogic>()?.hasAuthoritativeState == true;
 			MyAPIGateway.TerminalControls.AddControl<IMyUpgradeModule>(colorControl);
 		}
 
 		private Color GetMaxColor(IMyTerminalBlock b)
 		{
 			var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
-			if (logic == null)
+			if (logic == null || !logic.hasAuthoritativeState)
 				return Color.Black;
 
 			return logic.radiatorData.MaxColor;
@@ -91,9 +94,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 		private void SetMaxColor(IMyTerminalBlock b, Color color)
 		{
 			var logic = b.GameLogic.GetAs<HeatRadiatorLogic>();
-			if (logic == null)
+			if (logic == null || !logic.hasAuthoritativeState)
 				return;
-			logic.radiatorData.MaxColor = color;
+			ThermalNetwork.RequestRadiatorColor(b.EntityId, false, color.PackedValue);
 		}
 
 		private void CreateControls()
@@ -104,6 +107,8 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 
 		private void Animate()
 		{
+			if (!hasAuthoritativeState || block == null || radiatorData == null)
+				return;
 			block.SetEmissiveParts("Emissive", InterpolateColor(radiatorData.MinColor, radiatorData.MaxColor, radiatorData.HeatRatio), radiatorData.HeatRatio);
 			SetBladeRotation();
 			//if (radiatorData.HeatRatio > 0.7)

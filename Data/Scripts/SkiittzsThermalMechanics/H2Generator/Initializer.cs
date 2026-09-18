@@ -15,6 +15,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Gener
 	{
 		public PowerPlantHeatData heatData;
 		private IMyPowerProducer block;
+		private bool hasAuthoritativeState;
 
 		public override void Init(MyObjectBuilder_EntityBase objectBuilder)
 		{
@@ -22,11 +23,20 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Gener
 			if (block == null)
 				return;
 
-			bool configFound = false;
-			heatData = PowerPlantHeatData.LoadData(block, out configFound, block.DefaultId("H2Engine"));
+			bool configFound;
+			if (ThermalAuthority.IsServer)
+				heatData = PowerPlantHeatData.LoadData(block, out configFound, block.DefaultId("H2Engine"));
+			else
+			{
+				heatData = new PowerPlantHeatData { HeatCapacity = 1f, HeatGenerationMultiplier = 1f };
+				configFound = true;
+			}
 			if (!configFound) return;
+			hasAuthoritativeState = ThermalAuthority.IsServer;
 
-			NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME | MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+			if (ThermalAuthority.IsServer)
+				NeedsUpdate |= MyEntityUpdateEnum.EACH_100TH_FRAME;
 			(Container.Entity as IMyTerminalBlock).AppendingCustomInfo += H2EngineLogic_AppendingCustomInfo;
 		}
 
@@ -38,8 +48,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Gener
 				{
 					(Container.Entity as IMyTerminalBlock).AppendingCustomInfo -= H2EngineLogic_AppendingCustomInfo;
 					(Container.Entity as IMyCubeBlock).OnClose -= H2EngineLogic_OnClose;
-					if (block.IsOwnedByAPlayer())
-						PowerPlantHeatData.SaveData(obj.EntityId, obj.GameLogic.GetAs<H2EngineLogic>().heatData);
+					if (ThermalAuthority.IsServer)
+						SaveAuthoritativeState();
+					ThermalAuthority.Unregister(obj.EntityId);
 				}
 			}
 			catch (Exception ex)
@@ -51,11 +62,15 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.H2Gener
 		public override void UpdateOnceBeforeFrame()
 		{
 			if (block.CubeGrid?.Physics == null) // ignore projected and other non-physical grids
+			{
+				NeedsUpdate = MyEntityUpdateEnum.NONE;
 				return;
+			}
 
 			try
 			{
 				(Container.Entity as IMyCubeBlock).OnClose += H2EngineLogic_OnClose;
+				ThermalAuthority.Register(this);
 			}
 			catch (Exception ex)
 			{

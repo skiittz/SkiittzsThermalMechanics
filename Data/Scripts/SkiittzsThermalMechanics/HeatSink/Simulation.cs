@@ -17,6 +17,9 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 	{
 		public float ActiveCooling(float heatValue)
 		{
+			if (!ThermalAuthority.IsServer || HeatSinkData == null)
+				return 0;
+
 			var incomingHeat = heatValue.LowerBoundedBy(0);
 			if (HeatSinkData.AvailableCapacity >= incomingHeat)
 			{
@@ -33,7 +36,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		public override void UpdateAfterSimulation100()
 		{
-			if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer()) return;
+			if (!ThermalAuthority.IsServer || block == null || HeatSinkData == null || block.CubeGrid?.Physics == null) return;
 			CheckForSeparation();
 
 			if (HeatSinkData.IsSmallGrid && HeatSinkData.ShuntToParent)
@@ -92,11 +95,13 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 				ChatBot.ChatBot.WarnPlayer(block, "Heat sink is at almost at capacity!  Need more radiators!", MessageSeverity.Tutorial);
 			else if (HeatSinkData.HeatRatio >= 0.5)
 				ChatBot.ChatBot.WarnPlayer(block, "Heat sink is at 50% capacity - do you have enough radiators?", MessageSeverity.Tutorial);
+
+			ThermalAuthority.Sync(this);
 		}
 
 		private void CheckForSeparation()
 		{
-			if (block == null || HeatSinkData == null || !block.IsOwnedByAPlayer() ||
+			if (!ThermalAuthority.IsServer || block == null || HeatSinkData == null ||
 				block?.CubeGrid?.EntityId == HeatSinkData.OriginalGridId) return;
 
 			Utilities.InvalidateHeatSinkCache(HeatSinkData.OriginalGridId);
@@ -134,7 +139,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 
 		private static void RedistributeHeat(HeatSinkLogic logic)
 		{
-			if (logic?.HeatSinkData == null || logic.block == null)
+			if (!ThermalAuthority.IsServer || logic?.HeatSinkData == null || logic.block == null)
 				return;
 
 			Utilities.InvalidateHeatSinkCache(logic.block.CubeGrid.EntityId);
@@ -175,17 +180,30 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
 		{
 			var tgt = target as IMyEntity;
 			if (tgt == null)
+				tgt = (target as IMySlimBlock)?.FatBlock as IMyEntity;
+			if (tgt == null)
 				return;
 
 			var logic = tgt.GameLogic?.GetAs<HeatSinkLogic>();
 			if (logic == null)
 				return;
 
-			RedistributeHeat(logic);
+			logic.RedistributeHeatOnce();
+		}
+
+		private void RedistributeHeatOnce()
+		{
+			if (_heatWasRedistributed)
+				return;
+			_heatWasRedistributed = true;
+			RedistributeHeat(this);
 		}
 
 		public float RemoveHeat(float heat)
 		{
+			if (!ThermalAuthority.IsServer || HeatSinkData == null)
+				return 0;
+
 			var dissipatedHeat = (Math.Min(heat, HeatSinkData.CurrentHeat)).LowerBoundedBy(0);
 			HeatSinkData.CurrentHeat -= dissipatedHeat;
 			HeatSinkData.VentingHeat += dissipatedHeat;

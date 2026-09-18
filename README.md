@@ -1,5 +1,12 @@
 HIGHLY CONFIGURABLE!
 A settings.xml file will be created in your save location/Storage/SkiittzThermalMechanics folder. There are all sorts of data points in there that you can tweak to your heart's desire.
+
+MULTIPLAYER AUTHORITY
+Thermal simulation, damage, configuration, and persistent heat state are owned by the server. Clients receive display-only state and cannot replace server settings or upload saved heat values. Chat commands and radiator color changes are validated by the server and replies are sent only to the requesting player.
+
+Loaded grids continue simulating whether their owner is online, offline, absent, or an NPC. Display snapshots are proximity/ownership filtered and batched per recipient to keep the server-authoritative model from producing one network packet per block.
+
+When upgrading from a client-simulated release, client-side heat files are intentionally ignored. The server resumes any state already present in server world storage; otherwise affected blocks begin from a cold authoritative state. Uploading old client state would allow clients to forge heat and thermal-fatigue values.
 _______________________________
 
 Reactors, Batteries, H2 Engines, and H2 Thrusters will produce heat proportional to their output. Once enough heat has built up they will begin to take damage.

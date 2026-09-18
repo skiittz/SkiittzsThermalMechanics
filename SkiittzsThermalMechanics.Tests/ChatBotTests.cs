@@ -257,5 +257,26 @@ namespace SkiittzsThermalMechanics.Tests
         }
 
         #endregion
+
+        [TestCase("Invalid Name")]
+        [TestCase("Bad/Name")]
+        [TestCase("")]
+        [TestCase(null)]
+        [TestCase("123456789012345678901234567890123")]
+        public void InitConfigs_InvalidChatBotName_UsesDefault(string configuredName)
+        {
+            ChatBot.InitConfigs(new Dictionary<string, string> { { "ChatBotName", configuredName } });
+
+            Assert.AreEqual("HotDaddy", ChatBot.ChatBotName);
+        }
+
+        [TestCase("Valid_Name-42")]
+        [TestCase("12345678901234567890123456789012")]
+        public void InitConfigs_ValidChatBotName_UsesConfiguredName(string configuredName)
+        {
+            ChatBot.InitConfigs(new Dictionary<string, string> { { "ChatBotName", configuredName } });
+
+            Assert.AreEqual(configuredName, ChatBot.ChatBotName);
+        }
     }
 }

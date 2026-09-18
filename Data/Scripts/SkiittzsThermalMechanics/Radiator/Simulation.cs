@@ -14,16 +14,18 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 	{
 		public override void UpdateAfterSimulation()
 		{
-			Animate();
+			if (MyAPIGateway.Utilities == null || !MyAPIGateway.Utilities.IsDedicated)
+				Animate();
 		}
 		public override void UpdateAfterSimulation100()
 		{
-			if (block == null || radiatorData == null || !block.IsOwnedByAPlayer()) return;
+			if (!ThermalAuthority.IsServer || block == null || radiatorData == null || block.CubeGrid?.Physics == null) return;
 			CheckIsExterior();
 
 			if (!block.IsFunctional || !radiatorData.CanSeeSky)
 			{
 				radiatorData.CurrentDissipation = 0;
+				ThermalAuthority.Sync(this);
 				return;
 			}
 
@@ -48,8 +50,14 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 				}
 			}
 
-			radiatorData.DebugMessages.Add($"Ticks since weather check: {ticksSinceWeatherCheck}");
-			radiatorData.DebugMessages.Add($"Weather Mult: {dissipationMult}");
+			if (Configuration.Configuration.DebugMode
+			    && (MyAPIGateway.Utilities == null || !MyAPIGateway.Utilities.IsDedicated))
+			{
+				if (radiatorData.DebugMessages.Count >= 20)
+					radiatorData.DebugMessages.Clear();
+				radiatorData.DebugMessages.Add($"Ticks since weather check: {ticksSinceWeatherCheck}");
+				radiatorData.DebugMessages.Add($"Weather Mult: {dissipationMult}");
+			}
 
 			if (!block.Enabled)
 			{
@@ -59,7 +67,11 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 			{
 				var beacon = Utilities.GetHeatSinkLogic(block?.CubeGrid);
 				if (beacon == null)
+				{
+					radiatorData.CurrentDissipation = 0;
+					ThermalAuthority.Sync(this);
 					return;
+				}
 
 				if (radiatorData.CurrentDissipation < 0)
 					radiatorData.CurrentDissipation = 0;
@@ -68,15 +80,21 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Radiato
 
 				var attemptToDissipate = radiatorData.CurrentDissipation.LowerBoundedBy(radiatorData.StepSize) * dissipationMult;
 				var dissipatedHeat = beacon.RemoveHeat(attemptToDissipate);
-				radiatorData.DebugMessages.Add($"Attempted to dissipate: {attemptToDissipate}");
-				radiatorData.DebugMessages.Add($"Dissipated heat: {dissipatedHeat}");
+				if (Configuration.Configuration.DebugMode
+				    && (MyAPIGateway.Utilities == null || !MyAPIGateway.Utilities.IsDedicated))
+				{
+					radiatorData.DebugMessages.Add($"Attempted to dissipate: {attemptToDissipate}");
+					radiatorData.DebugMessages.Add($"Dissipated heat: {dissipatedHeat}");
+				}
 				if (dissipatedHeat < attemptToDissipate)
 					radiatorData.CurrentDissipation = (radiatorData.CurrentDissipation - radiatorData.StepSize).LowerBoundedBy(0);
 				else
 					radiatorData.CurrentDissipation = (radiatorData.CurrentDissipation + radiatorData.StepSize).UpperBoundedBy(radiatorData.MaxDissipation);
 			}
 
-			Animate();
+			if (MyAPIGateway.Utilities == null || !MyAPIGateway.Utilities.IsDedicated)
+				Animate();
+			ThermalAuthority.Sync(this);
 			block.RefreshCustomInfo();
 		}
 
