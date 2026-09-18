@@ -59,6 +59,10 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.HeatSin
                 var location = ApproximatePosition(beacon.GetPosition());
                 foreach (var player in players)
                 {
+                    // Match the ownership sources used elsewhere for heat-sink notifications.
+                    if (beacon.OwnerId == player.IdentityId || beacon.CubeGrid.BigOwners.Contains(player.IdentityId))
+                        continue;
+
                     var gps = MyAPIGateway.Session.GPS.Create("Thermal Spike",
                         "Approximate location of a heat sink broadcasting at maximum range.", location, true);
                     MyAPIGateway.Session.GPS.AddGps(player.IdentityId, gps);
