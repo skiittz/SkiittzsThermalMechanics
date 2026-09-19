@@ -11,7 +11,7 @@ namespace SkiittzsThermalMechanics.Data.Scripts.SkiittzsThermalMechanics.Configu
 		public List<Setting> GeneralSettings { get; set; }
 
 		public float ConfigVersion { get; set; }
-		public static float CurrentVersion = 1.93f;
+		public static float CurrentVersion = 1.94f;
 
 		public static ModSettings Default()
 		{
